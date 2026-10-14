@@ -1,0 +1,154 @@
+---
+title: "The model bench: open and closed boxes"
+author: "Raban Heller, Gerhard Achatz"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The model bench: open and closed boxes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>",
+  fig.width = 7, fig.height = 4, dpi = 96
+)
+has <- function(...) {
+  all(vapply(c(...), requireNamespace, logical(1), quietly = TRUE))
+}
+core <- has("parsnip", "recipes", "workflows", "rsample", "tune",
+            "yardstick", "dials", "hardhat")
+bench_ready <- core && has("rpart", "glmnet")
+explain_ready <- bench_ready && has("DALEX", "DALEXtra")
+```
+
+```{r setup}
+library(sandtablR)
+```
+
+An interpretable model is worth having only if you know what it costs. This
+article measures that: the same data, the same preprocessing, the same
+held-out split, scored across engines you can read and engines you cannot.
+
+## Choosing a target that can be lost
+
+The first thing to get right is what to predict.
+
+The card's true sighting category is a deterministic function of life points
+by construction: red is 1–4, yellow 5–8, green 9–12. Any engine recovers that
+rule exactly, so a leaderboard on it is a row of ones.
+
+```{r trivial, eval = bench_ready}
+co <- sdt_synthetic_cohort(n = 400, seed = 1)
+trivial <- sdt_fit(co, target = "triage", engine = "tree",
+                   tune = FALSE, folds = 3, seed = 1, verbose = FALSE)
+sdt_metrics(trivial)
+```
+
+What a *participant* calls is a different matter. The published evaluation
+reports how often participants agreed with the card: 88% for red, 59% for
+yellow, 71% for green. `sdt_add_decisions()` generates calls with those hit
+rates, weighting miscalls toward neighbouring categories, since red is
+mistaken for yellow far more often than for green.
+
+```{r decisions}
+labelled <- sdt_add_decisions(sdt_synthetic_cohort(n = 800, seed = 5),
+                              seed = 6)
+table(true = labelled$triage, called = labelled$called_triage)
+```
+
+Agreement between the two is well above chance and well short of perfect,
+which is what makes it a real prediction problem:
+
+```{r kappa}
+sdt_consistency_score(labelled$triage, labelled$called_triage)
+```
+
+Kappa rather than raw accuracy, because on a cohort that is 44% red, two
+raters who both always say "red" agree 44% of the time while sharing no
+judgement at all.
+
+## The bench
+
+`sdt_workflowset()` fits every installed engine to the same data through the
+same recipe and returns one leaderboard. Engines whose package is missing are
+skipped and named, not silently dropped.
+
+```{r bench, eval = bench_ready}
+board <- sdt_workflowset(
+  labelled, target = "called_triage",
+  engines = c("tree", "glmnet"),
+  tune = FALSE, folds = 3, seed = 1, verbose = FALSE
+)
+board
+```
+
+`class_box` is the column the article is about. `glass` marks models whose
+decision rule can be read off directly: a single decision tree, a penalised
+multinomial regression. `black` marks models that cannot be, however good.
+
+```{r skipped, eval = bench_ready}
+attr(board, "skipped")
+```
+
+The fitted models come back attached, so the winner can be interrogated
+without refitting:
+
+```{r models, eval = bench_ready}
+models <- attr(board, "models")
+names(models)
+```
+
+## Reading the gap
+
+The question is not which engine wins. It is how much is given up by choosing
+one you can read.
+
+```{r gap, eval = bench_ready}
+auc <- board[board$.metric == "roc_auc", ]
+glass <- max(auc$.estimate[auc$class_box == "glass"])
+black <- max(auc$.estimate[auc$class_box == "black"])
+c(best_glass_box = glass, best_black_box = black, difference = glass - black)
+```
+
+On this cohort the gap is small, and that is worth knowing: the participant's
+call is mostly driven by a few card fields, so a tree captures nearly all of
+the signal a forest does. On data where the gap is large, the trade is real
+and should be made deliberately.
+
+```{r roc, eval = bench_ready, fig.alt = "ROC curves, one per class, for the leading model"}
+best <- auc$engine[which.max(auc$.estimate)]
+sdt_roc(models[[best]])
+```
+
+## Explaining both the same way
+
+A glass-box model can be read directly, but a black-box one cannot, so the
+only way to put them side by side is to explain both from the outside.
+Permutation importance does that: it asks how much worse a model gets when a
+predictor is shuffled, which is defined identically for every engine.
+
+```{r importance, eval = explain_ready, fig.alt = "Permutation variable importance for the leading model"}
+sdt_importance(models[[best]], n_permutations = 5)
+```
+
+If the two kinds of model rely on the same predictors, the interpretable one
+is probably telling the truth about the problem. If they disagree, the black
+box has found something the glass box cannot express, and the gap in the
+leaderboard is where to look for it.
+
+```{r profile, eval = explain_ready, fig.alt = "Partial dependence of predicted probability on life points"}
+sdt_profile(models[[best]], variables = "life_points")
+```
+
+For a single casualty, `sdt_shap()` decomposes one prediction into
+per-predictor contributions: not "what does this model use", but "why this
+casualty".
+
+## Caveats
+
+Everything above runs on synthetic data whose structure is known, because it
+was generated. That is useful for demonstrating the bench and useless as
+evidence about real mass-casualty decision-making. With a real seed cohort,
+`sdt_synthesise()` produces a releasable replica, and
+`sdt_synthesis_utility()` scores it before anyone releases it.

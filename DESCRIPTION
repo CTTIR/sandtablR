@@ -1,0 +1,91 @@
+Package: sandtablR
+Title: Mass-Casualty Incident Simulation and Machine Learning Workbench
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Raban", "Heller", email = "raban.heller@charite.de",
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8006-9742")),
+    person("Gerhard", "Achatz", role = "aut"))
+Description: A generic framework for mass-casualty incident tabletop exercise
+    simulation, decision-path analysis, and machine learning. Provides a
+    discrete-event patient-flow engine, a tidy data model for scenarios,
+    patient cards and decision paths, synthetic cohort generation, supervised
+    triage and therapy-concept classification spanning interpretable and
+    black-box models, sequence analysis of participant decision paths, and a
+    model-agnostic explainability layer. An interactive 'shiny' workbench ties
+    the pieces together for scenario building, simulation, model training,
+    comparison and visualisation.
+License: MIT + file LICENSE
+URL: https://github.com/cttir/sandtablR, https://cttir.github.io/sandtablR/
+BugReports: https://github.com/cttir/sandtablR/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    cli,
+    dplyr,
+    ggplot2,
+    grDevices,
+    methods,
+    rlang,
+    simmer,
+    stats,
+    tibble,
+    utils,
+    withr
+Suggests:
+    bslib,
+    chromote,
+    covr,
+    DALEX,
+    DALEXtra,
+    dials,
+    earth,
+    digest,
+    DT,
+    future,
+    future.apply,
+    ggiraph,
+    glmmTMB,
+    glmnet,
+    hardhat,
+    htmltools,
+    jsonlite,
+    kernlab,
+    knitr,
+    lme4,
+    nanoparquet,
+    nnet,
+    parsnip,
+    plotly,
+    quarto,
+    ranger,
+    reactable,
+    readxl,
+    recipes,
+    rmarkdown,
+    rpart,
+    rsample,
+    shiny,
+    shinytest2,
+    simstudy,
+    spelling,
+    stacks,
+    synthpop,
+    testthat (>= 3.2.0),
+    TraMineR,
+    tune,
+    WeightedCluster,
+    workflows,
+    workflowsets,
+    writexl,
+    xgboost,
+    yardstick,
+    zip
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/Needs/website: pkgdown
+Config/Needs/coverage: covr
+Encoding: UTF-8
+Language: en-GB
+Roxygen: list(markdown = TRUE)
+LazyData: true
+Config/roxygen2/version: 8.0.0
