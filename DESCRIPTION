@@ -82,7 +82,7 @@ Suggests:
     zip
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Config/Needs/website: pkgdown
+Config/Needs/website: CTTIR/themakR
 Config/Needs/coverage: covr
 Encoding: UTF-8
 Language: en-GB

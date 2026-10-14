@@ -20,27 +20,46 @@ were made, then model and explain them.
 remotes::install_github("cttir/sandtablR")
 ```
 
-Only a handful of packages are required. Every model engine, explainer and
-sequence backend is optional and guarded at the point of use, so the package
-installs and checks with none of them present.
+R 4.1.0 or later is required. The core installation includes the simulation
+and plotting dependencies. Modelling, explanations and sequence clustering
+have optional dependencies; install the ones needed for your workflow.
+
+**Development software.** Synthetic examples demonstrate interfaces and modelling
+assumptions. They do not establish clinical validity or real-world performance.
 
 ## Quick start
 
 ```r
 library(sandtablR)
+co <- sdt_synthetic_cohort(n = 40, seed = 1)
+sc <- sdt_scenario(co, resources = list(or = 3, icu_imc = 6, ward = 20))
+run <- sdt_simulate(sc, replications = 5, seed = 1, verbose = FALSE)
+summary(run, reference = TRUE)
+head(sdt_decision_paths(run))
+head(sdt_decision_consistency(run))
+```
 
-co  <- sdt_synthetic_cohort(n = 40, seed = 1)
-sc  <- sdt_scenario(co, resources = list(or = 3, icu_imc = 6, ward = 20))
-run <- sdt_simulate(sc, replications = 5, seed = 1)
+The event log records patient movement by replication and board area. Summaries
+compare the simulated end state with a reference distribution; the comparison
+is not an independent clinical validation. Seeds make this example repeatable
+within the recorded software environment.
 
-summary(run, reference = TRUE)   # end of game, against the published values
-sdt_decision_paths(run)          # full pathway per casualty per replication
-sdt_decision_consistency(run)    # how repeatably each casualty was handled
+For a small optional modelling example, install the listed dependencies first:
 
-labelled <- sdt_add_decisions(co, seed = 2)   # simulated participant calls
-board <- sdt_workflowset(labelled, target = "called_triage")
+```r
+# install.packages(c("parsnip", "recipes", "workflows", "rsample", "tune",
+#                    "yardstick", "dials", "hardhat", "rpart"))
+labelled <- sdt_add_decisions(co, seed = 2)
+fit <- sdt_fit(labelled, target = "called_triage", engine = "tree",
+               tune = FALSE, folds = 3, seed = 1, verbose = FALSE)
+sdt_metrics(fit)
+```
 
-sdt_run_app()   # the interactive workbench
+Launch the interactive workbench separately:
+
+```r
+# Install the suggested Shiny dependencies listed in DESCRIPTION if needed.
+sdt_run_app()
 ```
 
 ## What is in it
@@ -63,8 +82,7 @@ distance between a casualty's replications rather than agreement on one label.
 
 **A model bench.** One interface over interpretable engines (`glmnet`, a
 decision tree) and black-box ones (`ranger`, `xgboost`), all trained through
-the same recipe and scored on the same held-out split, so the price of
-interpretability is a number rather than an opinion.
+the same recipe and scored on the same held-out split, so performance can be compared under the same evaluation design.
 
 **Explainability.** Permutation importance, dependence profiles and
 per-casualty SHAP attributions via DALEX, all model-agnostic, so a tree and a
@@ -101,3 +119,39 @@ TDSC course and an author of the evaluation the package calibrates against.
 `sdt_reference()` keeps the values attributed to that publication separate
 from `sandtablR`'s own modelling choices, so a calibration test cannot quietly
 check the model against parameters we picked ourselves.
+
+## Tutorials and reproducibility
+
+- [Getting started](https://github.com/CTTIR/sandtablR/blob/main/vignettes/sandtablR.Rmd): cohort validation, simulation,
+  decision paths, model fitting and saving results.
+- [The model bench](https://github.com/CTTIR/sandtablR/blob/main/vignettes/model-bench.Rmd): a fixed, reproducible comparison
+  of selected engines and the limits of model explanations.
+
+Install with `remotes::install_github("CTTIR/sandtablR", build_vignettes = TRUE)`
+to use `vignette("sandtablR", package = "sandtablR")` and
+`vignette("model-bench", package = "sandtablR")`. Building tutorials requires
+`knitr`, `rmarkdown` and Pandoc; optional modelling dependencies enable the
+corresponding tutorial sections.
+
+```r
+path <- tempfile(fileext = ".rds")
+saveRDS(list(scenario = sc, run = run, seed = 1,
+             session = sessionInfo()), path)
+restored <- readRDS(path)
+stopifnot(identical(run$events, restored$run$events))
+```
+
+Keep the scenario, seeds, package revision and software environment together.
+Synthetic data derived from real records are not automatically anonymous or
+safe to release. Assess privacy separately from predictive utility.
+
+## Troubleshooting, citation and licence
+
+Validation errors identify invalid card fields; consult `?sdt_cohort` for the
+schema. Optional-engine errors name the missing dependency. Start with the core
+simulation before adding modelling or explanation packages.
+
+Use `citation("sandtablR")` for installed-version metadata and cite the reference
+publication when using its attributed values. Licensed under [MIT](LICENSE.md).
+Report reproducible problems with synthetic inputs in
+[GitHub issues](https://github.com/CTTIR/sandtablR/issues).

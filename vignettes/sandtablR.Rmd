@@ -59,6 +59,7 @@ attempt:
 
 ```{r validate, error = TRUE}
 bad <- co
+bad$triage <- as.character(bad$triage)
 bad$triage[c(2, 5)] <- "purple"
 bad$life_points[3] <- 99
 sdt_cohort(bad)
@@ -75,7 +76,7 @@ sc
 summary(sc)
 ```
 
-```{r triage-mix, fig.alt = "Bar chart of casualties per sighting category"}
+```{r triage-mix, fig.alt = "Bar chart of casualties per sighting category", fig.cap = "Bar chart of casualties per sighting category. Synthetic demonstration."}
 sdt_plot_triage_mix(sc)
 ```
 
@@ -107,7 +108,7 @@ casualty is a point in the area it had reached at that moment, laid out as the
 nine areas of the published board. Change `at` and you watch the stream move
 across it.
 
-```{r board, eval = has("simmer"), fig.width = 8, fig.height = 3.4, fig.alt = "The nine board areas with casualties drawn as coloured points"}
+```{r board, eval = has("simmer"), fig.width = 8, fig.height = 3.4, fig.alt = "The nine board areas with casualties drawn as coloured points", fig.cap = "The nine board areas with casualties drawn as coloured points. Synthetic demonstration."}
 sdt_plot_board(run, at = 150)
 ```
 
@@ -115,7 +116,7 @@ sdt_plot_board(run, at = 150)
 summary(run, reference = TRUE)
 ```
 
-```{r end-plot, eval = has("simmer"), fig.alt = "Simulated end-of-game location against the published reference"}
+```{r end-plot, eval = has("simmer"), fig.alt = "Simulated end-of-game location against the published reference", fig.cap = "Simulated end-of-game location against the published reference. Synthetic demonstration."}
 sdt_plot_end_state(run)
 ```
 
@@ -141,7 +142,7 @@ consistency <- sdt_decision_consistency(run)
 head(consistency[order(consistency$consistency), ])
 ```
 
-```{r sequences, eval = has("simmer"), fig.alt = "Share of casualties in each board area by position in the pathway"}
+```{r sequences, eval = has("simmer"), fig.alt = "Share of casualties in each board area by position in the pathway", fig.cap = "Share of casualties in each board area by position in the pathway. Synthetic demonstration."}
 sdt_plot_sequences(run, type = "distribution")
 ```
 
@@ -176,7 +177,7 @@ glass-box and black-box models side by side. See
 Explanations are model-agnostic, so the same views work on a decision tree and
 on a random forest.
 
-```{r explain, eval = explain_ready, fig.alt = "Permutation variable importance"}
+```{r explain, eval = explain_ready, fig.alt = "Permutation variable importance", fig.cap = "Permutation variable importance. Synthetic demonstration."}
 sdt_importance(fit, n_permutations = 5)
 ```
 
@@ -192,6 +193,26 @@ self-contained HTML report.
 The domain model (sighting categories, ETC/DCS/TASC therapy concepts, board
 areas, patient-card fields) follows the TDSC tabletop exercise as described in
 the open-access evaluation by Achatz et al. (2023), *Eur J Trauma Emerg Surg*
-49(2):607--617, \doi{10.1007/s00068-022-02217-1}. `sandtablR` is a generic
+49(2):607--617, [doi:10.1007/s00068-022-02217-1](https://doi.org/10.1007/s00068-022-02217-1). `sandtablR` is a generic
 re-implementation built from published specifications, and is not affiliated
 with the TDSC course.
+
+## Save and reproduce a run
+
+```{r save-results, eval=has("simmer")}
+path <- tempfile(fileext = ".rds")
+saveRDS(list(scenario = sc, run = run, seed = 1,
+             session = sessionInfo()), path)
+restored <- readRDS(path)
+stopifnot(identical(run$events, restored$run$events))
+```
+
+Retain the software revision and scenario alongside every seed. A reproducible
+simulation is not evidence that its assumptions describe a real incident.
+See [the model bench](model-bench.html) for a separate synthetic prediction example.
+
+## Software environment
+
+```{r session-information}
+sessionInfo()
+```

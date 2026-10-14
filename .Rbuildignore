@@ -23,3 +23,6 @@
 ^AGENTS\.md$
 ^CLAUDE.*$
 ^admin$
+
+^docs$
+^_pkgdown\.yml$
