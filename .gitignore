@@ -61,3 +61,8 @@ __pycache__/
 *.pyc
 Rplots.pdf
 /paper/
+
+/docs/
+/inst/doc/
+/vignettes/*.html
+/vignettes/*.R

@@ -18,7 +18,7 @@ has <- function(...) {
 }
 core <- has("parsnip", "recipes", "workflows", "rsample", "tune",
             "yardstick", "dials", "hardhat")
-bench_ready <- core && has("rpart", "glmnet")
+bench_ready <- core && has("rpart", "glmnet", "ranger")
 explain_ready <- bench_ready && has("DALEX", "DALEXtra")
 ```
 
@@ -30,7 +30,18 @@ An interpretable model is worth having only if you know what it costs. This
 article measures that: the same data, the same preprocessing, the same
 held-out split, scored across engines you can read and engines you cannot.
 
-## Choosing a target that can be lost
+The modelling chunks require `parsnip`, `recipes`, `workflows`, `rsample`,
+`tune`, `yardstick`, `dials`, `hardhat`, `rpart`, `glmnet` and `ranger`.
+The explanation chunks additionally require `DALEX` and `DALEXtra`. Sections
+with missing optional packages are not executed; the table below records which
+parts are available in this build.
+
+```{r capabilities}
+data.frame(section = c("Model comparison", "Explanations"),
+           available = c(bench_ready, explain_ready))
+```
+
+## Define the target before comparing models
 
 The first thing to get right is what to predict.
 
@@ -64,9 +75,10 @@ which is what makes it a real prediction problem:
 sdt_consistency_score(labelled$triage, labelled$called_triage)
 ```
 
-Kappa rather than raw accuracy, because on a cohort that is 44% red, two
-raters who both always say "red" agree 44% of the time while sharing no
-judgement at all.
+Kappa accounts for agreement expected from the marginal category frequencies.
+Raw agreement alone can look high when one category dominates. If both raters
+always choose the same category, agreement is 100% but kappa is undefined;
+there is no variation with which to assess discrimination.
 
 ## The bench
 
@@ -77,7 +89,7 @@ skipped and named, not silently dropped.
 ```{r bench, eval = bench_ready}
 board <- sdt_workflowset(
   labelled, target = "called_triage",
-  engines = c("tree", "glmnet"),
+  engines = c("tree", "glmnet", "ranger"),
   tune = FALSE, folds = 3, seed = 1, verbose = FALSE
 )
 board
@@ -99,7 +111,7 @@ models <- attr(board, "models")
 names(models)
 ```
 
-## Reading the gap
+## Read the comparison
 
 The question is not which engine wins. It is how much is given up by choosing
 one you can read.
@@ -111,12 +123,12 @@ black <- max(auc$.estimate[auc$class_box == "black"])
 c(best_glass_box = glass, best_black_box = black, difference = glass - black)
 ```
 
-On this cohort the gap is small, and that is worth knowing: the participant's
-call is mostly driven by a few card fields, so a tree captures nearly all of
-the signal a forest does. On data where the gap is large, the trade is real
-and should be made deliberately.
+The printed gap describes this synthetic sample, split and set of fixed
+hyperparameters. Its sign and size are outcomes of the example, not a general
+claim that one model family is superior. Selecting the best engine using this
+comparison also requires a separate final evaluation for an unbiased assessment.
 
-```{r roc, eval = bench_ready, fig.alt = "ROC curves, one per class, for the leading model"}
+```{r roc, eval = bench_ready, fig.alt = "ROC curves, one per class, for the leading model", fig.cap = "ROC curves, one per class, for the leading model. Synthetic demonstration."}
 best <- auc$engine[which.max(auc$.estimate)]
 sdt_roc(models[[best]])
 ```
@@ -128,16 +140,16 @@ only way to put them side by side is to explain both from the outside.
 Permutation importance does that: it asks how much worse a model gets when a
 predictor is shuffled, which is defined identically for every engine.
 
-```{r importance, eval = explain_ready, fig.alt = "Permutation variable importance for the leading model"}
+```{r importance, eval = explain_ready, fig.alt = "Permutation variable importance for the leading model", fig.cap = "Permutation variable importance for the leading model. Synthetic demonstration."}
 sdt_importance(models[[best]], n_permutations = 5)
 ```
 
-If the two kinds of model rely on the same predictors, the interpretable one
-is probably telling the truth about the problem. If they disagree, the black
-box has found something the glass box cannot express, and the gap in the
-leaderboard is where to look for it.
+Agreement between importance profiles does not establish a causal explanation.
+Correlated predictors, model instability and the evaluation sample can affect
+these summaries. Inspect the predictive results and the data-generating
+assumptions alongside each explanation.
 
-```{r profile, eval = explain_ready, fig.alt = "Partial dependence of predicted probability on life points"}
+```{r profile, eval = explain_ready, fig.alt = "Partial dependence of predicted probability on life points", fig.cap = "Partial dependence of predicted probability on life points. Synthetic demonstration."}
 sdt_profile(models[[best]], variables = "life_points")
 ```
 
@@ -150,5 +162,12 @@ casualty".
 Everything above runs on synthetic data whose structure is known, because it
 was generated. That is useful for demonstrating the bench and useless as
 evidence about real mass-casualty decision-making. With a real seed cohort,
-`sdt_synthesise()` produces a releasable replica, and
-`sdt_synthesis_utility()` scores it before anyone releases it.
+`sdt_synthesise()` produces a synthetic candidate and `sdt_synthesis_utility()`
+assesses utility. Neither establishes anonymity or permission to release data;
+privacy assessment and disclosure review are separate tasks.
+
+## Software environment
+
+```{r session-information}
+sessionInfo()
+```

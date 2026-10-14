@@ -1,22 +1,20 @@
 url: https://cttir.github.io/sandtablR/
-
 template:
-  bootstrap: 5
+  package: themakR
+  math-rendering: mathml
   bslib:
-    primary: "#5E2C8E"
-
+    base_font: system-ui
+    heading_font: system-ui
+    code_font: monospace
 development:
   mode: auto
-
-navbar:
-  bg: dark
-
 reference:
 - title: Data model
-  desc: >
-    A casualty is a patient card; an ordered set of them is a cohort; a cohort
-    plus board capacities is a scenario. Validation is vectorised over the
-    cohort, so a bad import names every offending row and column at once.
+  desc: 'A casualty is a patient card; an ordered set of them is a cohort; a cohort
+    plus board capacities is a scenario. Validation is vectorised over the cohort,
+    so a bad import names every offending row and column at once.
+
+    '
   contents:
   - sdt_patient_card
   - validate_patient_card
@@ -28,49 +26,49 @@ reference:
   - as_tibble.scenario
   - autoplot.scenario
   - sdt_vocabularies
-
 - title: Reference distributions
-  desc: >
-    The published marginals the package calibrates against, kept apart from
-    sandtablR's own modelling choices so a calibration test cannot quietly
-    check the model against its own assumptions.
+  desc: 'The published marginals the package calibrates against, kept apart from sandtablR''s
+    own modelling choices so a calibration test cannot quietly check the model against
+    its own assumptions.
+
+    '
   contents:
   - sdt_reference
   - sdt_reference_scenario
   - sdt_reference_horizon
-
 - title: Synthetic data
-  desc: >
-    Generate a cohort from marginals, or synthesise a releasable replica of a
+  desc: 'Generate a cohort from marginals, or synthesise a releasable replica of a
     real one.
+
+    '
   contents:
   - sdt_synthetic_cohort
   - sdt_synthesise
   - sdt_synthesis_utility
   - sdt_add_decisions
-
 - title: Simulation
-  desc: >
-    A discrete-event model of the board. The event log it records, not the
-    summary, is what everything downstream is built on.
+  desc: 'A discrete-event model of the board. The event log it records, not the summary,
+    is what everything downstream is built on.
+
+    '
   contents:
   - sdt_simulate
   - summary.game_run
-
 - title: Decision paths
-  desc: >
-    Casualty pathways as state sequences: their shape, their groupings, and
-    how repeatably the same casualty is handled.
+  desc: 'Casualty pathways as state sequences: their shape, their groupings, and how
+    repeatably the same casualty is handled.
+
+    '
   contents:
   - sdt_decision_paths
   - sdt_decision_consistency
   - sdt_seqdef
   - sdt_seq_cluster
-
 - title: Machine learning
-  desc: >
-    One interface over interpretable and black-box engines, scored on the same
+  desc: 'One interface over interpretable and black-box engines, scored on the same
     held-out split.
+
+    '
   contents:
   - sdt_fit
   - sdt_workflowset
@@ -80,14 +78,12 @@ reference:
   - sdt_predictions
   - predict.sdt_model
   - sdt_consistency_score
-
 - title: Explainability
   contents:
   - sdt_explain
   - sdt_importance
   - sdt_profile
   - sdt_shap
-
 - title: Visualisation
   contents:
   - sdt_plot_triage_mix
@@ -96,17 +92,44 @@ reference:
   - sdt_plot_end_state
   - sdt_plot_sequences
   - sdt_roc
-
 - title: The workbench
   contents:
   - sdt_run_app
   - sdt_app
   - sdt_app_ui
   - sdt_app_server
-
+- title: Additional analysis interfaces
+  contents:
+  - sandtablR-package
+  - sdt_area_labels
+  - sdt_course_composition
+  - sdt_describe
+  - sdt_describe_participants
+  - sdt_describe_render
+  - sdt_export_simulation
+  - sdt_fidelity
+  - sdt_fit_behaviour
+  - sdt_participant_dictionary
+  - sdt_participant_summary
+  - sdt_plot_board
+  - sdt_plot_fidelity
+  - sdt_read_participants
+  - sdt_run_behaviour
+  - sdt_simulate_groups
 articles:
 - title: Articles
-  navbar: ~
+  navbar: null
   contents:
   - sandtablR
   - model-bench
+destination: docs
+home:
+  sidebar:
+    structure:
+    - links
+    - license
+    - citation
+    - authors
+  title: sandtablR
+
+llm-docs: false
