@@ -1,0 +1,15 @@
+# Calls the shared CTTIR workflow. Do not add steps here - change the
+# shared one at CTTIR/.github so every package moves together.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+name: R-CMD-check
+
+permissions: read-all
+
+jobs:
+  R-CMD-check:
+    uses: CTTIR/.github/.github/workflows/R-CMD-check.yaml@main

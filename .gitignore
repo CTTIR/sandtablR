@@ -1,0 +1,63 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+docs/
+inst/doc/
+_build.R
+_coverage/
+.DS_Store
+/doc/
+/Meta/
+*.tmp
+*.log
+*~
+*.bak
+*.orig
+*.Rcheck/
+*.tar.gz
+
+# Build/orchestration prompts and agent tooling: local only, never committed.
+CLAUDE.md
+CLAUDE_CODE_*.md
+.claude/
+dev/
+notes/
+
+# LaTeX build artefacts
+paper/*.aux
+paper/*.log
+paper/*.out
+
+# Stray device output from figure scripts.
+Rplots.pdf
+
+# Real course exports and everything derived from them: local only, never
+# committed. The package is built from the published specification alone.
+data-raw/Rohdaten TDSC/
+
+# Conference submissions: local only, never committed.
+CONFERENCES/
+
+# Local records and development material
+/.local-private/
+/admin/
+AGENTS.md
+CLAUDE.md
+CLAUDE_CODE_*.md
+.claude/
+.codex/
+*PROMPT*.md
+*prompt*.md
+*.log
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rcheck/
+*.tar.gz
+
+__pycache__/
+*.pyc
+Rplots.pdf
+/paper/
