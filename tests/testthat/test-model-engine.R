@@ -360,6 +360,35 @@ test_that("sdt_workflowset() names the engines whose package is absent", {
   expect_setequal(unique(ws$engine), "tree")
 })
 
+test_that("sdt_workflowset() skips a transformer with no working backend", {
+  skip_unless_bench("rpart")
+  # keras3 can be installed with no Python backend behind it, and the
+  # transformer fit then aborts. That must cost the board one row, not every
+  # row. The transformer is pointed at a package every machine has, so it
+  # counts as installed whether or not keras3 is.
+  keras_engines <- function() {
+    tibble::tibble(
+      engine = c("tree", "transformer"),
+      package = c("rpart", "stats"),
+      class_box = c("glass", "closed")
+    )
+  }
+  local_mocked_bindings(
+    .sdt_engines = keras_engines,
+    .sdt_keras_ready = function() FALSE,
+    .package = "sandtablR"
+  )
+  expect_warning(
+    ws <- sdt_workflowset(bench_cohort(), target = "called_triage",
+                          engines = c("tree", "transformer"), tune = FALSE,
+                          folds = 2L, seed = 1, verbose = TRUE),
+    "no working backend"
+  )
+  expect_identical(attr(ws, "skipped"), "transformer")
+  expect_named(attr(ws, "models"), "tree")
+  expect_setequal(unique(ws$engine), "tree")
+})
+
 test_that("sdt_workflowset() returns an empty leaderboard, not an error", {
   # No skip: with nothing usable it returns before it fits anything, so this
   # is exactly the path a machine with no engines installed takes.

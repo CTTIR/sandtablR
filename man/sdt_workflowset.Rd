@@ -62,7 +62,7 @@ short of the machine, capped at 8.}
 A \code{\link[tibble:tibble]{tibble::tibble()}} with one row per engine and metric:
 \code{engine}, \code{class_box}, \code{.metric}, \code{.estimator}, \code{.estimate}, ranked with
 the best \code{roc_auc} first. Carries a \code{skipped} attribute listing engines
-whose package was missing, and a \code{models} attribute holding the fitted
+that could not be fitted here, and a \code{models} attribute holding the fitted
 \code{sdt_model} objects.
 }
 \description{
@@ -73,7 +73,8 @@ interpretability is a number rather than an opinion.
 }
 \details{
 Engines whose package is not installed are skipped, and named in the
-\code{skipped} attribute rather than silently dropped.
+\code{skipped} attribute rather than silently dropped. So is the transformer
+when \pkg{keras3} is installed but has no working backend.
 }
 \examples{
 co <- sdt_synthetic_cohort(n = 150, seed = 4)

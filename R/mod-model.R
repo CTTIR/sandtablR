@@ -309,7 +309,7 @@ mod_model_server <- function(id, state) {
         skipped <- attr(board, "skipped")
         if (length(skipped)) {
           shiny::showNotification(
-            sprintf("Skipped %s: no package installed.",
+            sprintf("Skipped %s: no package installed or no working backend.",
                     .sdt_model_and(.sdt_model_engine_label(skipped))),
             type = "warning", duration = 8
           )

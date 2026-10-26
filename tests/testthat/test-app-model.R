@@ -224,11 +224,6 @@ test_that("a second engine joins the first rather than replacing it", {
 
 test_that("comparing all engines fills one row per engine and metric", {
   lab_needs_engines()
-  # The board fits every installed engine. keras3 without a Python backend
-  # counts as installed, and the transformer fit then aborts the whole board.
-  if (requireNamespace("keras3", quietly = TRUE)) {
-    skip_if_not(.sdt_keras_ready(), "keras3 is installed without a backend")
-  }
   state <- lab_state()
   state$scenario <- lab_scenario()
   shiny::testServer(mod_model_server, args = list(state = state), {
@@ -236,6 +231,12 @@ test_that("comparing all engines fills one row per engine and metric", {
                       tune = FALSE, grid = 2, seed = 1, bench = 1)
     spec <- sdt_engines()
     usable <- spec$engine[spec$installed]
+    # keras3 without a Python backend counts as installed. The board then
+    # names the transformer as skipped and is built for every other engine.
+    if ("transformer" %in% usable && !.sdt_keras_ready()) {
+      usable <- setdiff(usable, "transformer")
+      expect_true("transformer" %in% attr(state$bench, "skipped"))
+    }
     expect_setequal(unique(state$bench$engine), usable)
     expect_setequal(names(state$models), usable)
     # Four metrics per engine, every engine scored on the same split: a board

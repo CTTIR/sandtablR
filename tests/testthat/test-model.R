@@ -66,13 +66,15 @@ test_that("sdt_fit() accepts every installed engine and rejects unknown ones", {
   eng <- sdt_engines()
   # rpart is the one engine the rest of this file already requires, so it is
   # the only fit exercised by default; the others are checked when present.
+  # keras3 alone is not enough: the transformer also needs a Python backend,
+  # and installed only says the R package is there. That one iteration is
+  # passed over and reported as a skip once every other engine is checked.
+  no_backend <- character()
   for (e in eng$engine[eng$installed]) {
     skip_if_not_installed(eng$package[eng$engine == e])
-    # keras3 alone is not enough: the transformer also needs a Python backend,
-    # and installed only says the R package is there. It is the last engine,
-    # so the skip leaves the others checked.
-    if (e == "transformer") {
-      skip_if_not(sandtablR:::.sdt_keras_ready(), "no working keras3 backend")
+    if (e == "transformer" && !sandtablR:::.sdt_keras_ready()) {
+      no_backend <- e
+      next
     }
     fit <- sdt_fit(bench_data(), target = "called_triage", engine = e,
                    predictors = c("age", "sex", "life_points"),
@@ -81,6 +83,7 @@ test_that("sdt_fit() accepts every installed engine and rejects unknown ones", {
     expect_identical(fit$engine, e)
     expect_true(all(c("accuracy", "roc_auc") %in% sdt_metrics(fit)$.metric))
   }
+  skip_if(length(no_backend) > 0L, "no working keras3 backend for transformer")
 })
 
 test_that("sdt_metric_set() covers kappa as well as accuracy", {

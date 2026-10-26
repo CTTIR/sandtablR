@@ -642,7 +642,8 @@ print.sdt_model <- function(x, ...) {
 #' interpretability is a number rather than an opinion.
 #'
 #' Engines whose package is not installed are skipped, and named in the
-#' `skipped` attribute rather than silently dropped.
+#' `skipped` attribute rather than silently dropped. So is the transformer
+#' when \pkg{keras3} is installed but has no working backend.
 #'
 #' @inheritParams sdt_fit
 #' @param engines Which engines to screen. Defaults to all of them.
@@ -650,7 +651,7 @@ print.sdt_model <- function(x, ...) {
 #' @return A [tibble::tibble()] with one row per engine and metric:
 #'   `engine`, `class_box`, `.metric`, `.estimator`, `.estimate`, ranked with
 #'   the best `roc_auc` first. Carries a `skipped` attribute listing engines
-#'   whose package was missing, and a `models` attribute holding the fitted
+#'   that could not be fitted here, and a `models` attribute holding the fitted
 #'   `sdt_model` objects.
 #' @seealso [sdt_fit()], [sdt_metrics()].
 #' @export
@@ -690,10 +691,22 @@ sdt_workflowset <- function(data,
   }
 
   usable <- engines[engines %in% available$engine[available$installed]]
+  # keras3 can be installed with no Python backend behind it. The transformer
+  # fit then aborts, and would take every other engine's row down with it.
+  no_backend <- character()
+  if ("transformer" %in% usable && !.sdt_keras_ready()) {
+    no_backend <- "transformer"
+    usable <- setdiff(usable, no_backend)
+  }
   skipped <- setdiff(engines, usable)
   if (length(skipped) && verbose) {
+    why <- if (length(no_backend)) {
+      "no package installed or no working backend"
+    } else {
+      "no package installed"
+    }
     cli::cli_warn(c(
-      "!" = "Skipping {length(skipped)} engine{?s} with no package installed.",
+      "!" = "Skipping {length(skipped)} engine{?s} with {why}.",
       "i" = "Skipped: {.val {skipped}}."
     ))
   }
