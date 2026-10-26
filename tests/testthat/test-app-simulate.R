@@ -272,6 +272,10 @@ test_that("the parallel switch reaches the engine", {
   # Without future.apply installed sdt_simulate() warns and falls back, which
   # would make this test noisy rather than informative.
   skip_if_not_installed("future.apply")
+  # It also falls back, and records parallel = FALSE, when it would get fewer
+  # than two workers. That is every R CMD check --as-cran run, where
+  # _R_CHECK_LIMIT_CORES_ caps the cores at two and one is left free.
+  skip_if(.sdt_workers() < 2L, "fewer than two parallel workers available")
   state <- fake_state()
   state$scenario <- demo_scenario(n = 8)
   shiny::testServer(mod_simulate_server, args = list(state = state), {
