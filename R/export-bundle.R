@@ -353,7 +353,10 @@ sdt_export_simulation <- function(x, path,
       call = call
     )
   }
-  dest
+  # `dest` is the same file, but normalizePath() spells it differently on
+  # macOS (/private/var) and Windows (separators, long names), and the
+  # documented return value is the caller's path.
+  target$zip
 }
 
 .export_report <- function(out, files, cw, meta) {

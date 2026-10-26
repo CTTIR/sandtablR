@@ -10,6 +10,9 @@ First development version.
   `sdt_triage_accuracy()`, `sdt_fit_triage_error()`, `sdt_simulate_triage()`
   and `sdt_error_fidelity()` are exported, as their documentation already
   declared.
+* `sdt_export_simulation()` returns the archive path exactly as it was
+  passed. It returned a normalised spelling of the same file, which differs
+  from the caller's on macOS (`/private/var`) and Windows.
 
 ## Realignment with the source publication
 
