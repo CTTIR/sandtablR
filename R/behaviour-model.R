@@ -139,7 +139,7 @@
               "triaged yellow"),
     .beh_spec("green", list("called_triage"),
               function(d) .beh_in(d[["called_triage"]], c("green", "gruen",
-                                                          "grün")),
+                                                          "gr\u00fcn")),
               "triaged green"),
     .beh_spec("icu", list("general_location"),
               function(d) .beh_in(d[["general_location"]], .beh_icu_levels()),
