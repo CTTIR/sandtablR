@@ -224,6 +224,11 @@ test_that("a second engine joins the first rather than replacing it", {
 
 test_that("comparing all engines fills one row per engine and metric", {
   lab_needs_engines()
+  # The board fits every installed engine. keras3 without a Python backend
+  # counts as installed, and the transformer fit then aborts the whole board.
+  if (requireNamespace("keras3", quietly = TRUE)) {
+    skip_if_not(.sdt_keras_ready(), "keras3 is installed without a backend")
+  }
   state <- lab_state()
   state$scenario <- lab_scenario()
   shiny::testServer(mod_model_server, args = list(state = state), {

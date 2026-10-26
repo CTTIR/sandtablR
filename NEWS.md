@@ -4,6 +4,8 @@ First development version.
 
 ## Check and portability fixes
 
+* **keras3** and **parallelly** are declared in Suggests. Both were already
+  used when present.
 * The documentation and NAMESPACE are regenerated. The transformer engine
   (`sdt_transformer()` and its fit and predict plumbing) is now documented,
   and `sdt_read_gold_standard()`, `sdt_apply_gold_standard()`,
