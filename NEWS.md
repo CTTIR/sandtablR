@@ -12,9 +12,14 @@ First development version.
   `sdt_triage_accuracy()`, `sdt_fit_triage_error()`, `sdt_simulate_triage()`
   and `sdt_error_fidelity()` are exported, as their documentation already
   declared.
-* `sdt_export_simulation()` returns the archive path exactly as it was
-  passed. It returned a normalised spelling of the same file, which differs
-  from the caller's on macOS (`/private/var`) and Windows.
+* The `format()` and `print()` methods for `sdt_simulated_triage` and
+  `sdt_triage_error_model` objects, and the `tibble::tbl_sum()` methods for
+  `sdt_error_fidelity`, `sdt_gold_standard` and `sdt_triage_accuracy`
+  tables, are now registered, so these objects print with their own
+  headers everywhere, not only from inside the package.
+* `sdt_export_simulation()` returns the archive path as it was passed, with
+  only `~` expanded. It returned a normalised spelling of the same file,
+  which differs from the caller's on macOS (`/private/var`) and Windows.
 * `sdt_workflowset()` skips the transformer, and names it in `skipped`,
   when **keras3** is installed but has no working backend. Its fit used to
   abort and take every other engine's row down with it.
