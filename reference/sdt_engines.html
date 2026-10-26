@@ -70,10 +70,11 @@ and <code>installed</code>.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>class_box</code> grades readability by where an explanation comes from:
 <code>"glass"</code> when the fitted model can simply be read, <code>"grey"</code> when its own
-structure yields exact per-feature attributions, and <code>"black"</code> when
-attributions come only from perturbing the inputs. Gradient boosting sits
-in the middle rather than with the black boxes, which is where a two-way
-split would put it.</p>
+structure yields exact per-feature attributions, <code>"black"</code> when attributions
+come only from perturbing the inputs, and <code>"closed"</code> when the model learns
+its own representation first, so a per-input attribution no longer describes
+what the model reasons in. Gradient boosting sits in the middle rather than
+with the black boxes, which is where a two-way split would put it.</p>
     </div>
 
     <div class="section level2">
@@ -90,7 +91,7 @@ split would put it.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> ranger      ranger  black     TRUE     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> svm_rbf     kernlab black     TRUE     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> mlp         nnet    black     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> transformer keras3  closed    FALSE    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> transformer keras3  closed    TRUE     </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

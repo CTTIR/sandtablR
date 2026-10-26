@@ -67,12 +67,14 @@ a tuning grid, and a final fit evaluated on a held-out split.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sdt_fit</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
 <span>  target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"triage"</span>, <span class="st">"therapy"</span>, <span class="st">"called_triage"</span>, <span class="st">"called_therapy"</span><span class="op">)</span>,</span>
-<span>  engine <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ranger"</span>, <span class="st">"xgboost"</span>, <span class="st">"glmnet"</span>, <span class="st">"tree"</span><span class="op">)</span>,</span>
+<span>  engine <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  predictors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tune <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  grid <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  folds <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  prop <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  workers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -96,8 +98,9 @@ participant's call is the target worth benchmarking.</p></dd>
 
 
 <dt id="arg-engine">engine<a class="anchor" aria-label="anchor" href="#arg-engine"></a></dt>
-<dd><p>One of <code><a href="sdt_engines.html">sdt_engines()</a></code>: <code>"glmnet"</code> or <code>"tree"</code> (glass-box),
-<code>"ranger"</code> or <code>"xgboost"</code> (black-box).</p></dd>
+<dd><p>One of <code><a href="sdt_engines.html">sdt_engines()</a></code>. <code>"multinom"</code>, <code>"glmnet"</code> and <code>"tree"</code>
+are glass-box; <code>"mars"</code> and <code>"xgboost"</code> are grey-box; <code>"ranger"</code>,
+<code>"svm_rbf"</code> and <code>"mlp"</code> are black-box.</p></dd>
 
 
 <dt id="arg-predictors">predictors<a class="anchor" aria-label="anchor" href="#arg-predictors"></a></dt>
@@ -121,6 +124,20 @@ specification's defaults once.</p></dd>
 
 <dt id="arg-prop">prop<a class="anchor" aria-label="anchor" href="#arg-prop"></a></dt>
 <dd><p>Proportion of the data used for training in the initial split.</p></dd>
+
+
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
+<dd><p>If <code>TRUE</code>, fit resamples and grid points in parallel.
+Defaults to <code>FALSE</code>: a package that claims every core without being asked
+is a bad guest on a shared machine, and a sequential run needs no thought
+about RNG streams. It pays off on a tuned fit or an engine screen and
+costs a little on a single untuned one. The backend is set up for the
+duration of the call and the caller's plan is restored on exit.</p></dd>
+
+
+<dt id="arg-workers">workers<a class="anchor" aria-label="anchor" href="#arg-workers"></a></dt>
+<dd><p>Number of parallel workers, or <code>NULL</code> to choose one: a core
+short of the machine, capped at 8.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>

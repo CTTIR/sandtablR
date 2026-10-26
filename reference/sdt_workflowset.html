@@ -73,6 +73,8 @@ interpretability is a number rather than an opinion.</p>
 <span>  grid <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  folds <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  prop <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  workers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -122,6 +124,20 @@ specification's defaults once.</p></dd>
 <dd><p>Proportion of the data used for training in the initial split.</p></dd>
 
 
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
+<dd><p>If <code>TRUE</code>, fit resamples and grid points in parallel.
+Defaults to <code>FALSE</code>: a package that claims every core without being asked
+is a bad guest on a shared machine, and a sequential run needs no thought
+about RNG streams. It pays off on a tuned fit or an engine screen and
+costs a little on a single untuned one. The backend is set up for the
+duration of the call and the caller's plan is restored on exit.</p></dd>
+
+
+<dt id="arg-workers">workers<a class="anchor" aria-label="anchor" href="#arg-workers"></a></dt>
+<dd><p>Number of parallel workers, or <code>NULL</code> to choose one: a core
+short of the machine, capped at 8.</p></dd>
+
+
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Optional integer seed, applied with <code><a href="https://withr.r-lib.org/reference/with_seed.html" class="external-link">withr::local_seed()</a></code>.</p></dd>
 
@@ -135,13 +151,14 @@ specification's defaults once.</p></dd>
     <p>A <code><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble::tibble()</a></code> with one row per engine and metric:
 <code>engine</code>, <code>class_box</code>, <code>.metric</code>, <code>.estimator</code>, <code>.estimate</code>, ranked with
 the best <code>roc_auc</code> first. Carries a <code>skipped</code> attribute listing engines
-whose package was missing, and a <code>models</code> attribute holding the fitted
+that could not be fitted here, and a <code>models</code> attribute holding the fitted
 <code>sdt_model</code> objects.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Engines whose package is not installed are skipped, and named in the
-<code>skipped</code> attribute rather than silently dropped.</p>
+<code>skipped</code> attribute rather than silently dropped. So is the transformer
+when <span class="pkg">keras3</span> is installed but has no working backend.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

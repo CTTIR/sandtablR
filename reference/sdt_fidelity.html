@@ -133,7 +133,15 @@ cards on which the statistic was true. The spread of those group-level
 rates is the quantity of interest, and the columns report:</p><ul><li><p><code>observed</code>, <code>simulated</code>: the between-group SD of the group rates.</p></li>
 <li><p><code>ratio</code>: <code>observed / simulated</code>. <code>Inf</code> when the simulator produces no
 between-group spread at all, which is a real and reportable result.</p></li>
-<li><p><code>ci_lower</code>, <code>ci_upper</code>: a percentile bootstrap interval on <code>ratio</code>.</p></li>
+<li><p><code>ci_lower</code>, <code>ci_upper</code>: a percentile bootstrap interval on <code>ratio</code>,
+resampling groups on each side with the simulated cohort held fixed. It
+answers "how much would this move with a different sample of teams?".</p></li>
+<li><p><code>rep_lower</code>, <code>rep_upper</code>, <code>rep_covers_one</code>: the interval across
+replicates – <code>observed / SD(replicate)</code> for each simulated cohort, at the
+2.5th and 97.5th percentiles. It answers the other question, "how much
+would this move on a different RUN of the simulator?", which is the one
+that dominates for a rare behaviour and which the bootstrap cannot see.
+Needs at least ten replicates; <code>NA</code> below that.</p></li>
 <li><p><code>observed_mean</code>, <code>simulated_mean</code>, <code>location_z</code>: the level check.
 <code>location_z</code> is the difference in pooled rates expressed in observed
 between-group SDs, so a model can also fail by getting the level wrong.</p></li>

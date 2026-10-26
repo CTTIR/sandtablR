@@ -18,6 +18,7 @@
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_app.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_app_server.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_app_ui.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_apply_gold_standard.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_area_labels.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_as_patient_cards.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_cohort.html</loc></url>
@@ -29,11 +30,13 @@
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_describe_participants.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_describe_render.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_engines.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_error_fidelity.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_explain.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_export_simulation.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_fidelity.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_fit.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_fit_behaviour.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_fit_triage_error.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_importance.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_metric_set.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_metrics.html</loc></url>
@@ -49,6 +52,7 @@
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_plot_utilisation.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_predictions.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_profile.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_read_gold_standard.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_read_participants.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_reference.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_reference_horizon.html</loc></url>
@@ -62,9 +66,14 @@
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_shap.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_simulate.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_simulate_groups.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_simulate_triage.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_synthesis_utility.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_synthesise.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_synthetic_cohort.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_transformer.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_transformer_fit.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_transformer_predict.html</loc></url>
+<url><loc>https://cttir.github.io/sandtablR/reference/sdt_triage_accuracy.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_vocabularies.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/sdt_workflowset.html</loc></url>
 <url><loc>https://cttir.github.io/sandtablR/reference/summary.game_run.html</loc></url>

@@ -70,6 +70,7 @@ per-casualty flow records and resource utilisation.</p>
 <span>  service_times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  horizon <span class="op">=</span> <span class="fl">270</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  workers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -102,10 +103,14 @@ completion.</p></dd>
 
 
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
-<dd><p>If <code>TRUE</code>, run replications concurrently with
-<code><a href="https://future.apply.futureverse.org/reference/future_lapply.html" class="external-link">future.apply::future_lapply()</a></code>. Requires <span class="pkg">future.apply</span>; warns and
-runs sequentially if it is not installed. Choose the backend yourself with
-<code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>.</p></dd>
+<dd><p>If <code>TRUE</code>, run replications concurrently. Defaults to
+<code>FALSE</code>. The backend is set up for the duration of the call and the
+caller's plan is restored on exit.</p></dd>
+
+
+<dt id="arg-workers">workers<a class="anchor" aria-label="anchor" href="#arg-workers"></a></dt>
+<dd><p>Number of parallel workers, or <code>NULL</code> to choose one: a core
+short of the machine, capped at 8.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>

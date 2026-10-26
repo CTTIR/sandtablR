@@ -52,6 +52,17 @@
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="sandtablr-0009000">sandtablR 0.0.0.9000<a class="anchor" aria-label="anchor" href="#sandtablr-0009000"></a></h2>
 <p>First development version.</p>
 <div class="section level3">
+<h3 id="check-and-portability-fixes-0-0-0-9000">Check and portability fixes<a class="anchor" aria-label="anchor" href="#check-and-portability-fixes-0-0-0-9000"></a></h3>
+<ul><li>
+<strong>keras3</strong> and <strong>parallelly</strong> are declared in Suggests. Both were already used when present.</li>
+<li>The documentation and NAMESPACE are regenerated. The transformer engine (<code><a href="../reference/sdt_transformer.html">sdt_transformer()</a></code> and its fit and predict plumbing) is now documented, and <code><a href="../reference/sdt_read_gold_standard.html">sdt_read_gold_standard()</a></code>, <code><a href="../reference/sdt_apply_gold_standard.html">sdt_apply_gold_standard()</a></code>, <code><a href="../reference/sdt_triage_accuracy.html">sdt_triage_accuracy()</a></code>, <code><a href="../reference/sdt_fit_triage_error.html">sdt_fit_triage_error()</a></code>, <code><a href="../reference/sdt_simulate_triage.html">sdt_simulate_triage()</a></code> and <code><a href="../reference/sdt_error_fidelity.html">sdt_error_fidelity()</a></code> are exported, as their documentation already declared.</li>
+<li>The <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> methods for <code>sdt_simulated_triage</code> and <code>sdt_triage_error_model</code> objects, and the <code><a href="https://pillar.r-lib.org/reference/tbl_sum.html" class="external-link">tibble::tbl_sum()</a></code> methods for <code>sdt_error_fidelity</code>, <code>sdt_gold_standard</code> and <code>sdt_triage_accuracy</code> tables, are now registered, so these objects print with their own headers everywhere, not only from inside the package.</li>
+<li>
+<code><a href="../reference/sdt_export_simulation.html">sdt_export_simulation()</a></code> returns the archive path as it was passed, with only <code>~</code> expanded. It returned a normalised spelling of the same file, which differs from the caller’s on macOS (<code>/private/var</code>) and Windows.</li>
+<li>
+<code><a href="../reference/sdt_workflowset.html">sdt_workflowset()</a></code> skips the transformer, and names it in <code>skipped</code>, when <strong>keras3</strong> is installed but has no working backend. Its fit used to abort and take every other engine’s row down with it.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="realignment-with-the-source-publication-0-0-0-9000">Realignment with the source publication<a class="anchor" aria-label="anchor" href="#realignment-with-the-source-publication-0-0-0-9000"></a></h3>
 <p>The reference distributions were re-read against the open-access paper and extended from four pinned quantities to the full published set. Several package defaults that contradicted the patient card reproduced in the source’s Fig. 1 were corrected. These are breaking changes; the package is pre-1.0 and the previous values were never published ones.</p>
 <ul><li>
