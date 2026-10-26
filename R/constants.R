@@ -123,7 +123,9 @@ sdt_sex_levels <- function() c("f", "m", "d")
 #' @param areas Character vector of board areas. Defaults to
 #'   [sdt_board_areas()].
 #' @return A character vector of labels, the same length as `areas`.
-#' @seealso [sdt_board_areas()], [sdt_report_area()].
+#' @seealso [sdt_board_areas()], and [summary.game_run()], whose
+#'   `reference = TRUE` folds the board onto the published reporting
+#'   locations.
 #' @export
 #' @examples
 #' sdt_area_labels()

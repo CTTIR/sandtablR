@@ -73,6 +73,7 @@ reference:
   - sdt_fit
   - sdt_workflowset
   - sdt_engines
+  - sdt_transformer
   - sdt_metric_set
   - sdt_metrics
   - sdt_predictions
@@ -101,21 +102,27 @@ reference:
 - title: Additional analysis interfaces
   contents:
   - sandtablR-package
+  - sdt_apply_gold_standard
   - sdt_area_labels
   - sdt_course_composition
   - sdt_describe
   - sdt_describe_participants
   - sdt_describe_render
+  - sdt_error_fidelity
   - sdt_export_simulation
   - sdt_fidelity
   - sdt_fit_behaviour
+  - sdt_fit_triage_error
   - sdt_participant_dictionary
   - sdt_participant_summary
   - sdt_plot_board
   - sdt_plot_fidelity
+  - sdt_read_gold_standard
   - sdt_read_participants
   - sdt_run_behaviour
   - sdt_simulate_groups
+  - sdt_simulate_triage
+  - sdt_triage_accuracy
 articles:
 - title: Articles
   navbar: null

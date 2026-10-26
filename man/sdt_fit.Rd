@@ -7,12 +7,14 @@
 sdt_fit(
   data,
   target = c("triage", "therapy", "called_triage", "called_therapy"),
-  engine = c("ranger", "xgboost", "glmnet", "tree"),
+  engine = NULL,
   predictors = NULL,
   tune = TRUE,
   grid = 5L,
   folds = 5L,
   prop = 0.75,
+  parallel = FALSE,
+  workers = NULL,
   seed = NULL,
   verbose = TRUE
 )
@@ -27,8 +29,9 @@ values are close to a deterministic function of the card, so every engine
 scores near 1 on them and the comparison is uninformative. The
 participant's call is the target worth benchmarking.}
 
-\item{engine}{One of \code{\link[=sdt_engines]{sdt_engines()}}: \code{"glmnet"} or \code{"tree"} (glass-box),
-\code{"ranger"} or \code{"xgboost"} (black-box).}
+\item{engine}{One of \code{\link[=sdt_engines]{sdt_engines()}}. \code{"multinom"}, \code{"glmnet"} and \code{"tree"}
+are glass-box; \code{"mars"} and \code{"xgboost"} are grey-box; \code{"ranger"},
+\code{"svm_rbf"} and \code{"mlp"} are black-box.}
 
 \item{predictors}{Character vector of predictor columns. Defaults to the
 card fields, excluding identifiers and every outcome column, so a model
@@ -42,6 +45,16 @@ specification's defaults once.}
 \item{folds}{Number of cross-validation folds, stratified on the target.}
 
 \item{prop}{Proportion of the data used for training in the initial split.}
+
+\item{parallel}{If \code{TRUE}, fit resamples and grid points in parallel.
+Defaults to \code{FALSE}: a package that claims every core without being asked
+is a bad guest on a shared machine, and a sequential run needs no thought
+about RNG streams. It pays off on a tuned fit or an engine screen and
+costs a little on a single untuned one. The backend is set up for the
+duration of the call and the caller's plan is restored on exit.}
+
+\item{workers}{Number of parallel workers, or \code{NULL} to choose one: a core
+short of the machine, capped at 8.}
 
 \item{seed}{Optional integer seed, applied with \code{\link[withr:local_seed]{withr::local_seed()}}.}
 

@@ -686,6 +686,7 @@ sdt_describe_participants <- function(x, by = "short_course_id", ...) {
   strwrap(out, width = 78, indent = 2L, exdent = 4L)
 }
 
+#' @param ... These dots are for future extensions and must be empty.
 #' @param max_groups Groups to print before the rest are summarised in one
 #'   line. The object keeps every group either way.
 #' @param max_levels Levels to print per categorical variable.
