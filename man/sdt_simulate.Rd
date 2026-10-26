@@ -10,6 +10,7 @@ sdt_simulate(
   service_times = list(),
   horizon = 270,
   parallel = FALSE,
+  workers = NULL,
   seed = NULL,
   verbose = TRUE
 )
@@ -29,10 +30,12 @@ when the clock stops are recorded where they stood, which is what makes
 the end-of-game distribution meaningful. \code{Inf} runs every casualty to
 completion.}
 
-\item{parallel}{If \code{TRUE}, run replications concurrently with
-\code{\link[future.apply:future_lapply]{future.apply::future_lapply()}}. Requires \pkg{future.apply}; warns and
-runs sequentially if it is not installed. Choose the backend yourself with
-\code{\link[future:plan]{future::plan()}}.}
+\item{parallel}{If \code{TRUE}, run replications concurrently. Defaults to
+\code{FALSE}. The backend is set up for the duration of the call and the
+caller's plan is restored on exit.}
+
+\item{workers}{Number of parallel workers, or \code{NULL} to choose one: a core
+short of the machine, capped at 8.}
 
 \item{seed}{Optional integer seed, applied with \code{\link[withr:local_seed]{withr::local_seed()}}.}
 

@@ -37,6 +37,8 @@ non-indicator column otherwise.}
 one fewer, since a percent already carries two significant figures more
 than the proportion it comes from. The returned tibble is never rounded.}
 
+\item{...}{These dots are for future extensions and must be empty.}
+
 \item{max_groups}{Groups to print before the rest are summarised in one
 line. The object keeps every group either way.}
 

@@ -24,5 +24,7 @@ sdt_area_labels()
 sdt_area_labels(c("or", "morgue", "nowhere"))
 }
 \seealso{
-\code{\link[=sdt_board_areas]{sdt_board_areas()}}, \code{\link[=sdt_report_area]{sdt_report_area()}}.
+\code{\link[=sdt_board_areas]{sdt_board_areas()}}, and \code{\link[=summary.game_run]{summary.game_run()}}, whose
+\code{reference = TRUE} folds the board onto the published reporting
+locations.
 }

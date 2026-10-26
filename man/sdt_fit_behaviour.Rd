@@ -11,6 +11,7 @@ sdt_fit_behaviour(
   block = "session_id",
   card = "card",
   engine = "lme4",
+  nAGQ = 1L,
   frame = c("matched", "all"),
   min_coverage = NULL,
   block_data = NULL,
@@ -29,6 +30,15 @@ session (block) the team played in, and the patient card. \code{block} may be
 blocks are nested inside their block, with a warning.}
 
 \item{engine}{\code{"lme4"} (default) or \code{"glmmTMB"}.}
+
+\item{nAGQ}{Quadrature points for the \pkg{lme4} engine. \code{1} (default) is
+the Laplace approximation. A larger value uses adaptive Gauss-Hermite
+quadrature, which removes most of the upward bias the Laplace
+approximation carries in the variance component when clusters hold very
+few events -- the failure mode behind an over-dispersed simulated cohort
+for a rare behaviour. \pkg{lme4} supports it only for a model with one
+grouping factor, so it requires \code{block = NULL}; asking for it on a
+cross-classified model is an error rather than a silent downgrade.}
 
 \item{frame}{\code{"matched"} (default) for the composition-matched frame, or
 \code{"all"} for every row.}

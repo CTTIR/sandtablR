@@ -17,10 +17,11 @@ is installed, and how readable the fitted model is.
 \details{
 \code{class_box} grades readability by where an explanation comes from:
 \code{"glass"} when the fitted model can simply be read, \code{"grey"} when its own
-structure yields exact per-feature attributions, and \code{"black"} when
-attributions come only from perturbing the inputs. Gradient boosting sits
-in the middle rather than with the black boxes, which is where a two-way
-split would put it.
+structure yields exact per-feature attributions, \code{"black"} when attributions
+come only from perturbing the inputs, and \code{"closed"} when the model learns
+its own representation first, so a per-input attribution no longer describes
+what the model reasons in. Gradient boosting sits in the middle rather than
+with the black boxes, which is where a two-way split would put it.
 }
 \examples{
 sdt_engines()

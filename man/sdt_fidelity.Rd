@@ -60,7 +60,15 @@ rates is the quantity of interest, and the columns report:
 \item \code{observed}, \code{simulated}: the between-group SD of the group rates.
 \item \code{ratio}: \code{observed / simulated}. \code{Inf} when the simulator produces no
 between-group spread at all, which is a real and reportable result.
-\item \code{ci_lower}, \code{ci_upper}: a percentile bootstrap interval on \code{ratio}.
+\item \code{ci_lower}, \code{ci_upper}: a percentile bootstrap interval on \code{ratio},
+resampling groups on each side with the simulated cohort held fixed. It
+answers "how much would this move with a different sample of teams?".
+\item \code{rep_lower}, \code{rep_upper}, \code{rep_covers_one}: the interval across
+replicates -- \code{observed / SD(replicate)} for each simulated cohort, at the
+2.5th and 97.5th percentiles. It answers the other question, "how much
+would this move on a different RUN of the simulator?", which is the one
+that dominates for a rare behaviour and which the bootstrap cannot see.
+Needs at least ten replicates; \code{NA} below that.
 \item \code{observed_mean}, \code{simulated_mean}, \code{location_z}: the level check.
 \code{location_z} is the difference in pooled rates expressed in observed
 between-group SDs, so a model can also fail by getting the level wrong.

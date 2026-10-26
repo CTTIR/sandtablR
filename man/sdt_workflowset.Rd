@@ -13,6 +13,8 @@ sdt_workflowset(
   grid = 5L,
   folds = 5L,
   prop = 0.75,
+  parallel = FALSE,
+  workers = NULL,
   seed = NULL,
   verbose = TRUE
 )
@@ -41,6 +43,16 @@ specification's defaults once.}
 \item{folds}{Number of cross-validation folds, stratified on the target.}
 
 \item{prop}{Proportion of the data used for training in the initial split.}
+
+\item{parallel}{If \code{TRUE}, fit resamples and grid points in parallel.
+Defaults to \code{FALSE}: a package that claims every core without being asked
+is a bad guest on a shared machine, and a sequential run needs no thought
+about RNG streams. It pays off on a tuned fit or an engine screen and
+costs a little on a single untuned one. The backend is set up for the
+duration of the call and the caller's plan is restored on exit.}
+
+\item{workers}{Number of parallel workers, or \code{NULL} to choose one: a core
+short of the machine, capped at 8.}
 
 \item{seed}{Optional integer seed, applied with \code{\link[withr:local_seed]{withr::local_seed()}}.}
 

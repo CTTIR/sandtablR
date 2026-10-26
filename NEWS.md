@@ -2,6 +2,15 @@
 
 First development version.
 
+## Check and portability fixes
+
+* The documentation and NAMESPACE are regenerated. The transformer engine
+  (`sdt_transformer()` and its fit and predict plumbing) is now documented,
+  and `sdt_read_gold_standard()`, `sdt_apply_gold_standard()`,
+  `sdt_triage_accuracy()`, `sdt_fit_triage_error()`, `sdt_simulate_triage()`
+  and `sdt_error_fidelity()` are exported, as their documentation already
+  declared.
+
 ## Realignment with the source publication
 
 The reference distributions were re-read against the open-access paper and
