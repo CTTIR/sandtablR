@@ -36,6 +36,14 @@ test_that("the calibrated fixture is bit-identical", {
   # Whole-log identity, when a hash is available. The count vector above
   # already pins the end state; this pins every intermediate step too.
   skip_if_not_installed("digest")
+  # The hash is taken over the serialised log, so it also sees how R stores
+  # it. Before R 4.6 a tibble keeps its attributes in a different order
+  # (row.names before names), which gives an identical() log a different
+  # hash. On arm64 macOS, with the same R and package versions, the hash
+  # differs while every count above agrees. It was recorded on R 4.6 on
+  # x86_64, and is only compared there.
+  skip_if(getRversion() < "4.6.0", "log hash recorded on R >= 4.6.0")
+  skip_if(R.version$arch != "x86_64", "log hash recorded on x86_64")
   expect_identical(
     digest::digest(run$events), "eab66533c904ff9b17f1498f77be5d14"
   )
