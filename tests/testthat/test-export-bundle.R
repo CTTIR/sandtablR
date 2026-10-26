@@ -69,6 +69,28 @@ test_that("the archive lands on the path a downloadHandler hands over", {
   expect_gt(nrow(utils::unzip(bare, list = TRUE)), 0L)
 })
 
+test_that("the archive path comes back spelled as the caller passed it", {
+  # A canonicalised path names the same file but compares unequal to the one
+  # handed over: macOS resolves its temporary directory through /private, and
+  # Windows swaps the separators and expands short names. A "." segment and a
+  # symlinked directory show the same thing on Linux.
+  dir <- withr::local_tempdir()
+  dotted <- file.path(dir, ".", "bundle.zip")
+  out <- sdt_export_simulation(fake_sim(), dotted, verbose = FALSE)
+  expect_identical(out[[1L]], dotted)
+  expect_true(file.exists(dotted))
+
+  skip_on_os("windows")
+  real <- file.path(dir, "real")
+  dir.create(real)
+  link <- file.path(dir, "link")
+  skip_if_not(file.symlink(real, link), "could not create a symlink")
+  linked <- file.path(link, "bundle.zip")
+  out <- sdt_export_simulation(fake_sim(), linked, verbose = FALSE)
+  expect_identical(out[[1L]], linked)
+  expect_true(file.exists(file.path(real, "bundle.zip")))
+})
+
 test_that("an existing bundle is never overwritten by accident", {
   dir <- withr::local_tempdir()
   zipfile <- file.path(dir, "bundle.zip")
