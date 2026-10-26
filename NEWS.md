@@ -15,6 +15,9 @@ First development version.
 * `sdt_export_simulation()` returns the archive path exactly as it was
   passed. It returned a normalised spelling of the same file, which differs
   from the caller's on macOS (`/private/var`) and Windows.
+* `sdt_workflowset()` skips the transformer, and names it in `skipped`,
+  when **keras3** is installed but has no working backend. Its fit used to
+  abort and take every other engine's row down with it.
 
 ## Realignment with the source publication
 
