@@ -274,8 +274,10 @@ test_that("the parallel switch reaches the engine", {
   skip_if_not_installed("future.apply")
   # It also falls back, and records parallel = FALSE, when it would get fewer
   # than two workers. That is every R CMD check --as-cran run, where
-  # _R_CHECK_LIMIT_CORES_ caps the cores at two and one is left free.
-  skip_if(.sdt_workers() < 2L, "fewer than two parallel workers available")
+  # _R_CHECK_LIMIT_CORES_ caps the cores at two and one is left free. Two
+  # workers are asked for outright, which stays inside that cap.
+  local_mocked_bindings(.sdt_workers = function(workers = NULL) 2L,
+                        .package = "sandtablR")
   state <- fake_state()
   state$scenario <- demo_scenario(n = 8)
   shiny::testServer(mod_simulate_server, args = list(state = state), {
