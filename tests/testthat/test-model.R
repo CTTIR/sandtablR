@@ -68,6 +68,12 @@ test_that("sdt_fit() accepts every installed engine and rejects unknown ones", {
   # the only fit exercised by default; the others are checked when present.
   for (e in eng$engine[eng$installed]) {
     skip_if_not_installed(eng$package[eng$engine == e])
+    # keras3 alone is not enough: the transformer also needs a Python backend,
+    # and installed only says the R package is there. It is the last engine,
+    # so the skip leaves the others checked.
+    if (e == "transformer") {
+      skip_if_not(sandtablR:::.sdt_keras_ready(), "no working keras3 backend")
+    }
     fit <- sdt_fit(bench_data(), target = "called_triage", engine = e,
                    predictors = c("age", "sex", "life_points"),
                    tune = FALSE, seed = 1L, verbose = FALSE)
