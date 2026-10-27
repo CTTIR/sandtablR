@@ -74,7 +74,9 @@ interpretability is a number rather than an opinion.
 \details{
 Engines whose package is not installed are skipped, and named in the
 \code{skipped} attribute rather than silently dropped. So is the transformer
-when \pkg{keras3} is installed but has no working backend.
+when \pkg{keras3} is installed but has no working backend. The transformer
+is fitted after every other engine, so Python and its backend are not
+loaded into the session before their parallel workers are started.
 }
 \examples{
 co <- sdt_synthetic_cohort(n = 150, seed = 4)
