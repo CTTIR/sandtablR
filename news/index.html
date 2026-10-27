@@ -60,7 +60,7 @@
 <li>
 <code><a href="../reference/sdt_export_simulation.html">sdt_export_simulation()</a></code> returns the archive path as it was passed, with only <code>~</code> expanded. It returned a normalised spelling of the same file, which differs from the caller’s on macOS (<code>/private/var</code>) and Windows.</li>
 <li>
-<code><a href="../reference/sdt_workflowset.html">sdt_workflowset()</a></code> skips the transformer, and names it in <code>skipped</code>, when <strong>keras3</strong> is installed but has no working backend. Its fit used to abort and take every other engine’s row down with it.</li>
+<code><a href="../reference/sdt_workflowset.html">sdt_workflowset()</a></code> skips the transformer, and names it in <code>skipped</code>, when <strong>keras3</strong> is installed but has no working backend; the warning says how to install one. Its fit used to abort and take every other engine’s row down with it. The transformer is now fitted after the other engines, so Python is not loaded before their parallel workers start. The workbench’s skip notice gives each skipped engine its own reason.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="realignment-with-the-source-publication-0-0-0-9000">Realignment with the source publication<a class="anchor" aria-label="anchor" href="#realignment-with-the-source-publication-0-0-0-9000"></a></h3>

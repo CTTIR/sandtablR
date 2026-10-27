@@ -158,7 +158,9 @@ that could not be fitted here, and a <code>models</code> attribute holding the f
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Engines whose package is not installed are skipped, and named in the
 <code>skipped</code> attribute rather than silently dropped. So is the transformer
-when <span class="pkg">keras3</span> is installed but has no working backend.</p>
+when <span class="pkg">keras3</span> is installed but has no working backend. The transformer
+is fitted after every other engine, so Python and its backend are not
+loaded into the session before their parallel workers are started.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
