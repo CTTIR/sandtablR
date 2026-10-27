@@ -21,8 +21,10 @@ First development version.
   only `~` expanded. It returned a normalised spelling of the same file,
   which differs from the caller's on macOS (`/private/var`) and Windows.
 * `sdt_workflowset()` skips the transformer, and names it in `skipped`,
-  when **keras3** is installed but has no working backend. Its fit used to
-  abort and take every other engine's row down with it.
+  when **keras3** is installed but has no working backend; the warning says
+  how to install one. Its fit used to abort and take every other engine's
+  row down with it. The transformer is now fitted after the other engines,
+  so Python is not loaded before their parallel workers start.
 
 ## Realignment with the source publication
 

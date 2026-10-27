@@ -389,6 +389,118 @@ test_that("sdt_workflowset() skips a transformer with no working backend", {
   expect_setequal(unique(ws$engine), "tree")
 })
 
+# A transformer that counts as installed on any machine, whether or not keras3
+# is there, so the backend paths can be reached everywhere.
+backend_engines <- function() {
+  tibble::tibble(
+    engine = c("tree", "transformer"),
+    package = c("rpart", "stats"),
+    class_box = c("glass", "closed")
+  )
+}
+
+test_that("sdt_workflowset() asks about the backend after the other fits", {
+  skip_unless_bench("rpart")
+  # Asking imports Python and TensorFlow into this process, and with
+  # parallel = TRUE the other engines' workers are forked from it. So the
+  # transformer goes last, whatever order it was asked for in, and the
+  # question is only put once its own fit has failed.
+  calls <- character()
+  real_fit <- sdt_fit
+  local_mocked_bindings(
+    .sdt_engines = backend_engines,
+    .sdt_keras_ready = function() {
+      calls <<- c(calls, "probe")
+      FALSE
+    },
+    sdt_fit = function(data, ..., engine) {
+      calls <<- c(calls, engine)
+      if (engine == "transformer") {
+        cli::cli_abort("The transformer needs a working keras3 backend.")
+      }
+      real_fit(data, ..., engine = engine)
+    },
+    .package = "sandtablR"
+  )
+  expect_warning(
+    ws <- sdt_workflowset(bench_cohort(), target = "called_triage",
+                          engines = c("transformer", "tree"), tune = FALSE,
+                          folds = 2L, seed = 1, verbose = TRUE),
+    "no working backend"
+  )
+  expect_identical(calls, c("tree", "transformer", "probe"))
+  expect_identical(attr(ws, "skipped"), "transformer")
+  expect_setequal(unique(ws$engine), "tree")
+})
+
+test_that("a transformer asked for alone still says how to get a backend", {
+  skip_unless_bench()
+  # The fit used to carry the install hint. Skipping it must not lose that,
+  # and here the skip is all the caller gets back.
+  local_mocked_bindings(
+    .sdt_engines = backend_engines,
+    .sdt_keras_ready = function() FALSE,
+    .package = "sandtablR"
+  )
+  expect_warning(
+    ws <- sdt_workflowset(bench_cohort(n = 30), target = "called_triage",
+                          engines = "transformer", tune = FALSE,
+                          folds = 2L, seed = 1, verbose = TRUE),
+    "keras3::install_keras()", fixed = TRUE
+  )
+  expect_identical(nrow(ws), 0L)
+  expect_identical(attr(ws, "skipped"), "transformer")
+  expect_identical(attr(ws, "models"), list())
+})
+
+test_that("warnings from a transformer fit that works still reach the caller", {
+  skip_unless_bench("rpart")
+  # Its warnings are held back until the outcome is known, and only a skip for
+  # a missing backend may drop them. A tree fit stands in for the transformer.
+  real_fit <- sdt_fit
+  local_mocked_bindings(
+    .sdt_engines = backend_engines,
+    sdt_fit = function(data, ..., engine) {
+      if (engine == "transformer") {
+        warning("said by the transformer fit")
+        return(real_fit(data, ..., engine = "tree"))
+      }
+      real_fit(data, ..., engine = engine)
+    },
+    .package = "sandtablR"
+  )
+  expect_warning(
+    ws <- sdt_workflowset(bench_cohort(), target = "called_triage",
+                          engines = c("tree", "transformer"), tune = FALSE,
+                          folds = 2L, seed = 1, verbose = FALSE),
+    "said by the transformer fit"
+  )
+  expect_setequal(unique(ws$engine), c("tree", "transformer"))
+  expect_identical(attr(ws, "skipped"), character())
+})
+
+test_that("a transformer that fails with a working backend is not skipped", {
+  skip_unless_bench("rpart")
+  # Only a missing backend is a reason to skip. Any other failure is a real
+  # one and has to surface rather than be passed off as an absent engine.
+  real_fit <- sdt_fit
+  local_mocked_bindings(
+    .sdt_engines = backend_engines,
+    .sdt_keras_ready = function() TRUE,
+    sdt_fit = function(data, ..., engine) {
+      if (engine == "transformer") cli::cli_abort("The fit fell over.")
+      real_fit(data, ..., engine = engine)
+    },
+    .package = "sandtablR"
+  )
+  expect_error(
+    sdt_workflowset(bench_cohort(), target = "called_triage",
+                    engines = c("tree", "transformer"), tune = FALSE,
+                    folds = 2L, seed = 1, verbose = FALSE),
+    "fell over"
+  )
+})
+
 test_that("sdt_workflowset() returns an empty leaderboard, not an error", {
   # No skip: with nothing usable it returns before it fits anything, so this
   # is exactly the path a machine with no engines installed takes.

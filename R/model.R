@@ -643,7 +643,9 @@ print.sdt_model <- function(x, ...) {
 #'
 #' Engines whose package is not installed are skipped, and named in the
 #' `skipped` attribute rather than silently dropped. So is the transformer
-#' when \pkg{keras3} is installed but has no working backend.
+#' when \pkg{keras3} is installed but has no working backend. The transformer
+#' is fitted after every other engine, so Python and its backend are not
+#' loaded into the session before their parallel workers are started.
 #'
 #' @inheritParams sdt_fit
 #' @param engines Which engines to screen. Defaults to all of them.
@@ -691,23 +693,61 @@ sdt_workflowset <- function(data,
   }
 
   usable <- engines[engines %in% available$engine[available$installed]]
-  # keras3 can be installed with no Python backend behind it. The transformer
-  # fit then aborts, and would take every other engine's row down with it.
-  no_backend <- character()
-  if ("transformer" %in% usable && !.sdt_keras_ready()) {
-    no_backend <- "transformer"
-    usable <- setdiff(usable, no_backend)
+  fit_one <- function(e) {
+    if (verbose) cli::cli_inform("Screening {.val {e}}.")
+    sdt_fit(
+      data, target = target, engine = e, predictors = predictors,
+      tune = tune, grid = grid, folds = folds, prop = prop,
+      seed = seed, verbose = FALSE
+    )
   }
+  models <- lapply(stats::setNames(nm = setdiff(usable, "transformer")),
+                   fit_one)
+
+  # keras3 can be installed with no Python backend behind it, and the
+  # transformer fit then aborts. That has to cost the board one row, not
+  # every row. Asking whether the backend works imports Python and
+  # TensorFlow into this process, and with parallel = TRUE the other
+  # engines' workers would be forked from it, so the transformer goes last
+  # and the question is only put once its own fit has failed.
+  # Its warnings are held back until the outcome is known: for a missing
+  # backend they only repeat what the skip warning below says.
+  no_backend <- character()
+  if ("transformer" %in% usable) {
+    held <- list()
+    fit <- withCallingHandlers(
+      tryCatch(fit_one("transformer"), error = function(cnd) cnd),
+      warning = function(w) {
+        held[[length(held) + 1L]] <<- w
+        invokeRestart("muffleWarning")
+      }
+    )
+    missing_backend <- inherits(fit, "error") && !.sdt_keras_ready()
+    if (missing_backend) {
+      no_backend <- "transformer"
+    } else {
+      for (w in held) warning(w)
+      if (inherits(fit, "error")) stop(fit)
+      models$transformer <- fit
+    }
+  }
+  usable <- setdiff(usable, no_backend)
   skipped <- setdiff(engines, usable)
   if (length(skipped) && verbose) {
-    why <- if (length(no_backend)) {
-      "no package installed or no working backend"
-    } else {
-      "no package installed"
+    why <- paste(c(
+      if (length(setdiff(skipped, no_backend))) "no package installed",
+      if (length(no_backend)) "no working backend"
+    ), collapse = " or ")
+    hint <- if (length(no_backend)) {
+      c(
+        "i" = "{.val transformer} needs a working {.pkg keras3} backend.",
+        "i" = "Install it with {.code keras3::install_keras()}."
+      )
     }
     cli::cli_warn(c(
       "!" = "Skipping {length(skipped)} engine{?s} with {why}.",
-      "i" = "Skipped: {.val {skipped}}."
+      "i" = "Skipped: {.val {skipped}}.",
+      hint
     ))
   }
   if (!length(usable)) {
@@ -719,16 +759,7 @@ sdt_workflowset <- function(data,
     attr(out, "models") <- list()
     return(out)
   }
-
-  models <- lapply(usable, function(e) {
-    if (verbose) cli::cli_inform("Screening {.val {e}}.")
-    sdt_fit(
-      data, target = target, engine = e, predictors = predictors,
-      tune = tune, grid = grid, folds = folds, prop = prop,
-      seed = seed, verbose = FALSE
-    )
-  })
-  names(models) <- usable
+  models <- models[usable]
 
   rows <- lapply(usable, function(e) {
     m <- sdt_metrics(models[[e]])
