@@ -309,8 +309,7 @@ mod_model_server <- function(id, state) {
         skipped <- attr(board, "skipped")
         if (length(skipped)) {
           shiny::showNotification(
-            sprintf("Skipped %s: no package installed or no working backend.",
-                    .sdt_model_and(.sdt_model_engine_label(skipped))),
+            .sdt_model_skip_note(skipped, sdt_engines()),
             type = "warning", duration = 8
           )
         }
@@ -621,6 +620,20 @@ mod_model_server <- function(id, state) {
 }
 
 # "a, b and c", for a sentence rather than a vector printed at the reader.
+# Why the board left each engine out. sdt_workflowset() skips an engine whose
+# package is missing, and the transformer when keras3 is installed but has no
+# working backend. Those are different fixes, so each gets its own sentence.
+.sdt_model_skip_note <- function(skipped, spec) {
+  has_pkg <- spec$installed[match(skipped, spec$engine)] %in% TRUE
+  say <- function(x, why) {
+    sprintf("Skipped %s: %s.", .sdt_model_and(.sdt_model_engine_label(x)), why)
+  }
+  paste(c(
+    if (any(!has_pkg)) say(skipped[!has_pkg], "no package installed"),
+    if (any(has_pkg)) say(skipped[has_pkg], "no working keras3 backend")
+  ), collapse = " ")
+}
+
 .sdt_model_and <- function(x) {
   n <- length(x)
   if (n < 2L) {

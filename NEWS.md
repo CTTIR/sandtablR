@@ -24,7 +24,8 @@ First development version.
   when **keras3** is installed but has no working backend; the warning says
   how to install one. Its fit used to abort and take every other engine's
   row down with it. The transformer is now fitted after the other engines,
-  so Python is not loaded before their parallel workers start.
+  so Python is not loaded before their parallel workers start. The
+  workbench's skip notice gives each skipped engine its own reason.
 
 ## Realignment with the source publication
 
