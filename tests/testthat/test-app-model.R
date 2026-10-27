@@ -263,6 +263,45 @@ test_that("comparing all engines fills one row per engine and metric", {
   })
 })
 
+test_that("the skip notice gives each skipped engine its own reason", {
+  lab_needs_engines()
+  # A missing package and a missing keras3 backend are different fixes, so
+  # the notice must not offer both for every engine it left out. ranger is
+  # pointed at a package nobody has, and the transformer at one everybody
+  # has, so it counts as installed and only its backend is missing.
+  notes <- character()
+  local_mocked_bindings(
+    showNotification = function(ui, ..., type = "default") {
+      notes <<- c(notes, paste(as.character(ui), collapse = " "))
+      invisible(NULL)
+    },
+    .package = "shiny"
+  )
+  local_mocked_bindings(
+    .sdt_engines = function() {
+      tibble::tibble(
+        engine = c("tree", "ranger", "transformer"),
+        package = c("rpart", "sandtabl.absent", "stats"),
+        class_box = c("glass", "black", "closed")
+      )
+    },
+    .sdt_keras_ready = function() FALSE,
+    .package = "sandtablR"
+  )
+  state <- lab_state()
+  state$scenario <- lab_scenario()
+  shiny::testServer(mod_model_server, args = list(state = state), {
+    session$setInputs(target = "called_triage", prop = 0.75, folds = 2,
+                      tune = FALSE, grid = 2, seed = 1, bench = 1)
+    expect_setequal(unique(state$bench$engine), "tree")
+    expect_setequal(attr(state$bench, "skipped"), c("ranger", "transformer"))
+  })
+  said <- paste(notes, collapse = " ")
+  expect_match(said, "Random forest: no package installed.", fixed = TRUE)
+  expect_match(said, "transformer: no working keras3 backend.", fixed = TRUE)
+  expect_no_match(said, "or no working backend", fixed = TRUE)
+})
+
 test_that("a fit that cannot run leaves the state as it was", {
   lab_needs_engines()
   co <- lab_cohort()
