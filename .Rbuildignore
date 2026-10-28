@@ -14,7 +14,7 @@
 ^README\.Rmd$
 ^\.Rproj\.user$
 ^sandtablR\.Rproj$
-^.*\.svg$
+^[^/]*\.svg$
 ^paper$
 ^Rplots\.pdf$
 ^CONFERENCES$
