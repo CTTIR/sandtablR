@@ -49,6 +49,7 @@ sdt_app_ui <- function() {
   .require_pkgs(c("shiny", "bslib", "htmltools"))
   .sdt_mount_assets()
   bslib::page_navbar(
+    window_title = "sandtablR",
     title = .sdt_brand(),
     theme = .sdt_app_theme(),
     header = htmltools::tags$head(

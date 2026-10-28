@@ -382,7 +382,7 @@ test_that("mounting assets exposes the www directory to Shiny", {
 test_that("the navbar brand carries the logo and the package name", {
   skip_if_no_shiny()
   html <- as.character(htmltools::renderTags(.sdt_brand())$html)
-  expect_match(html, "sandtablR/logo.png", fixed = TRUE)
+  expect_match(html, "cttir-app-brand", fixed = TRUE)
   expect_match(html, "alt=\"sandtablR logo\"", fixed = TRUE)
   expect_match(html, "sandtablR", fixed = TRUE)
 })
@@ -390,7 +390,7 @@ test_that("the navbar brand carries the logo and the package name", {
 test_that("the app UI embeds the logo", {
   skip_if_no_shiny()
   html <- as.character(htmltools::renderTags(sdt_app_ui())$html)
-  expect_match(html, "sandtablR/logo.png", fixed = TRUE)
+  expect_match(html, "cttir-app-brand", fixed = TRUE)
 })
 
 test_that("sdt_app() mounts assets before it serves anything", {
