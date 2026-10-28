@@ -36,9 +36,7 @@
 .sdt_brand <- function() {
   htmltools::div(
     class = "d-flex align-items-center gap-2",
-    htmltools::img(
-      src = "sandtablR/logo.png", height = "34", alt = "sandtablR logo"
-    ),
+    .cttir_brand_logo(),
     htmltools::span("sandtablR", class = "fw-semibold")
   )
 }
