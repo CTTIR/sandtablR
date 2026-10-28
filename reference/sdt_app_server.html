@@ -18,6 +18,7 @@ app and the console disagree."><meta property="og:image" content="https://cttir.
 
     <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
+    <!-- Standard logo aliases contain the named v5 light and dark hexes. -->
     <a class="navbar-brand me-2" href="../index.html"><img src="../logo.svg" alt="" class="themakr-navbar-logo" data-cttir-dark-src="../reference/figures/logo-dark.svg">sandtablR</a>
 
     <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
@@ -93,8 +94,8 @@ app and the console disagree.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .require_pkgs(c("shiny", "bslib", "htmltools"))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     .sdt_mount_assets()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     bslib::page_navbar(title = .sdt_brand(), theme = .sdt_app_theme(), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         header = htmltools::tags$head(htmltools::tags$style(htmltools::HTML(.sdt_app_css()))), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     bslib::page_navbar(window_title = "sandtablR", title = .sdt_brand(), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         theme = .sdt_app_theme(), header = htmltools::tags$head(htmltools::tags$style(htmltools::HTML(.sdt_app_css()))), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         bslib::nav_panel("Overview", mod_overview_ui("overview")), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         bslib::nav_panel("Scenario", mod_scenario_ui("scenario")), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         bslib::nav_panel("Simulate", mod_simulate_ui("simulate")), </span>
@@ -107,7 +108,7 @@ app and the console disagree.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             "Report", class = "btn-sm btn-outline-secondary")), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         bslib::nav_item(bslib::input_dark_mode(id = "colour_mode")))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5921631bbc00&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5f80dd6e9d88&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:sandtablR&gt;</span>
 </code></pre></div>
     </div>
