@@ -103,7 +103,7 @@ test_that("the casualty picker names a casualty rather than a row", {
   choices <- .sdt_explain_casualty_choices(co)
 
   # The value is the id, because that is what the attribution is looked up
-  # by; the label is the card, because choosing between "P007" and "P012" is
+  # by; the label is the card, because choosing between "Z901" and "Z902" is
   # guesswork and choosing between two casualties is a decision.
   expect_identical(unname(choices), as.character(co$id))
   for (i in seq_along(choices)) {
