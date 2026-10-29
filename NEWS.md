@@ -6,6 +6,9 @@
 
 First development version.
 
+* R 4.5.0 or later is required. Suggested modelling packages need it
+  (glmmTMB depends via pbkrtest and doBy on Deriv, which requires R 4.5).
+
 ## Check and portability fixes
 
 * **keras3** and **parallelly** are declared in Suggests. Both were already
