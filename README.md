@@ -20,7 +20,7 @@ were made, then model and explain them.
 remotes::install_github("cttir/sandtablR")
 ```
 
-R 4.1.0 or later is required. The core installation includes the simulation
+R 4.5.0 or later is required. The core installation includes the simulation
 and plotting dependencies. Modelling, explanations and sequence clustering
 have optional dependencies; install the ones needed for your workflow.
 
