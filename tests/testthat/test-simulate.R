@@ -153,7 +153,8 @@ test_that("parallel replications produce the same structure as sequential", {
   skip_if_not_installed("future.apply")
   co <- sdt_synthetic_cohort(n = 15, seed = 8)
   sc <- sdt_scenario(co, resources = list(or = 2))
-  par <- sdt_simulate(sc, replications = 3, parallel = TRUE, seed = 9,
+  par <- sdt_simulate(sc, replications = 3, parallel = TRUE, workers = 2,
+                      seed = 9,
                       verbose = FALSE)
   seq_run <- sdt_simulate(sc, replications = 3, parallel = FALSE, seed = 9,
                           verbose = FALSE)

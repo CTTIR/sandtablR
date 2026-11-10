@@ -78,6 +78,9 @@ sdt_driver_app_code <- function() {
 
 
 test_that("the workbench builds, runs and switches tabs in a browser", {
+  # A second R process and a headless browser: too slow and too dependent on
+  # the machine for CRAN.
+  skip_on_cran()
   skip_if_not_installed("shinytest2")
   skip_if_not_installed("chromote")
   skip_if_not_installed("shiny")

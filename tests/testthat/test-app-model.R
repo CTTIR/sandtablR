@@ -109,7 +109,9 @@ test_that("the UI names both buttons, every input and all three views", {
 # Preconditions ------------------------------------------------------------
 
 test_that("the precondition says what is missing, then what is ready", {
-  lab_needs_shiny()
+  # "Ready" is only reachable when the training packages are installed;
+  # without them the panel names the missing packages instead.
+  lab_needs_engines()
   state <- lab_state()
   shiny::testServer(mod_model_server, args = list(state = state), {
     # A panel whose buttons do nothing until a scenario exists has to say so
