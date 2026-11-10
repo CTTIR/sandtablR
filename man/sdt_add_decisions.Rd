@@ -31,7 +31,9 @@ green.
 \examples{
 co <- sdt_synthetic_cohort(n = 200, seed = 1)
 called <- sdt_add_decisions(co, seed = 2)
-sdt_consistency_score(called$triage, called$called_triage)
+if (requireNamespace("yardstick", quietly = TRUE)) {
+  sdt_consistency_score(called$triage, called$called_triage)
+}
 
 # Hit rate per true category, against the published targets.
 table(called$triage, called$called_triage)
