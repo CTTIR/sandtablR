@@ -45,10 +45,14 @@ This is the honest half of the missingness policy. The imputing half lives
 in \code{\link[=sdt_course_composition]{sdt_course_composition()}}, which fills and flags.
 }
 \examples{
-\dontrun{
-p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-sdt_participant_summary(p)
-sdt_participant_summary(p, fields = "seniority", by = "short_course_id")
+# A synthetic register shipped with the package; the real register is
+# personal data and is never distributed.
+path <- system.file("extdata", "example-participants.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  p <- sdt_read_participants(path, verbose = FALSE)
+  sdt_participant_summary(p)
+  sdt_participant_summary(p, fields = "seniority", by = "short_course_id")
 }
 }
 \seealso{

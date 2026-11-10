@@ -62,10 +62,14 @@ preferring one source.
 }
 
 \examples{
-\dontrun{
-gold <- sdt_read_gold_standard("Patienten Codebook.xlsx")
-gold
-attr(gold, "meta")$guards
+# A synthetic codebook shipped with the package; the real codebook is
+# study data and is never distributed.
+path <- system.file("extdata", "example-codebook.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  gold <- sdt_read_gold_standard(path)
+  gold
+  attr(gold, "meta")$guards
 }
 }
 \seealso{

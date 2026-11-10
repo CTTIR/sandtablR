@@ -31,7 +31,9 @@ It becomes the right tool when the training set is expanded with simulated
 cohorts.
 }
 \examples{
-\dontrun{
-sdt_transformer(d_model = 16, num_heads = 2)
+# Building the specification needs only 'parsnip'; fitting it needs
+# 'keras3' with a working Python backend.
+if (requireNamespace("parsnip", quietly = TRUE)) {
+  sdt_transformer(d_model = 16, num_heads = 2)
 }
 }

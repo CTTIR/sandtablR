@@ -74,14 +74,18 @@ people is not missing, it is noisy, and those are different problems.
 }
 
 \examples{
-\dontrun{
-p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-comp <- sdt_course_composition(p)
-comp[, c("short_course_id", "n_participants", "share_consultant")]
+# A synthetic register shipped with the package; the real register is
+# personal data and is never distributed.
+path <- system.file("extdata", "example-participants.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  p <- sdt_read_participants(path, verbose = FALSE)
+  comp <- sdt_course_composition(p)
+  comp[, c("short_course_id", "n_participants", "share_consultant")]
 
-# How much does each covariate actually vary between courses?
-vapply(comp[, c("share_female", "share_consultant")],
-       stats::sd, numeric(1), na.rm = TRUE)
+  # How much does each covariate actually vary between courses?
+  vapply(comp[, c("share_female", "share_consultant")],
+         stats::sd, numeric(1), na.rm = TRUE)
 }
 }
 \seealso{

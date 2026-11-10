@@ -208,8 +208,10 @@ sdt_transformer_predict <- function(object, new_data, type = "prob", ...) {
 #' @return A \pkg{parsnip} model specification.
 #' @export
 #' @examples
-#' \dontrun{
-#' sdt_transformer(d_model = 16, num_heads = 2)
+#' # Building the specification needs only 'parsnip'; fitting it needs
+#' # 'keras3' with a working Python backend.
+#' if (requireNamespace("parsnip", quietly = TRUE)) {
+#'   sdt_transformer(d_model = 16, num_heads = 2)
 #' }
 sdt_transformer <- function(d_model = 16L, num_heads = 2L, epochs = 30L) {
   .sdt_register_transformer()

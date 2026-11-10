@@ -30,10 +30,14 @@ read from the \code{course_index} attribute, so their absence is stated rather
 than left for the reader to notice.
 }
 \examples{
-\dontrun{
-p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-sdt_describe_participants(p)
-sdt_describe_participants(p, by = NULL, na_report = "footnote")
+# A synthetic register shipped with the package; the real register is
+# personal data and is never distributed.
+path <- system.file("extdata", "example-participants.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  p <- sdt_read_participants(path, verbose = FALSE)
+  sdt_describe_participants(p)
+  sdt_describe_participants(p, by = NULL, na_report = "footnote")
 }
 }
 \seealso{

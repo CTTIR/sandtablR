@@ -587,11 +587,15 @@ new_sdt_participants <- function(x, course_index, dictionary, meta) {
 #'   denominators.
 #' @export
 #' @examples
-#' \dontrun{
-#' p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-#' p
-#' attr(p, "course_index")
-#' sdt_course_composition(p)
+#' # A synthetic register shipped with the package; the real register is
+#' # personal data and is never distributed.
+#' path <- system.file("extdata", "example-participants.xlsx",
+#'                     package = "sandtablR")
+#' if (requireNamespace("readxl", quietly = TRUE)) {
+#'   p <- sdt_read_participants(path)
+#'   p
+#'   attr(p, "course_index")
+#'   sdt_course_composition(p)
 #' }
 sdt_read_participants <- function(path,
                                   dictionary = sdt_participant_dictionary(),
@@ -952,10 +956,14 @@ tbl_sum.sdt_participants <- function(x, ...) {
 #' @seealso [sdt_read_participants()], [sdt_course_composition()].
 #' @export
 #' @examples
-#' \dontrun{
-#' p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-#' sdt_participant_summary(p)
-#' sdt_participant_summary(p, fields = "seniority", by = "short_course_id")
+#' # A synthetic register shipped with the package; the real register is
+#' # personal data and is never distributed.
+#' path <- system.file("extdata", "example-participants.xlsx",
+#'                     package = "sandtablR")
+#' if (requireNamespace("readxl", quietly = TRUE)) {
+#'   p <- sdt_read_participants(path, verbose = FALSE)
+#'   sdt_participant_summary(p)
+#'   sdt_participant_summary(p, fields = "seniority", by = "short_course_id")
 #' }
 
 sdt_participant_summary <- function(x, fields = NULL, by = NULL) {
@@ -1130,14 +1138,18 @@ sdt_participant_summary <- function(x, fields = NULL, by = NULL) {
 #' @seealso [sdt_read_participants()], [sdt_participant_summary()].
 #' @export
 #' @examples
-#' \dontrun{
-#' p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-#' comp <- sdt_course_composition(p)
-#' comp[, c("short_course_id", "n_participants", "share_consultant")]
+#' # A synthetic register shipped with the package; the real register is
+#' # personal data and is never distributed.
+#' path <- system.file("extdata", "example-participants.xlsx",
+#'                     package = "sandtablR")
+#' if (requireNamespace("readxl", quietly = TRUE)) {
+#'   p <- sdt_read_participants(path, verbose = FALSE)
+#'   comp <- sdt_course_composition(p)
+#'   comp[, c("short_course_id", "n_participants", "share_consultant")]
 #'
-#' # How much does each covariate actually vary between courses?
-#' vapply(comp[, c("share_female", "share_consultant")],
-#'        stats::sd, numeric(1), na.rm = TRUE)
+#'   # How much does each covariate actually vary between courses?
+#'   vapply(comp[, c("share_female", "share_consultant")],
+#'          stats::sd, numeric(1), na.rm = TRUE)
 #' }
 sdt_course_composition <- function(x,
                                    impute = c("flag", "median", "none"),

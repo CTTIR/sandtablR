@@ -58,10 +58,16 @@ alone with it: a surrogate must never end up wearing the truth's label.
 }
 
 \examples{
-\dontrun{
-gold <- sdt_read_gold_standard("Patienten Codebook.xlsx")
-truth <- sdt_apply_gold_standard(pooled, gold)
-mean(truth$triage == truth$triage_original)
+# A synthetic codebook shipped with the package; the real codebook is
+# study data and is never distributed.
+path <- system.file("extdata", "example-codebook.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  gold <- sdt_read_gold_standard(path, verbose = FALSE)
+  cohort <- sdt_cohort(sdt_synthetic_cohort(n = 6, seed = 1))
+  cohort$card <- sprintf("\%02d", 1:6)
+  truth <- sdt_apply_gold_standard(cohort, gold)
+  mean(truth$triage == truth$triage_original)
 }
 }
 \seealso{

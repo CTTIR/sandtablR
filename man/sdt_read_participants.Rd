@@ -74,11 +74,15 @@ indistinguishable from an observed one.
 }
 
 \examples{
-\dontrun{
-p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-p
-attr(p, "course_index")
-sdt_course_composition(p)
+# A synthetic register shipped with the package; the real register is
+# personal data and is never distributed.
+path <- system.file("extdata", "example-participants.xlsx",
+                    package = "sandtablR")
+if (requireNamespace("readxl", quietly = TRUE)) {
+  p <- sdt_read_participants(path)
+  p
+  attr(p, "course_index")
+  sdt_course_composition(p)
 }
 }
 \seealso{

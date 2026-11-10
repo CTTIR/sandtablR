@@ -511,10 +511,14 @@ sdt_describe <- function(x, by = NULL, vars = NULL,
 #' @seealso [sdt_describe()], [sdt_read_participants()].
 #' @export
 #' @examples
-#' \dontrun{
-#' p <- sdt_read_participants("TDSC_course_participant_relations.xlsx")
-#' sdt_describe_participants(p)
-#' sdt_describe_participants(p, by = NULL, na_report = "footnote")
+#' # A synthetic register shipped with the package; the real register is
+#' # personal data and is never distributed.
+#' path <- system.file("extdata", "example-participants.xlsx",
+#'                     package = "sandtablR")
+#' if (requireNamespace("readxl", quietly = TRUE)) {
+#'   p <- sdt_read_participants(path, verbose = FALSE)
+#'   sdt_describe_participants(p)
+#'   sdt_describe_participants(p, by = NULL, na_report = "footnote")
 #' }
 sdt_describe_participants <- function(x, by = "short_course_id", ...) {
   .check_class(x, "sdt_participants")
