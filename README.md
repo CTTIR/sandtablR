@@ -17,7 +17,7 @@ were made, then model and explain them.
 
 ```r
 # install.packages("remotes")
-remotes::install_github("cttir/sandtablR")
+remotes::install_github("CTTIR/sandtablR")
 ```
 
 R 4.5.0 or later is required. The core installation includes the simulation

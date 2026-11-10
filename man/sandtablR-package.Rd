@@ -6,25 +6,25 @@
 \alias{sandtablR-package}
 \title{sandtablR: Mass-Casualty Incident Simulation and Machine Learning Workbench}
 \description{
-\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis, and machine learning. Provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, synthetic cohort generation, supervised triage and therapy-concept classification spanning interpretable and black-box models, sequence analysis of participant decision paths, and a model-agnostic explainability layer. An interactive 'shiny' workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.
+A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis and machine learning. The package provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, and synthetic cohort generation. It supports supervised triage and therapy-concept classification with interpretable and black-box models, sequence analysis of participant decision paths and a model-agnostic explainability layer. An interactive 'shiny' workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/cttir/sandtablR}
+  \item \url{https://github.com/CTTIR/sandtablR}
   \item \url{https://cttir.github.io/sandtablR/}
-  \item Report bugs at \url{https://github.com/cttir/sandtablR/issues}
+  \item Report bugs at \url{https://github.com/CTTIR/sandtablR/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Raban Heller \email{raban.heller@charite.de} (\href{https://orcid.org/0000-0001-8006-9742}{ORCID})
+\strong{Maintainer}: Raban Heller \email{raban.heller@uni-ulm.de} (\href{https://orcid.org/0000-0001-8006-9742}{ORCID})
 
 Authors:
 \itemize{
-  \item Raban Heller \email{raban.heller@charite.de} (\href{https://orcid.org/0000-0001-8006-9742}{ORCID})
+  \item Raban Heller \email{raban.heller@uni-ulm.de} (\href{https://orcid.org/0000-0001-8006-9742}{ORCID})
   \item Gerhard Achatz
 }
 

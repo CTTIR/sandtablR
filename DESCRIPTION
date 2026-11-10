@@ -1,22 +1,22 @@
 Package: sandtablR
 Title: Mass-Casualty Incident Simulation and Machine Learning Workbench
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
-    person("Raban", "Heller", email = "raban.heller@charite.de",
+    person("Raban", "Heller", email = "raban.heller@uni-ulm.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8006-9742")),
     person("Gerhard", "Achatz", role = "aut"))
-Description: A generic framework for mass-casualty incident tabletop exercise
-    simulation, decision-path analysis, and machine learning. Provides a
-    discrete-event patient-flow engine, a tidy data model for scenarios,
-    patient cards and decision paths, synthetic cohort generation, supervised
-    triage and therapy-concept classification spanning interpretable and
-    black-box models, sequence analysis of participant decision paths, and a
-    model-agnostic explainability layer. An interactive 'shiny' workbench ties
-    the pieces together for scenario building, simulation, model training,
-    comparison and visualisation.
+Description: A generic framework for mass-casualty incident tabletop
+    exercise simulation, decision-path analysis and machine learning. The
+    package provides a discrete-event patient-flow engine, a tidy data model
+    for scenarios, patient cards and decision paths, and synthetic cohort
+    generation. It supports supervised triage and therapy-concept
+    classification with interpretable and black-box models, sequence analysis
+    of participant decision paths and a model-agnostic explainability layer.
+    An interactive 'shiny' workbench ties the pieces together for scenario
+    building, simulation, model training, comparison and visualisation.
 License: MIT + file LICENSE
-URL: https://github.com/cttir/sandtablR, https://cttir.github.io/sandtablR/
-BugReports: https://github.com/cttir/sandtablR/issues
+URL: https://github.com/CTTIR/sandtablR, https://cttir.github.io/sandtablR/
+BugReports: https://github.com/CTTIR/sandtablR/issues
 Depends:
     R (>= 4.5.0)
 Imports:
@@ -90,4 +90,4 @@ Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
 LazyData: true
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1

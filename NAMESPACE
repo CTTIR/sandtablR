@@ -103,8 +103,12 @@ export(sdt_triage_levels)
 export(sdt_workflowset)
 export(validate_cohort)
 export(validate_patient_card)
-importFrom(rlang,"%||%")
-importFrom(rlang,.data)
-importFrom(stats,predict)
-importFrom(stats,rexp)
-importFrom(stats,runif)
+importFrom(rlang,
+  "%||%",
+  .data
+)
+importFrom(stats,
+  predict,
+  rexp,
+  runif
+)
