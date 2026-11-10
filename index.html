@@ -15,8 +15,8 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="sandtablR">
-<meta name="description" content="A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis, and machine learning. Provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, synthetic cohort generation, supervised triage and therapy-concept classification spanning interpretable and black-box models, sequence analysis of participant decision paths, and a model-agnostic explainability layer. An interactive shiny workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.">
-<meta property="og:description" content="A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis, and machine learning. Provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, synthetic cohort generation, supervised triage and therapy-concept classification spanning interpretable and black-box models, sequence analysis of participant decision paths, and a model-agnostic explainability layer. An interactive shiny workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.">
+<meta name="description" content="A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis and machine learning. The package provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, and synthetic cohort generation. It supports supervised triage and therapy-concept classification with interpretable and black-box models, sequence analysis of participant decision paths and a model-agnostic explainability layer. An interactive shiny workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.">
+<meta property="og:description" content="A generic framework for mass-casualty incident tabletop exercise simulation, decision-path analysis and machine learning. The package provides a discrete-event patient-flow engine, a tidy data model for scenarios, patient cards and decision paths, and synthetic cohort generation. It supports supervised triage and therapy-concept classification with interpretable and black-box models, sequence analysis of participant decision paths and a model-agnostic explainability layer. An interactive shiny workbench ties the pieces together for scenario building, simulation, model training, comparison and visualisation.">
 <meta property="og:image" content="https://cttir.github.io/sandtablR/logo.svg">
 <meta name="theme-color" content="#1565c0">
 <script defer data-domain="cttir.github.io/sandtablr" src="https://analytics.hellebo.de/js/script.file-downloads.outbound-links.js"></script>
@@ -37,7 +37,7 @@
     <!-- Standard logo aliases contain the named v5 light and dark hexes. -->
     <a class="navbar-brand me-2" href="index.html"><img src="logo.svg" alt="" class="themakr-navbar-logo" data-cttir-dark-src="reference/figures/logo-dark.svg">sandtablR</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/cttir/sandtablR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/CTTIR/sandtablR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -88,7 +88,7 @@
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"cttir/sandtablR"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"CTTIR/sandtablR"</span><span class="op">)</span></span></code></pre></div>
 <p>R 4.5.0 or later is required. The core installation includes the simulation and plotting dependencies. Modelling, explanations and sequence clustering have optional dependencies; install the ones needed for your workflow.</p>
 <p><strong>Development software.</strong> Synthetic examples demonstrate interfaces and modelling assumptions. They do not establish clinical validity or real-world performance.</p>
 </div>
@@ -96,7 +96,7 @@
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/cttir/sandtablR" class="external-link">sandtablR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/CTTIR/sandtablR" class="external-link">sandtablR</a></span><span class="op">)</span></span>
 <span><span class="va">co</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sdt_synthetic_cohort.html">sdt_synthetic_cohort</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">40</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">sc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sdt_scenario.html">sdt_scenario</a></span><span class="op">(</span><span class="va">co</span>, resources <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>or <span class="op">=</span> <span class="fl">3</span>, icu_imc <span class="op">=</span> <span class="fl">6</span>, ward <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">run</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sdt_simulate.html">sdt_simulate</a></span><span class="op">(</span><span class="va">sc</span>, replications <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">1</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -183,8 +183,8 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/cttir/sandtablR/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/cttir/sandtablR/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/CTTIR/sandtablR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/CTTIR/sandtablR/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
