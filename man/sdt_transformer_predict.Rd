@@ -23,4 +23,13 @@ A plain function rather than an S3 method: parsnip calls it from its own
 namespace, where a method defined here would not be found unless separately
 registered, and the failure mode is a silent dispatch to the default.
 }
+\examples{
+# needs 'keras3' with a working Python 'TensorFlow' backend
+\dontrun{
+x <- matrix(stats::rnorm(60), ncol = 3)
+y <- factor(rep(c("green", "red"), 10))
+fit <- sdt_transformer_fit(x, y, epochs = 2L)
+sdt_transformer_predict(fit, x[1:3, ], type = "prob")
+}
+}
 \keyword{internal}

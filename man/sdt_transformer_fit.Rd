@@ -41,4 +41,13 @@ resolves a registered model's fit and predict callbacks with
 \code{getExportedValue()}, so an internal dot-prefixed function is unreachable to
 it. Call \code{\link[=sdt_fit]{sdt_fit()}} rather than this.
 }
+\examples{
+# needs 'keras3' with a working Python 'TensorFlow' backend
+\dontrun{
+x <- matrix(stats::rnorm(60), ncol = 3)
+y <- factor(rep(c("green", "red"), 10))
+fit <- sdt_transformer_fit(x, y, epochs = 2L)
+sdt_transformer_predict(fit, x[1:3, ], type = "class")
+}
+}
 \keyword{internal}

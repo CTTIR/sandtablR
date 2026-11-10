@@ -51,6 +51,14 @@
 #' @param dropout Dropout before the softmax.
 #' @param ... Unused.
 #' @return An `sdt_transformer` object.
+#' @examples
+#' # needs 'keras3' with a working Python 'TensorFlow' backend
+#' \dontrun{
+#' x <- matrix(stats::rnorm(60), ncol = 3)
+#' y <- factor(rep(c("green", "red"), 10))
+#' fit <- sdt_transformer_fit(x, y, epochs = 2L)
+#' sdt_transformer_predict(fit, x[1:3, ], type = "class")
+#' }
 #' @keywords internal
 #' @export
 sdt_transformer_fit <- function(x, y, d_model = 16L, num_heads = 2L,
@@ -119,6 +127,14 @@ sdt_transformer_fit <- function(x, y, d_model = 16L, num_heads = 2L,
 #' @param type `"prob"` or `"class"`.
 #' @param ... Unused.
 #' @return A data frame of class probabilities, or a factor.
+#' @examples
+#' # needs 'keras3' with a working Python 'TensorFlow' backend
+#' \dontrun{
+#' x <- matrix(stats::rnorm(60), ncol = 3)
+#' y <- factor(rep(c("green", "red"), 10))
+#' fit <- sdt_transformer_fit(x, y, epochs = 2L)
+#' sdt_transformer_predict(fit, x[1:3, ], type = "prob")
+#' }
 #' @keywords internal
 #' @export
 sdt_transformer_predict <- function(object, new_data, type = "prob", ...) {
