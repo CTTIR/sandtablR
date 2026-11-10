@@ -159,11 +159,17 @@
   n <- if (requireNamespace("parallelly", quietly = TRUE)) {
     parallelly::availableCores()
   } else {
-    parallel::detectCores()
+    getOption("mc.cores", 2L)
   }
   n <- suppressWarnings(as.integer(n))
   if (!length(n) || is.na(n)) n <- 1L
-  max(1L, min(8L, n - 1L))
+  n <- max(1L, min(8L, n - 1L))
+  # R CMD check allows at most two cores when _R_CHECK_LIMIT_CORES_ is set.
+  limit <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
+  if (nzchar(limit) && limit != "false") {
+    n <- min(n, 2L)
+  }
+  n
 }
 
 .sdt_parallel_plan <- function(parallel, workers = NULL,
