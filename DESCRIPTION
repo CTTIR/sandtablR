@@ -2,8 +2,8 @@ Package: sandtablR
 Title: Mass-Casualty Incident Simulation and Machine Learning Workbench
 Version: 0.1.0
 Authors@R: c(
-    person("Raban", "Heller", email = "raban.heller@uni-ulm.de",
-           role = c("aut", "cre"), comment = c(ORCID = "0000-0001-8006-9742")),
+    person("R.", "Heller", email = "raban.heller@uni-ulm.de",
+           role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-8006-9742")),
     person("Gerhard", "Achatz", role = "aut"))
 Description: A generic framework for mass-casualty incident tabletop
     exercise simulation, decision-path analysis and machine learning. The
