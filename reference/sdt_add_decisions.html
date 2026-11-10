@@ -107,7 +107,9 @@ correctly.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">co</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdt_synthetic_cohort.html">sdt_synthetic_cohort</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">called</span> <span class="op">&lt;-</span> <span class="fu">sdt_add_decisions</span><span class="op">(</span><span class="va">co</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="sdt_consistency_score.html">sdt_consistency_score</a></span><span class="op">(</span><span class="va">called</span><span class="op">$</span><span class="va">triage</span>, <span class="va">called</span><span class="op">$</span><span class="va">called_triage</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"yardstick"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="sdt_consistency_score.html">sdt_consistency_score</a></span><span class="op">(</span><span class="va">called</span><span class="op">$</span><span class="va">triage</span>, <span class="va">called</span><span class="op">$</span><span class="va">called_triage</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .metric .estimator .estimate     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
@@ -127,7 +129,7 @@ correctly.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Raban Heller, Gerhard Achatz.</p>
+  <p>Developed by R. Heller, Gerhard Achatz.</p>
 </div>
 
 <div class="pkgdown-footer-center themakr-footer-suite">
