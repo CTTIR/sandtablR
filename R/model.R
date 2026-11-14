@@ -431,7 +431,7 @@ sdt_fit <- function(data,
   preds <- .class_from_prob(preds, lev)
   cols <- rlang::syms(paste0(".pred_", lev))
   metrics(preds, truth = !!rlang::sym(target), !!!cols,
-          estimate = .data$.pred_class)
+          estimate = ".pred_class")
 }
 
 # Building the grid separately is what makes mtry work: its upper bound is the
