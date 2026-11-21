@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+type: software
+title: 'sandtablR: Mass-Casualty Incident Simulation and Machine Learning Workbench'
+authors:
+- family-names: 'Heller'
+  given-names: 'Raban'
+  orcid: https://orcid.org/0000-0001-8006-9742
+  affiliation: Ulm University
+- family-names: 'Achatz'
+  given-names: 'Gerhard'
+version: 0.1.0
+doi: 10.5281/zenodo.24426393
+repository-code: https://github.com/CTTIR/sandtablR
+url: https://cttir.github.io/sandtablR/
+license: MIT
+identifiers:
+- type: doi
+  value: 10.5281/zenodo.24426393
+  description: Zenodo DOI (reserved; resolves once the record is published)
