@@ -433,9 +433,11 @@ sdt_plot_sequences <- function(run,
   long$row <- factor(row_id, levels = rev(sort(unique(row_id))))
 
   ggplot2::ggplot(long) +
+    # show.legend = TRUE draws a key for the states no casualty reached;
+    # without it ggplot2 >= 3.5 lists them with an empty swatch.
     ggplot2::geom_tile(
       ggplot2::aes(x = .data$step, y = .data$row, fill = .data$area),
-      colour = NA
+      colour = NA, show.legend = TRUE
     ) +
     ggplot2::scale_fill_viridis_d(drop = FALSE) +
     ggplot2::scale_x_continuous(breaks = seq_len(max(long$step))) +
@@ -457,7 +459,7 @@ sdt_plot_sequences <- function(run,
   ggplot2::ggplot(by_step) +
     ggplot2::geom_col(
       ggplot2::aes(x = .data$step, y = .data$share, fill = .data$area),
-      width = 0.9
+      width = 0.9, show.legend = TRUE
     ) +
     ggplot2::scale_fill_viridis_d(drop = FALSE) +
     ggplot2::scale_x_continuous(breaks = seq_len(max(by_step$step))) +

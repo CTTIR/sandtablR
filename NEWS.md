@@ -19,6 +19,10 @@
 * `sdt_plot_board()` writes its subtitle in plain ASCII. The em dash it used
   made the `pdf()` device, and any other device without that glyph, warn and
   substitute a hyphen.
+* `sdt_plot_flow()` and `sdt_plot_sequences()` draw a legend key for every
+  board area, including the ones a run never reached; ggplot2 3.5 and later
+  listed those with an empty swatch. `sdt_plot_flow()` labels its legend with
+  the board's display names, as the other board plots already did.
 
 ## Documentation
 

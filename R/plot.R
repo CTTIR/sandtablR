@@ -404,15 +404,21 @@ sdt_plot_flow <- function(run, replication = 1L, max_casualties = 40L) {
   ev$id <- factor(ev$id, levels = rev(keep))
   ev$area <- factor(ev$area, levels = sdt_board_areas())
 
+  # Every board area keeps its colour and its legend entry whether or not this
+  # replication reached it. ggplot2 >= 3.5 draws no key for a level absent
+  # from the data unless the layer asks for one, which left blank entries in
+  # the legend; `show.legend = TRUE` is that request.
   ggplot2::ggplot(ev) +
     ggplot2::geom_segment(
       ggplot2::aes(
         x = .data$start, xend = .data$end,
         y = .data$id, yend = .data$id, colour = .data$area
       ),
-      linewidth = 3
+      linewidth = 3, show.legend = TRUE
     ) +
-    ggplot2::scale_colour_viridis_d(drop = FALSE, option = "D") +
+    ggplot2::scale_colour_viridis_d(
+      drop = FALSE, option = "D", labels = .sdt_label_area
+    ) +
     ggplot2::labs(
       title = "Patient flow",
       subtitle = paste("Replication", replication),
