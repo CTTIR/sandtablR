@@ -1,5 +1,20 @@
 # sandtablR 0.1.0
 
+## Codebook and register readers
+
+* `sdt_read_gold_standard()` gains `deck_size`. The deck size used to be
+  fixed in the code; it now defaults to the highest card id on the sheet, so
+  a missing card still shows as a gap, and a stated `deck_size` drops numbered
+  rows beyond the deck as before. With `sheet = NULL` the codebook sheet is
+  found by its columns rather than its name, and English headers (`Card`,
+  `Sex`, `Age`, `SK`, `Findings`, `Vitals`) are accepted beside the German
+  ones.
+* The title map of `sdt_participant_dictionary()` no longer lists a
+  service-rank abbreviation; such an entry still reads as "none" through the
+  fallback.
+* The example workbooks in `inst/extdata` and the test fixtures use invented
+  decks, neutral headers and sheet names, synthetic identifiers and dates.
+
 ## Fixes
 
 * A tuned `sdt_fit(engine = "svm_rbf")` no longer aborts. Tuning parameters
@@ -47,6 +62,9 @@
 
 ## Documentation
 
+* Comments, help pages, the `frame = "all"` warning of
+  `sdt_fit_behaviour()`, the Generate panel's cost line and the export-bundle
+  README describe behaviour in general terms.
 * `sdt_metrics()`, `sdt_predictions()`, `predict.sdt_model()`, `sdt_roc()`,
   `sdt_explain()`, `sdt_profile()` and `sdt_shap()` have runnable examples.
   Their help pages pointed elsewhere and ran an unrelated call. Every example
