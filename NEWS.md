@@ -37,6 +37,9 @@
   Their help pages pointed elsewhere and ran an unrelated call. Every example
   is guarded on the suggested packages it needs.
 * The workbench help and README count its eight panels correctly.
+* The getting-started vignette says that its demonstration board is not the
+  calibrated one, which is why its end-of-game bars sit far from the
+  published points, and draws the calibrated reference board beside it.
 
 ## CRAN preparation
 

@@ -144,9 +144,21 @@ summary(run, reference = TRUE)
 sdt_plot_end_state(run)
 ```
 
-That calibration is checkable rather than asserted: `sdt_reference_scenario()`
-builds the board the engine was tuned on, and the package's own test suite
-re-runs the comparison.
+This board is not the one the engine was calibrated on. It has a single
+screening place, so many casualties are still queueing there when the game is
+called, and the bars sit far from the published points. The calibration
+belongs to a specific board: `sdt_reference_scenario()` builds the one the
+engine was tuned on, and run over the calibrated horizon it lands close to the
+published distribution.
+
+```{r reference-run, eval = has("simmer"), fig.alt = "End-of-game location on the calibrated reference board against the published reference", fig.cap = "End-of-game location on the calibrated reference board against the published reference. Synthetic demonstration."}
+ref_run <- sdt_simulate(sdt_reference_scenario(), replications = 5, seed = 1,
+                        verbose = FALSE)
+sdt_plot_end_state(ref_run)
+```
+
+That calibration is checkable rather than asserted: the package's own test
+suite re-runs the comparison.
 
 ## 4. Decision paths
 
