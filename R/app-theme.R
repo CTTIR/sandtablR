@@ -112,6 +112,12 @@
     ".sdt-chip-glass { background: #E8E1F2; color: #3D1C5C; }",
     ".sdt-chip-grey { background: #8A7FA0; color: #fff; }",
     ".sdt-chip-black { background: #2B2B2B; color: #fff; }",
+    # Closed box is past black: an outline in the text colour, so it reads in
+    # either colour mode rather than vanishing into an unstyled word.
+    ".sdt-chip-closed {",
+    "  background: transparent; color: inherit;",
+    "  box-shadow: inset 0 0 0 1.5px currentColor;",
+    "}",
     ".sdt-chip-muted {",
     "  background: var(--sdt-accent-soft); color: var(--sdt-accent-text);",
     "}",

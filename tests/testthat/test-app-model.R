@@ -360,6 +360,19 @@ test_that("training settings out of range are floored, not passed on", {
 
 # Engine chips -------------------------------------------------------------
 
+test_that("every engine has a reader's name and every grade a chip style", {
+  # The transformer, graded "closed", used to reach the page as its raw id in
+  # an unstyled chip: there was no label for it and no CSS for its grade.
+  spec <- sdt_engines()
+  labels <- .sdt_model_engine_label(spec$engine)
+  expect_false(any(labels == spec$engine))
+  css <- .sdt_app_css()
+  for (box in unique(spec$class_box)) {
+    expect_match(css, paste0(".sdt-chip-", box, " {"), fixed = TRUE,
+                 info = box)
+  }
+})
+
 test_that("the engine chips separate installed engines from missing ones", {
   lab_needs_shiny()
   spec <- .sdt_model_engines()

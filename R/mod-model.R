@@ -574,7 +574,8 @@ mod_model_server <- function(id, state) {
     multinom = "Multinomial logistic", glmnet = "Penalised regression",
     tree = "Decision tree", mars = "Spline model (MARS)",
     xgboost = "Gradient boosting", ranger = "Random forest",
-    svm_rbf = "Support vector machine", mlp = "Neural network"
+    svm_rbf = "Support vector machine", mlp = "Neural network",
+    transformer = "Tabular transformer"
   ))
 }
 

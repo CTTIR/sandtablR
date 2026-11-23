@@ -39,6 +39,8 @@
 * `sdt_plot_utilisation()` labels its legend with the board's display names,
   its panels "Replication 1", "Replication 2" rather than a bare number, and
   its count axis in whole places only.
+* The workbench names the transformer "Tabular transformer" and styles the
+  closed-box grade's chip; it used to show the raw engine id as plain text.
 
 ## Documentation
 
