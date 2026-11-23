@@ -121,7 +121,7 @@ test_that("a git working tree is refused unless the caller insists", {
 
 test_that("course identifiers are pseudonymised by default", {
   dir <- withr::local_tempdir()
-  raw <- "session-BGLU2-2026-09-01T19-28-02-931.json"
+  raw <- "session-TEAMA-2000-01-01T00-00-00-000.json"
   zipfile <- file.path(dir, "bundle.zip")
   key <- file.path(dir, "key.csv")
   sdt_export_simulation(
@@ -139,7 +139,7 @@ test_that("course identifiers are pseudonymised by default", {
 
 test_that("writing identifiers takes an explicit opt-in and is declared", {
   dir <- withr::local_tempdir()
-  raw <- "session-BGLU2-2026-09-01T19-28-02-931.json"
+  raw <- "session-TEAMA-2000-01-01T00-00-00-000.json"
   zipfile <- file.path(dir, "bundle.zip")
   sdt_export_simulation(
     fake_sim(session = raw), zipfile, pseudonymise = FALSE, verbose = FALSE
@@ -180,6 +180,14 @@ test_that("the README states what the bundle is not", {
   expect_true(any(grepl("NOT THE PUBLISHED EXERCISE", readme)))
   expect_true(any(grepl("NO GROUND-TRUTH TRIAGE", readme)))
   expect_true(any(grepl("NOT THE DISCRETE-EVENT ENGINE", readme)))
+  # The statements describe the bundle, not any particular course: no course
+  # variant, no deck size other than the published exercise's own, and no
+  # claim about what identifiers of a particular course contain.
+  text <- paste(readme, collapse = " ")
+  decks <- regmatches(text, gregexpr("[0-9]+-card", text))[[1]]
+  expect_identical(unique(decks), "20-card")
+  expect_false(grepl("variant", text, ignore.case = TRUE))
+  expect_false(grepl("hospital", text, ignore.case = TRUE))
 })
 
 test_that("a failing fidelity table is reported as failing", {
@@ -333,7 +341,7 @@ test_that("an unrecognised column holding an identifier is caught", {
   # are searched for the identifier shape as well.
   dir <- withr::local_tempdir()
   sim <- fake_sim()
-  sim$course <- "session-BGLU2-2026-09-01T19-28-02-931.json"
+  sim$course <- "session-TEAMA-2000-01-01T00-00-00-000.json"
   expect_error(
     sdt_export_simulation(sim, file.path(dir, "b.zip"), verbose = FALSE),
     class = "sandtablR_error_export_identity"

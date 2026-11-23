@@ -84,8 +84,8 @@ identifiers before the file is closed, and a survivor is an error.
 }
 
 \section{Pseudonymisation}{
-Session identifiers and scenario names in this domain embed hospital, venue
-and city names and the exact course date. They are therefore mapped to
+Session identifiers and scenario names can embed place names and exact
+dates. They are therefore mapped to
 \code{S01}…\code{Snn}, groups to \code{G001}…\code{Gnnn} and scenarios to \code{SC01}…\code{SCnn} by
 default. The crosswalk is written only if \code{crosswalk} names a path, and that
 path must lie outside the bundle; otherwise the mapping is discarded when

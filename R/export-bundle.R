@@ -12,9 +12,9 @@
 #
 # * synthetic rows must never be committed by accident, so a destination inside
 #   a git working tree is refused unless the caller says otherwise;
-# * course identifiers carry hospital, venue, city and the exact course date,
-#   so they are pseudonymised by default and the crosswalk never travels inside
-#   the bundle;
+# * course identifiers can carry place names and exact dates, so they are
+#   pseudonymised by default and the crosswalk never travels inside the
+#   bundle;
 # * the bundle has to state what it is *not* -- not the published exercise, not
 #   ground truth, not real observations -- in both the README and the manifest,
 #   so the caveats survive the file being forwarded to someone who never saw
@@ -49,8 +49,8 @@
 #'
 #' # Pseudonymisation
 #'
-#' Session identifiers and scenario names in this domain embed hospital, venue
-#' and city names and the exact course date. They are therefore mapped to
+#' Session identifiers and scenario names can embed place names and exact
+#' dates. They are therefore mapped to
 #' `S01`…`Snn`, groups to `G001`…`Gnnn` and scenarios to `SC01`…`SCnn` by
 #' default. The crosswalk is written only if `crosswalk` names a path, and that
 #' path must lie outside the bundle; otherwise the mapping is discarded when
@@ -905,25 +905,25 @@ sdt_export_simulation <- function(x, path,
       "happened."
     ),
     paste(
-      "NOT THE PUBLISHED EXERCISE. The corpus behind the model is the",
-      "46-card, roughly 10-round High Volume variant of the TDSC tabletop.",
-      "The published evaluation (Achatz et al. 2023) describes a 20-card,",
-      "4-round, 90-minute exercise. Marginals from this bundle are not",
+      "NOT THE PUBLISHED EXERCISE. The decisions behind the model need not",
+      "come from the exercise as published (Achatz et al. 2023, a 20-card,",
+      "4-round, 90-minute exercise): a course can play a different deck over",
+      "a different number of rounds. Marginals from this bundle are not",
       "comparable with the published ones."
     ),
     paste(
-      "NO GROUND-TRUTH TRIAGE. The corpus records what a team called, never",
-      "what was correct. A consensus triage label is the modal call across",
-      "teams and is therefore circular: scoring against it measures",
+      "NO GROUND-TRUTH TRIAGE. A course export records what a team called,",
+      "never what was correct. A consensus triage label is the modal call",
+      "across teams and is therefore circular: scoring against it measures",
       "agreement between teams, never accuracy. The clinical content of the",
       "cards is absent from the export entirely."
     ),
     paste(
       "NOT THE DISCRETE-EVENT ENGINE. These rows come from a fitted",
-      "behaviour model, not from sdt_simulate(). Measured on the reference",
-      "corpus, the engine's spread between replications is far narrower",
-      "than the spread between real teams, so the two are not",
-      "interchangeable and their outputs must not be mixed."
+      "behaviour model, not from sdt_simulate(). The engine's spread",
+      "between replications is far narrower than the spread between real",
+      "teams, so the two are not interchangeable and their outputs must not",
+      "be mixed."
     ),
     paste(.verdict_text(met), collapse = " ")
   )
@@ -944,9 +944,9 @@ sdt_export_simulation <- function(x, path,
 
 # Pseudonymisation -------------------------------------------------------------
 #
-# Session identifiers and scenario names in this corpus embed hospital, venue
-# and city names and the exact course date, so they are mapped by default and
-# the crosswalk is written outside the bundle or not at all.
+# Session identifiers and scenario names can embed place names and exact
+# dates, so they are mapped by default and the crosswalk is written outside
+# the bundle or not at all.
 
 .id_columns <- function(nms) {
   low <- tolower(nms)
@@ -1368,8 +1368,8 @@ sdt_export_simulation <- function(x, path,
     return(c("## Identifiers", "", paste(
       "Pseudonymisation was switched off for this bundle, so original",
       "session identifiers, group labels and scenario names are present.",
-      "Those strings carry hospital, venue and city names and the exact",
-      "course date. Handle this bundle accordingly."
+      "Such strings can carry place names and exact dates. Handle this",
+      "bundle accordingly."
     ), ""))
   }
   where <- if (isTRUE(p$crosswalk_written)) {
