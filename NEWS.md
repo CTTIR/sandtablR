@@ -41,7 +41,7 @@
 
 ## Earlier development (0.0.0.9000)
 
-* Standardize the named v5 package logo across README, documentation pages
+* Standardise the named v5 package logo across README, documentation pages
   and available application headers, with matching light and dark artwork.
 
 

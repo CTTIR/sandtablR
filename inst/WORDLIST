@@ -118,6 +118,7 @@ th
 tibble
 tibbles
 tidymodels
+tidyselect
 tidyverse
 TraMineR
 tunable
