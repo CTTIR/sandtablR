@@ -31,8 +31,14 @@ the data; accumulated local effects are more trustworthy when predictors
 are correlated, which on a casualty card they are.
 }
 \examples{
-# See ?sdt_importance for a runnable example.
-sdt_engines()
+co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+            "yardstick", "rpart", "DALEX", "DALEXtra")
+if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+  fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+                 tune = FALSE, seed = 1, verbose = FALSE)
+  sdt_profile(fit, variables = "life_points")
+}
 }
 \seealso{
 \code{\link[=sdt_importance]{sdt_importance()}}, \code{\link[=sdt_shap]{sdt_shap()}}.

@@ -20,6 +20,14 @@
   made the `pdf()` device, and any other device without that glyph, warn and
   substitute a hyphen.
 
+## Documentation
+
+* `sdt_metrics()`, `sdt_predictions()`, `predict.sdt_model()`, `sdt_roc()`,
+  `sdt_explain()`, `sdt_profile()` and `sdt_shap()` have runnable examples.
+  Their help pages pointed elsewhere and ran an unrelated call. Every example
+  is guarded on the suggested packages it needs.
+* The workbench help and README count its eight panels correctly.
+
 ## CRAN preparation
 
 * Use supported column selection for held-out classification metrics, avoiding

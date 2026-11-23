@@ -18,6 +18,12 @@ The predictions \code{\link[=sdt_fit]{sdt_fit()}} made on the test half of its o
 the truth alongside. This is what the metrics were computed from.
 }
 \examples{
-# See ?sdt_fit for a runnable example.
-sdt_metric_set
+co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+            "yardstick", "rpart")
+if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+  fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+                 tune = FALSE, seed = 1, verbose = FALSE)
+  head(sdt_predictions(fit))
+}
 }

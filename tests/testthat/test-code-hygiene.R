@@ -129,3 +129,26 @@ test_that("code uses TRUE/FALSE and seq_len(), not T/F and 1:n", {
   }
   expect_identical(offenders, character())
 })
+
+test_that("every exported plotting or model accessor has a working example", {
+  root <- pkg_root()
+  skip_if(is.na(root) || !dir.exists(file.path(root, "man")),
+          "not running from a source tree")
+  # These pages used to carry a placeholder -- a comment pointing elsewhere
+  # and an unrelated call such as `sdt_engines()` -- so their examples never
+  # exercised the function they document.
+  topics <- c(sdt_metrics = "sdt_metrics", sdt_predictions = "sdt_predictions",
+              predict.sdt_model = "predict", sdt_roc = "sdt_roc",
+              sdt_explain = "sdt_explain", sdt_profile = "sdt_profile",
+              sdt_shap = "sdt_shap")
+  for (topic in names(topics)) {
+    rd <- readLines(file.path(root, "man", paste0(topic, ".Rd")), warn = FALSE)
+    ex <- rd[seq(grep("^\\\\examples\\{", rd), length(rd))]
+    calls <- paste0("\\b", gsub(".", "\\.", topics[[topic]], fixed = TRUE),
+                    "\\(")
+    expect_true(any(grepl(calls, ex)), info = topic)
+    expect_false(any(grepl("^# See \\?", ex)), info = topic)
+    # Suggested packages are guarded, so a depends-only check still passes.
+    expect_true(any(grepl("requireNamespace", ex)), info = topic)
+  }
+})

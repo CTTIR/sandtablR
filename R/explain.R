@@ -38,8 +38,15 @@
 #' @seealso [sdt_importance()], [sdt_profile()], [sdt_shap()].
 #' @export
 #' @examples
-#' # See ?sdt_importance for a runnable example.
-#' sdt_engines()
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart", "DALEX", "DALEXtra")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   explainer <- sdt_explain(fit)
+#'   sdt_importance(explainer)
+#' }
 sdt_explain <- function(model, data = NULL, y = NULL) {
   .check_class(model, "sdt_model")
   .require_pkgs(c("DALEX", "DALEXtra", "rsample"))
@@ -137,8 +144,14 @@ sdt_importance <- function(x, data = NULL, n_permutations = 10L) {
 #' @seealso [sdt_importance()], [sdt_shap()].
 #' @export
 #' @examples
-#' # See ?sdt_importance for a runnable example.
-#' sdt_engines()
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart", "DALEX", "DALEXtra")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   sdt_profile(fit, variables = "life_points")
+#' }
 sdt_profile <- function(x,
                         variables = NULL,
                         type = c("partial", "accumulated"),
@@ -181,8 +194,15 @@ sdt_profile <- function(x,
 #' @seealso [sdt_importance()], [sdt_profile()].
 #' @export
 #' @examples
-#' # See ?sdt_importance for a runnable example.
-#' sdt_engines()
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart", "DALEX", "DALEXtra")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   # Why the model called the first casualty what it did.
+#'   sdt_shap(fit, casualty = co[1, ])
+#' }
 sdt_shap <- function(x, casualty, data = NULL, n_permutations = 10L) {
   .require_pkgs(c("DALEX", "DALEXtra"))
   n_permutations <- .check_count(n_permutations)

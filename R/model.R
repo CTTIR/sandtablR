@@ -538,8 +538,14 @@ sdt_fit <- function(data,
 #'   `.estimate`.
 #' @export
 #' @examples
-#' # See ?sdt_fit for a runnable example.
-#' sdt_metric_set
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   sdt_metrics(fit)
+#' }
 sdt_metrics <- function(model) {
   .check_class(model, "sdt_model")
   model$metrics
@@ -555,8 +561,14 @@ sdt_metrics <- function(model) {
 #'   columns, and `truth`.
 #' @export
 #' @examples
-#' # See ?sdt_fit for a runnable example.
-#' sdt_metric_set
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   head(sdt_predictions(fit))
+#' }
 sdt_predictions <- function(model) {
   .check_class(model, "sdt_model")
   .require_pkgs("tune")
@@ -581,8 +593,15 @@ sdt_predictions <- function(model) {
 #'   metrics were computed from.
 #' @export
 #' @examples
-#' # See ?sdt_fit for a runnable example.
-#' sdt_engines()
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   predict(fit, co[1:3, ])
+#'   predict(fit, co[1:3, ], type = "prob")
+#' }
 predict.sdt_model <- function(object, new_data, ...) {
   .require_pkgs("workflows")
   new_data <- tibble::as_tibble(new_data)
@@ -801,8 +820,14 @@ sdt_workflowset <- function(data,
 #' @return A \pkg{ggplot2} object.
 #' @export
 #' @examples
-#' # See ?sdt_fit for a runnable example.
-#' sdt_metric_set
+#' co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+#' needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+#'             "yardstick", "rpart")
+#' if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+#'   fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+#'                  tune = FALSE, seed = 1, verbose = FALSE)
+#'   sdt_roc(fit)
+#' }
 sdt_roc <- function(model) {
   .check_class(model, "sdt_model")
   .require_pkgs(c("yardstick", "tune"))

@@ -26,8 +26,15 @@ contributions, using SHAP values. This answers "why this casualty?", as
 opposed to importance, which answers "what does this model use in general?".
 }
 \examples{
-# See ?sdt_importance for a runnable example.
-sdt_engines()
+co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+            "yardstick", "rpart", "DALEX", "DALEXtra")
+if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+  fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+                 tune = FALSE, seed = 1, verbose = FALSE)
+  # Why the model called the first casualty what it did.
+  sdt_shap(fit, casualty = co[1, ])
+}
 }
 \seealso{
 \code{\link[=sdt_importance]{sdt_importance()}}, \code{\link[=sdt_profile]{sdt_profile()}}.

@@ -22,8 +22,15 @@ tibble, whatever the engine, so downstream code does not have to branch on
 which model produced it.
 }
 \examples{
-# See ?sdt_fit for a runnable example.
-sdt_engines()
+co <- sdt_add_decisions(sdt_synthetic_cohort(n = 200, seed = 3), seed = 4)
+needed <- c("parsnip", "recipes", "workflows", "rsample", "tune",
+            "yardstick", "rpart")
+if (all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+  fit <- sdt_fit(co, target = "called_triage", engine = "tree",
+                 tune = FALSE, seed = 1, verbose = FALSE)
+  predict(fit, co[1:3, ])
+  predict(fit, co[1:3, ], type = "prob")
+}
 }
 \seealso{
 \code{\link[=sdt_predictions]{sdt_predictions()}} for the held-out predictions the model's own
