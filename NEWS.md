@@ -1,5 +1,12 @@
 # sandtablR 0.1.0
 
+## Fixes
+
+* `sdt_scenario()` refuses a board capacity that is not a whole number of at
+  least 1, naming every offending area. It used to coerce such values without
+  a word: 0 and negative capacities became 1, 2.7 became 2 and text became
+  `NA`, so the board that was simulated was not the board that was asked for.
+
 ## CRAN preparation
 
 * Use supported column selection for held-out classification metrics, avoiding

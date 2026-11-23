@@ -22,7 +22,8 @@ new_scenario <- function(cohort = tibble::tibble(),
 #'   `triage`, `therapy`, `arrival_order`).
 #' @param resources Named list of integer capacities for board areas, e.g.
 #'   `list(triage = 1, or = 2, icu_imc = 6, ed_red = 2, ed_yellow = 4,
-#'   ward = 20)`. Missing areas default to `1`.
+#'   ward = 20)`. Missing areas default to `1`. Each capacity must be a whole
+#'   number of at least `1`; anything else is an error naming the area.
 #' @param name Optional scenario name.
 #' @param seed Optional integer seed recorded in metadata for reproducibility.
 #'
@@ -53,12 +54,27 @@ sdt_scenario <- function(cohort, resources = list(), name = NULL, seed = NULL) {
       "i" = "Allowed: {.val {sdt_board_areas()}}."
     ))
   }
+  # A capacity is a whole number of places, at least one. Anything else used to
+  # be coerced without a word -- 0 and negative values became 1, 2.7 became 2
+  # and text became NA -- so the board that was simulated was not the board
+  # that was asked for. Every offending area is named at once.
+  is_capacity <- function(x) {
+    is.numeric(x) && length(x) == 1L && is.finite(x) && x >= 1 &&
+      x == round(x)
+  }
+  bad <- names(resources)[!vapply(resources, is_capacity, logical(1))]
+  if (length(bad)) {
+    cli::cli_abort(c(
+      "{.arg resources} must hold whole-number capacities of at least 1.",
+      "x" = "Not a valid capacity: {.field {bad}}."
+    ))
+  }
   # Fill defaults for any unspecified board area.
   defaults <- stats::setNames(
     as.list(rep(1L, length(sdt_board_areas()))), sdt_board_areas()
   )
   resources <- utils::modifyList(defaults, resources)
-  resources <- lapply(resources, function(x) max(1L, as.integer(x)))
+  resources <- lapply(resources, as.integer)
 
   # One source of truth for the column contract: sdt_cohort() validates every
   # vocabulary and range, and returns the rows ordered by arrival_order.

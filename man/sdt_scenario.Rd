@@ -13,7 +13,8 @@ at least the columns produced by \code{\link[=sdt_patient_card]{sdt_patient_card
 \code{triage}, \code{therapy}, \code{arrival_order}).}
 
 \item{resources}{Named list of integer capacities for board areas, e.g.
-\code{list(triage = 1, or = 2, icu_imc = 6, ed_red = 2, ed_yellow = 4, ward = 20)}. Missing areas default to \code{1}.}
+\code{list(triage = 1, or = 2, icu_imc = 6, ed_red = 2, ed_yellow = 4, ward = 20)}. Missing areas default to \code{1}. Each capacity must be a whole
+number of at least \code{1}; anything else is an error naming the area.}
 
 \item{name}{Optional scenario name.}
 
