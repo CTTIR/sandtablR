@@ -68,8 +68,9 @@ v2_0 <- list(
     triage = 0.08, ed = 0.16, diagnostics = 0.04, or = 0.11,
     recovery = 0.01, icu_imc = 0.23, ward = 0.35, not_seen = 0.00
   ),
-  # Study scale. 18 groups and 49 participants in 3 courses: Background,
-  # p. 608; 49 participants again in Results, p. 611. Every group was dealt
+  # Study scale. 18 groups and 49 participants in 3 courses: Methods, "Study
+  # group description for the table-top exercise", p. 608; 49 participants
+  # again in Results, "Study group analysis", p. 611. Every group was dealt
   # the same n = 20 cards (Methods, "Study implementation", p. 609), and all
   # 18 x 20 = 360 were reached and evaluated: Results, p. 612, and the Fig. 6
   # caption, p. 613. The paper calls the evaluated charts "played" ("the total
