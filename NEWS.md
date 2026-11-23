@@ -4,11 +4,14 @@
 
 * `sdt_read_gold_standard()` gains `deck_size`. The deck size used to be
   fixed in the code; it now defaults to the highest card id on the sheet, so
-  a missing card still shows as a gap, and a stated `deck_size` drops numbered
-  rows beyond the deck as before. With `sheet = NULL` the codebook sheet is
-  found by its columns rather than its name, and English headers (`Card`,
-  `Sex`, `Age`, `SK`, `Findings`, `Vitals`) are accepted beside the German
-  ones.
+  a card missing inside the deck still shows as a gap, and a stated
+  `deck_size` drops numbered rows beyond the deck as before. Cards missing
+  from the end of the deck show only against a stated `deck_size` or the
+  legend cross-check, and the verbose report says when the size was taken
+  from the highest card id. With `sheet = NULL` the codebook sheet is found
+  by its columns rather than its name, so a workbook with two complete
+  codebook sheets now asks for `sheet`, and English headers (`Card`, `Sex`,
+  `Age`, `SK`, `Findings`, `Vitals`) are accepted beside the German ones.
 * The title map of `sdt_participant_dictionary()` no longer lists a
   service-rank abbreviation; such an entry still reads as "none" through the
   fallback.
@@ -29,8 +32,17 @@
   button, failed on the radial basis kernel and then on the transformer.
 * `sdt_scenario()` refuses a board capacity that is not a whole number of at
   least 1, naming every offending area. It used to coerce such values without
-  a word: 0 and negative capacities became 1, 2.7 became 2 and text became
-  `NA`, so the board that was simulated was not the board that was asked for.
+  a word: 0 and negative capacities became 1, 2.7 and the text `"2"` became 2,
+  and other text, `Inf` and values past the integer range became `NA`, so the
+  board that was simulated was not the board that was asked for.
+* Count arguments such as `grid`, `folds`, `seed` and `deck_size` refuse
+  `Inf` and values past the integer range, which used to reach the code as
+  `NA` with only a coercion warning.
+* A transformer fit is repeatable. `sdt_transformer_fit()` seeds the
+  backend's random generators from R's random-number stream, so the same
+  `seed` in `sdt_fit()`, `sdt_workflowset()` or the workbench, or the same
+  `set.seed()`, trains the same model; every call used to train a different
+  one.
 * `sdt_area_labels()` returns a character vector for every input; a
   zero-length input used to come back as `logical(0)`.
 * `sdt_reference("published")$n_charts` now gives each version its own
