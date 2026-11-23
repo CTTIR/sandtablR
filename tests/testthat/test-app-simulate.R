@@ -83,7 +83,7 @@ catch_notifications <- function(env = parent.frame()) {
 # How many casualties the board reactive says are standing on the board. Read
 # off the subtitle because that is the number the user actually sees.
 on_board <- function(plot) {
-  as.integer(sub("^.*\u2014 ([0-9]+) of.*$", "\\1", plot$labels$subtitle))
+  as.integer(sub("^.* min: ([0-9]+) of.*$", "\\1", plot$labels$subtitle))
 }
 
 
