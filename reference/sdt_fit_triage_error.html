@@ -125,8 +125,8 @@ composition-matched frame of <code><a href="sdt_fit_behaviour.html">sdt_fit_beha
 from that function on purpose: there dispersion is measured off the same
 frame that was fitted, while here the card term is in the model and the
 between-team dispersion is measured separately by <code><a href="sdt_error_fidelity.html">sdt_error_fidelity()</a></code>,
-which does its own matching. Matching here would cost a category its
-cards – on this corpus the matched frame keeps 2 of the 5 yellow cards.</p></dd>
+which does its own matching. Matching here can cost a category with only
+a few cards most of them.</p></dd>
 
 
 <dt id="arg-min-coverage">min_coverage<a class="anchor" aria-label="anchor" href="#arg-min-coverage"></a></dt>
@@ -189,25 +189,24 @@ accuracy and its error direction, and <code>joint = TRUE</code> estimates exactl
     </div>
     <div class="section level2">
     <h2 id="why-the-card-term-is-load-bearing">Why the card term is load-bearing<a class="anchor" aria-label="anchor" href="#why-the-card-term-is-load-bearing"></a></h2>
-    <p>Cards inside one true category are not alike. On the validation corpus red
-card 14 was called correctly by 26% of teams and 15 of the 30 red cards by
-every team. Removing the card term does not shrink the team effect, it
-<strong>erases</strong> it: the fitted team SD goes to exactly 0 for red and for yellow,
-against 0.544 and 0.639 with the card term, and the AIC is 473 and 137
-worse. Every group saw nearly the same deck, so the spread of raw hit rates
-across teams is <em>narrower</em> than binomial noise around a single pooled
+    <p>Cards inside one true category are not alike: one card can be called
+correctly by a minority of teams, others by every team. Removing the card
+term then does not shrink the team effect, it can <strong>erase</strong> it: the fitted
+team SD goes to exactly 0, against a clearly positive one with the card
+term, at a much worse AIC. When every group sees nearly the same deck, the
+spread of raw hit rates across teams can be <em>narrower</em> than binomial noise
+around a single pooled
 probability, and a model with one probability per category can only account
 for that by setting the team variance to zero.</p>
 <p><code>card_effect</code> therefore defaults to <code>"fixed"</code> for the hit part. It takes
 one value for both parts, or two – <code>c("fixed", "none")</code> sets the hit part
 then the split part – or a named vector such as
 <code>c(hit = "fixed", split = "random")</code>.</p>
-<p>The split part defaults to <code>"none"</code>, and that is measured rather than
-assumed. Its cells hold few error rows with a small minority (176, 124 and
-529 rows with 10, 24 and 38 minority calls on this corpus); a card-fixed
-split runs the yellow team SD up to 41 on the logit scale, is worse by AIC
-than no card term for red, and leaves any card that no team ever miscalled
-with no coefficient at all. It also costs little, because for red both
+<p>The split part defaults to <code>"none"</code>. Its cells hold few error rows with a
+small minority; a card-fixed split can run a team SD up to separation on
+the logit scale, can be worse by AIC than no card term, and leaves any card
+that no team ever miscalled with no coefficient at all. It also costs
+little, because for red both
 wrong answers are under-triage and for green both are over-triage: the
 split moves cells <em>inside</em> the confusion matrix without moving the
 over- and under-triage rates.</p>
@@ -229,12 +228,13 @@ and flagged <code>singular</code>: teams not differing is a finding, not a failu
     <p><code>joint = TRUE</code> stacks a category's two parts and fits them together with an
 unstructured team covariance, which is the full multinomial mixed model for
 that category. It is a <strong>diagnostic</strong>: it measures the one parameter the
-default gives up, and <code><a href="sdt_simulate_triage.html">sdt_simulate_triage()</a></code> never reads it. Run on the
-validation corpus it converged for green only – correlation <code>-0.050</code>, and
-a joint AIC equal to the sum of the two separate ones – while red came
-back rank deficient with a team correlation of 0.99 and yellow ran its
-split SD to 33-40. The full multinomial does not fit reliably at this n,
-and where it does fit it says the constraint costs nothing.</p>
+default gives up, and <code><a href="sdt_simulate_triage.html">sdt_simulate_triage()</a></code> never reads it. At
+course-sized n it often converges for some categories only: where it does,
+the correlation is near zero and the joint AIC equals the sum of the two
+separate ones; elsewhere it comes back rank deficient, with a team
+correlation near one or a split SD at separation. The full multinomial need
+not fit reliably at this n, and where it does fit it says the constraint
+costs nothing.</p>
     </div>
     <div class="section level2">
     <h2 id="the-team-term">The team term<a class="anchor" aria-label="anchor" href="#the-team-term"></a></h2>
@@ -276,7 +276,7 @@ observed table.</p></div>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> That is a finding about the cell, not a failure of the fit.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;sdt_triage_error_model&gt; lme4 | all frame (all rows)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12 cards x 20 groups in 2 blocks = 240 rows (of 240)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 cells fitted in 0.3s:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 cells fitted in 0.8s:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   cell               n    prev sd_group sd_block     card    dAIC</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   red.hit           80   0.750    1.284    0.000    fixed    -2.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   red.split         20   0.250    0.000    0.000     none     2.0</span>

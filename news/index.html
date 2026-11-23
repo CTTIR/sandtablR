@@ -52,6 +52,45 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="sandtablr-010">sandtablR 0.1.0<a class="anchor" aria-label="anchor" href="#sandtablr-010"></a></h2>
 <div class="section level3">
+<h3 id="codebook-and-register-readers-0-1-0">Codebook and register readers<a class="anchor" aria-label="anchor" href="#codebook-and-register-readers-0-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/sdt_read_gold_standard.html">sdt_read_gold_standard()</a></code> gains <code>deck_size</code>. The deck size used to be fixed in the code; it now defaults to the highest card id on the sheet, so a card missing inside the deck still shows as a gap, and a stated <code>deck_size</code> drops numbered rows beyond the deck as before. Cards missing from the end of the deck show only against a stated <code>deck_size</code> or the legend cross-check, and the verbose report says when the size was taken from the highest card id. With <code>sheet = NULL</code> the codebook sheet is found by its columns rather than its name, so a workbook with two complete codebook sheets now asks for <code>sheet</code>, and English headers (<code>Card</code>, <code>Sex</code>, <code>Age</code>, <code>SK</code>, <code>Findings</code>, <code>Vitals</code>) are accepted beside the German ones.</li>
+<li>The title map of <code><a href="../reference/sdt_participant_dictionary.html">sdt_participant_dictionary()</a></code> no longer lists a service-rank abbreviation; such an entry still reads as “none” through the fallback.</li>
+<li>The example workbooks in <code>inst/extdata</code> and the test fixtures use invented decks, neutral headers and sheet names, synthetic identifiers and dates.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-1-0">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-1-0"></a></h3>
+<ul><li>A tuned <code>sdt_fit(engine = "svm_rbf")</code> no longer aborts. Tuning parameters are now finalised on the predictors the model receives – the recipe applied to the training rows – rather than on the raw rows, whose identifier and text columns broke the radial basis kernel’s range and inflated <code>mtry</code>’s upper bound for “ranger” with columns no model sees. Tuned “ranger” grids change accordingly.</li>
+<li>
+<code><a href="../reference/sdt_workflowset.html">sdt_workflowset()</a></code> with its default <code>tune = TRUE</code> fits an engine that has nothing to tune (the transformer) once as specified. With every engine installed the default screen, and the workbench’s “Run the whole thing” button, failed on the radial basis kernel and then on the transformer.</li>
+<li>
+<code><a href="../reference/sdt_scenario.html">sdt_scenario()</a></code> refuses a board capacity that is not a whole number of at least 1, naming every offending area. It used to coerce such values without a word: 0 and negative capacities became 1, 2.7 and the text <code>"2"</code> became 2, and other text, <code>Inf</code> and values past the integer range became <code>NA</code>, so the board that was simulated was not the board that was asked for.</li>
+<li>Count arguments such as <code>grid</code>, <code>folds</code>, <code>seed</code> and <code>deck_size</code> refuse <code>Inf</code> and values past the integer range, which used to reach the code as <code>NA</code> with only a coercion warning.</li>
+<li>A transformer fit is repeatable. <code><a href="../reference/sdt_transformer_fit.html">sdt_transformer_fit()</a></code> seeds the random generators of the Python backend from the random-number stream of R, so the same <code>seed</code> in <code><a href="../reference/sdt_fit.html">sdt_fit()</a></code>, <code><a href="../reference/sdt_workflowset.html">sdt_workflowset()</a></code> or the workbench, or the same <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>, trains the same model; every call used to train a different one.</li>
+<li>
+<code><a href="../reference/sdt_area_labels.html">sdt_area_labels()</a></code> returns a character vector for every input; a zero-length input used to come back as <code>logical(0)</code>.</li>
+<li>
+<code>sdt_reference("published")$n_charts</code> now gives each version its own evaluated chart count, 360 for version 2.0 and 369 for version 1.0, as in the source’s Results and Fig. 6 caption; both versions used to carry 360 and 369 at once. <code>n_charts_played</code> equals it, which is how the source counts the 729 charts played. <code><a href="../reference/sdt_reference.html">?sdt_reference</a></code> gains a Sources section naming the figure, section and page of every published value, and the benchmark the source quotes for the Berlin algorithm now cites its origin (Kleber et al. 2020).</li>
+<li>
+<code><a href="../reference/sdt_plot_board.html">sdt_plot_board()</a></code> writes its subtitle in plain ASCII. The em dash it used made the <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf()</a></code> device, and any other device without that glyph, warn and substitute a hyphen.</li>
+<li>
+<code><a href="../reference/sdt_plot_flow.html">sdt_plot_flow()</a></code> and <code><a href="../reference/sdt_plot_sequences.html">sdt_plot_sequences()</a></code> draw a legend key for every board area, including the ones a run never reached; ggplot2 3.5 and later listed those with an empty swatch. <code><a href="../reference/sdt_plot_flow.html">sdt_plot_flow()</a></code> labels its legend with the board’s display names, as the other board plots already did.</li>
+<li>
+<code><a href="../reference/sdt_roc.html">sdt_roc()</a></code>, and the workbench’s ROC panel, draw the sighting categories in the package’s red, yellow and green. The default hue scale drew the red class in green and the green class in red.</li>
+<li>
+<code><a href="../reference/sdt_plot_utilisation.html">sdt_plot_utilisation()</a></code> labels its legend with the board’s display names, its panels “Replication 1”, “Replication 2” rather than a bare number, and its count axis in whole places only.</li>
+<li>The workbench names the transformer “Tabular transformer” and styles the closed-box grade’s chip; it used to show the raw engine id as plain text.</li>
+<li>The workbench’s one-click demo hands the models it trained to the Explain panel, as “Compare all engines” already did; after the demo, Explain said no model had been trained.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-1-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-1-0"></a></h3>
+<ul><li>Comments, help pages, the <code>frame = "all"</code> warning of <code><a href="../reference/sdt_fit_behaviour.html">sdt_fit_behaviour()</a></code>, the Generate panel’s cost line and the export-bundle README describe behaviour in general terms.</li>
+<li>
+<code><a href="../reference/sdt_metrics.html">sdt_metrics()</a></code>, <code><a href="../reference/sdt_predictions.html">sdt_predictions()</a></code>, <code><a href="../reference/predict.sdt_model.html">predict.sdt_model()</a></code>, <code><a href="../reference/sdt_roc.html">sdt_roc()</a></code>, <code><a href="../reference/sdt_explain.html">sdt_explain()</a></code>, <code><a href="../reference/sdt_profile.html">sdt_profile()</a></code> and <code><a href="../reference/sdt_shap.html">sdt_shap()</a></code> have runnable examples. Their help pages pointed elsewhere and ran an unrelated call. Every example is guarded on the suggested packages it needs.</li>
+<li>The workbench help and README count its eight panels correctly.</li>
+<li>The getting-started vignette says that its demonstration board is not the calibrated one, which is why its end-of-game bars sit far from the published points, and draws the calibrated reference board beside it.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="cran-preparation-0-1-0">CRAN preparation<a class="anchor" aria-label="anchor" href="#cran-preparation-0-1-0"></a></h3>
 <ul><li><p>Use supported column selection for held-out classification metrics, avoiding tidyselect deprecation warnings without changing the metric values.</p></li>
 <li><p>Ship two small synthetic workbooks in <code>inst/extdata</code> (<code>example-participants.xlsx</code>, <code>example-codebook.xlsx</code>, generated by <code>data-raw/example_workbooks.R</code> from the test fixtures) so that the examples of <code><a href="../reference/sdt_read_participants.html">sdt_read_participants()</a></code>, <code><a href="../reference/sdt_participant_summary.html">sdt_participant_summary()</a></code>, <code><a href="../reference/sdt_course_composition.html">sdt_course_composition()</a></code>, <code><a href="../reference/sdt_describe_participants.html">sdt_describe_participants()</a></code>, <code><a href="../reference/sdt_read_gold_standard.html">sdt_read_gold_standard()</a></code> and <code><a href="../reference/sdt_apply_gold_standard.html">sdt_apply_gold_standard()</a></code> run without the real study files.</p></li>
@@ -62,7 +101,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="earlier-development-0-1-0">Earlier development (0.0.0.9000)<a class="anchor" aria-label="anchor" href="#earlier-development-0-1-0"></a></h3>
-<ul><li>Standardize the named v5 package logo across README, documentation pages and available application headers, with matching light and dark artwork.</li>
+<ul><li>Standardise the named v5 package logo across README, documentation pages and available application headers, with matching light and dark artwork.</li>
 </ul><p>First development version.</p>
 <ul><li>R 4.5.0 or later is required. Suggested modelling packages need it (glmmTMB depends via pbkrtest and doBy on Deriv, which requires R 4.5).</li>
 </ul></div>

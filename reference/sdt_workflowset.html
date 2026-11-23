@@ -161,7 +161,9 @@ that could not be fitted here, and a <code>models</code> attribute holding the f
 <code>skipped</code> attribute rather than silently dropped. So is the transformer
 when <span class="pkg">keras3</span> is installed but has no working backend. The transformer
 is fitted after every other engine, so Python and its backend are not
-loaded into the session before their parallel workers are started.</p>
+loaded into the session before their parallel workers are started. With
+<code>tune = TRUE</code>, an engine whose specification has nothing to tune (the
+transformer) is fitted once as specified.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

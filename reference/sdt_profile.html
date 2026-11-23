@@ -105,20 +105,15 @@ are correlated, which on a casualty card they are.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># See ?sdt_importance for a runnable example.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="sdt_engines.html">sdt_engines</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   engine      package class_box installed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> tree        rpart   glass     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> multinom    nnet    glass     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> glmnet      glmnet  glass     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> mars        earth   grey      TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> xgboost     xgboost grey      TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> ranger      ranger  black     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> svm_rbf     kernlab black     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> mlp         nnet    black     TRUE     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> transformer keras3  closed    TRUE     </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">co</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdt_add_decisions.html">sdt_add_decisions</a></span><span class="op">(</span><span class="fu"><a href="sdt_synthetic_cohort.html">sdt_synthetic_cohort</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">200</span>, seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">needed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parsnip"</span>, <span class="st">"recipes"</span>, <span class="st">"workflows"</span>, <span class="st">"rsample"</span>, <span class="st">"tune"</span>,</span></span>
+<span class="r-in"><span>            <span class="st">"yardstick"</span>, <span class="st">"rpart"</span>, <span class="st">"DALEX"</span>, <span class="st">"DALEXtra"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">needed</span>, <span class="va">requireNamespace</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="sdt_fit.html">sdt_fit</a></span><span class="op">(</span><span class="va">co</span>, target <span class="op">=</span> <span class="st">"called_triage"</span>, engine <span class="op">=</span> <span class="st">"tree"</span>,</span></span>
+<span class="r-in"><span>                 tune <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">1</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">sdt_profile</span><span class="op">(</span><span class="va">fit</span>, variables <span class="op">=</span> <span class="st">"life_points"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-plt img"><img src="sdt_profile-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

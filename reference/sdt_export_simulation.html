@@ -161,8 +161,8 @@ identifiers before the file is closed, and a survivor is an error.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="pseudonymisation">Pseudonymisation<a class="anchor" aria-label="anchor" href="#pseudonymisation"></a></h2>
-    <p>Session identifiers and scenario names in this domain embed hospital, venue
-and city names and the exact course date. They are therefore mapped to
+    <p>Session identifiers and scenario names can embed place names and exact
+dates. They are therefore mapped to
 <code>S01</code>…<code>Snn</code>, groups to <code>G001</code>…<code>Gnnn</code> and scenarios to <code>SC01</code>…<code>SCnn</code> by
 default. The crosswalk is written only if <code>crosswalk</code> names a path, and that
 path must lie outside the bundle; otherwise the mapping is discarded when
@@ -187,11 +187,11 @@ input.</p></div>
 <span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">out</span>, list <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">Name</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "demo-bundle-18c315ccf799/"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "demo-bundle-18c315ccf799/deck-cards.csv"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "demo-bundle-18c315ccf799/simulated-groups.csv"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "demo-bundle-18c315ccf799/README.md"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "demo-bundle-18c315ccf799/manifest.json"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "demo-bundle-196542aecc3b/"                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "demo-bundle-196542aecc3b/deck-cards.csv"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "demo-bundle-196542aecc3b/simulated-groups.csv"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "demo-bundle-196542aecc3b/README.md"           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "demo-bundle-196542aecc3b/manifest.json"       </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># In Shiny, the handler's `file` is the archive path:</span></span></span>
 <span class="r-in"><span><span class="co"># downloadHandler(</span></span></span>

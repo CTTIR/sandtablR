@@ -75,7 +75,8 @@ at least the columns produced by <code><a href="sdt_patient_card.html">sdt_patie
 
 <dt id="arg-resources">resources<a class="anchor" aria-label="anchor" href="#arg-resources"></a></dt>
 <dd><p>Named list of integer capacities for board areas, e.g.
-<code>list(triage = 1, or = 2, icu_imc = 6, ed_red = 2, ed_yellow = 4, ward = 20)</code>. Missing areas default to <code>1</code>.</p></dd>
+<code>list(triage = 1, or = 2, icu_imc = 6, ed_red = 2, ed_yellow = 4, ward = 20)</code>. Missing areas default to <code>1</code>. Each capacity must be a whole
+number of at least <code>1</code>; anything else is an error naming the area.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>

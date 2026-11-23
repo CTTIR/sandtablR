@@ -166,10 +166,10 @@ on as <code>"frame"</code>.</p>
 <p>Between-group dispersion is only meaningful when every group is scored on
 the same cards. <code>sdt_fidelity()</code> enforces that: it intersects the card sets
 of the two frames, then keeps only groups that saw every card in the
-intersection, and records what it dropped in the <code>"frame"</code> attribute. On
-the real course corpus, skipping this step reports no team signal at all,
-because each truncated group saw a different deck and that composition
-variance swamps the behavioural one.</p>
+intersection, and records what it dropped in the <code>"frame"</code> attribute.
+Skipping this step can report no team signal at all, because each
+truncated group saw a different deck and that composition variance swamps
+the behavioural one.</p>
     </div>
     <div class="section level2">
     <h2 id="negative-controls">Negative controls<a class="anchor" aria-label="anchor" href="#negative-controls"></a></h2>
