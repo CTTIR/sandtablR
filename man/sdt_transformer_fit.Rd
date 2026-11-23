@@ -42,9 +42,9 @@ resolves a registered model's fit and predict callbacks with
 it. Call \code{\link[=sdt_fit]{sdt_fit()}} rather than this.
 }
 \details{
-The backend's random generators are seeded from R's random-number stream,
-so a fit under the same \code{\link[=set.seed]{set.seed()}}, or the same \code{seed} in \code{\link[=sdt_fit]{sdt_fit()}},
-trains the same model.
+The random generators of the Python backend are seeded from the
+random-number stream of R, so a fit under the same \code{\link[=set.seed]{set.seed()}}, or the
+same \code{seed} in \code{\link[=sdt_fit]{sdt_fit()}}, trains the same model.
 }
 \examples{
 # needs 'keras3' with a working Python 'TensorFlow' backend

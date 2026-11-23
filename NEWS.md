@@ -38,11 +38,11 @@
 * Count arguments such as `grid`, `folds`, `seed` and `deck_size` refuse
   `Inf` and values past the integer range, which used to reach the code as
   `NA` with only a coercion warning.
-* A transformer fit is repeatable. `sdt_transformer_fit()` seeds the
-  backend's random generators from R's random-number stream, so the same
-  `seed` in `sdt_fit()`, `sdt_workflowset()` or the workbench, or the same
-  `set.seed()`, trains the same model; every call used to train a different
-  one.
+* A transformer fit is repeatable. `sdt_transformer_fit()` seeds the random
+  generators of the Python backend from the random-number stream of R, so
+  the same `seed` in `sdt_fit()`, `sdt_workflowset()` or the workbench, or
+  the same `set.seed()`, trains the same model; every call used to train a
+  different one.
 * `sdt_area_labels()` returns a character vector for every input; a
   zero-length input used to come back as `logical(0)`.
 * `sdt_reference("published")$n_charts` now gives each version its own

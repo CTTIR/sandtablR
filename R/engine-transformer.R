@@ -43,9 +43,9 @@
 #' `getExportedValue()`, so an internal dot-prefixed function is unreachable to
 #' it. Call [sdt_fit()] rather than this.
 #'
-#' The backend's random generators are seeded from R's random-number stream,
-#' so a fit under the same [set.seed()], or the same `seed` in [sdt_fit()],
-#' trains the same model.
+#' The random generators of the Python backend are seeded from the
+#' random-number stream of R, so a fit under the same [set.seed()], or the
+#' same `seed` in [sdt_fit()], trains the same model.
 #'
 #' @param x Numeric predictor matrix from the recipe.
 #' @param y Outcome factor.
