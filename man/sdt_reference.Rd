@@ -44,6 +44,35 @@ are \strong{not} attributed to the paper.
 Calibration tests use \code{published} only. Mixing the two would test the
 package against its own assumptions.
 }
+\section{Sources}{
+
+Every \code{published} and \code{design} value is taken from Achatz G, Reckziegel A,
+Friemert B, et al. (2023), \emph{Eur J Trauma Emerg Surg} 49(2):607--617,
+\doi{10.1007/s00068-022-02217-1}. Page numbers are those of the printed
+article; \code{data-raw/tdsc_reference.R} in the source repository names the
+figure or paragraph beside every value.
+\itemize{
+\item \code{triage_mix}, \code{triage_hit}, \code{triage_hit_min}, \code{triage_hit_max},
+\code{casualties_per_category}: Results, "Sighting frequency and hit accuracy
+of the triage categories", and Fig. 5, p. 612; \code{triage_hit_overall},
+p. 613.
+\item \code{end_state}: Fig. 6 and the list beside it, p. 613.
+\item \code{diagnostics_mix}, \code{diagnostics_total}: Fig. 7 and its paragraph, p. 613.
+\item \code{therapy_mix}, \code{therapy_n}, \code{therapy_total}: Fig. 8 and its paragraph,
+p. 614.
+\item \code{n_charts}, \code{n_charts_played}: Results, p. 612, and the Fig. 6 caption,
+p. 613 (360 for version 2.0, 369 for version 1.0; the Abstract, p. 607,
+and Methods, p. 609, swap the two). \code{n_groups}, \code{n_participants},
+\code{n_courses}: pp. 608, 609 and 611.
+\item \code{design}: duration, card count, card rounds, team roles, scenario and
+tasks from the Methods, p. 609; the board and the version 2.0 life-point
+scale from Fig. 1, p. 610. \code{triage_algorithm_benchmark} (0.80) is the hit
+accuracy the Discussion, p. 615, reports for the Berlin algorithm from
+Kleber C, Solarek A, Cwojdzinski D (2020), \emph{Unfallchirurg}
+123(3):187--198, \doi{10.1007/s00113-019-0668-y}.
+}
+}
+
 \examples{
 sdt_reference("published")$triage_mix
 sdt_reference("published", version = "1.0")$triage_mix

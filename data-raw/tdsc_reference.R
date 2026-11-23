@@ -10,7 +10,9 @@
 #               doi:10.1007/s00068-022-02217-1; open access, CC BY 4.0). Both
 #               evaluated versions of the exercise are carried. Every value
 #               below is traceable to a numbered figure, a table or a sentence
-#               in that paper, and the figure is named beside it.
+#               in that paper, and the figure or section is named beside it
+#               together with the journal page ("p. 612" is page 612 of the
+#               article as printed, pp. 607-617).
 #
 #   $design     The exercise as specified in the paper's Methods: how long it
 #               runs, how many cards, how the board is laid out. Also published,
@@ -24,8 +26,9 @@
 # Keeping the parts apart is the point: a calibration test that mixes
 # fitted-to-us defaults with published marginals proves nothing.
 
-# The eight locations Fig. 6 reports, in board order. The green treatment area
-# (board position 9) is not among them, so it carries no published share.
+# The eight locations Fig. 6 (p. 613) reports, in board order. The green
+# treatment area (board position 9) is not among them, so it carries no
+# published share.
 end_state_areas <- c(
   "triage", "ed", "diagnostics", "or", "recovery", "icu_imc", "ward",
   "not_seen"
@@ -35,42 +38,55 @@ end_state_areas <- c(
 
 v2_0 <- list(
   # Sighting-category mix of the casualty stream. Results, "Sighting frequency
-  # and hit accuracy of the triage categories".
+  # and hit accuracy of the triage categories", p. 612.
   triage_mix = c(red = 0.444, yellow = 0.236, green = 0.319),
   # Proportion of casualties correctly categorised by participants, per
-  # category, and overall. Fig. 5 and the surrounding text.
+  # category, and overall. Fig. 5 and the surrounding text: per category
+  # p. 612, overall p. 613.
   triage_hit = c(red = 0.8822, yellow = 0.590, green = 0.7075),
   triage_hit_overall = 0.7694,
   # The lowest and highest per-patient hit accuracy observed in any group,
-  # which is the spread the mean above conceals.
+  # which is the spread the mean above conceals. Same paragraph, p. 612.
   triage_hit_min = c(red = 0.28, yellow = 0.39, green = 0.00),
   triage_hit_max = c(red = 1.00, yellow = 1.00, green = 1.00),
-  # How many of the 20 cards carried each category. Results text.
+  # How many of the 20 cards carried each category. Results text, p. 612.
   casualties_per_category = c(red = 9L, yellow = 3L, green = 8L),
   # Therapy-concept mix. ETC is never chosen under mass-casualty conditions.
-  # Fig. 8; n = 105 procedures, DCS n = 31, TASC n = 74.
+  # Fig. 8 and the text above it, p. 614; n = 105 procedures, DCS n = 31,
+  # TASC n = 74.
   therapy_mix = c(ETC = 0.000, DCS = 0.295, TASC = 0.705),
   therapy_n = c(ETC = 0L, DCS = 31L, TASC = 74L),
   therapy_total = 105L,
-  # Diagnostic modality mix. Fig. 7; n = 183 diagnostic measures.
+  # Diagnostic modality mix. Fig. 7 and the text beside it, p. 613; n = 183
+  # diagnostic measures.
   diagnostics_mix = c(efast = 0.831, xray = 0.022, ct = 0.148),
   diagnostics_total = 183L,
   # Where casualties stand when the game is called. Fig. 6 and the itemised
-  # list beside it. These eight sum to 0.98; the paper reports them rounded to
-  # whole percentages and does not attribute the remainder.
+  # list beside it, p. 613. These eight sum to 0.98; the paper reports them
+  # rounded to whole percentages and does not attribute the remainder.
   end_state = c(
     triage = 0.08, ed = 0.16, diagnostics = 0.04, or = 0.11,
     recovery = 0.01, icu_imc = 0.23, ward = 0.35, not_seen = 0.00
   ),
-  # Study scale. Methods, "Study group description".
+  # Study scale. 18 groups and 49 participants in 3 courses: Background,
+  # p. 608; 49 participants again in Results, p. 611. Every group was dealt
+  # the same n = 20 cards (Methods, "Study implementation", p. 609), and all
+  # 18 x 20 = 360 were reached and evaluated: Results, p. 612, and the Fig. 6
+  # caption, p. 613. The paper calls the evaluated charts "played" ("the total
+  # of 729 patients played", p. 613, is 360 + 369), so the two counts agree.
+  # The Abstract, p. 607, and Methods, p. 609, swap the two versions' counts;
+  # the Results, the Fig. 6 caption and the arithmetic agree with the values
+  # used here.
   n_charts = 360L,
-  n_charts_played = 369L,
+  n_charts_played = 360L,
   n_groups = 18L,
   n_participants = 49L,
   n_courses = 3L
 )
 
 # --- Version 1.0, the predecessor --------------------------------------------
+# Same sources and pages as version 2.0 above: each figure and paragraph
+# reports both versions side by side.
 
 v1_0 <- list(
   triage_mix = c(red = 0.434, yellow = 0.217, green = 0.350),
@@ -88,7 +104,11 @@ v1_0 <- list(
     triage = 0.15, ed = 0.17, diagnostics = 0.06, or = 0.09,
     recovery = 0.01, icu_imc = 0.20, ward = 0.31, not_seen = 0.03
   ),
-  n_charts = 360L,
+  # 19 groups and 55 participants in 3 courses: Methods, p. 609, and Results,
+  # p. 611. 19 x 20 = 380 charts were dealt; 11 of them were never reached
+  # before the 90-minute limit and were excluded (p. 610), leaving the 369
+  # the Results (p. 612) and the Fig. 6 caption (p. 613) evaluate.
+  n_charts = 369L,
   n_charts_played = 369L,
   n_groups = 19L,
   n_participants = 55L,
@@ -104,24 +124,28 @@ stopifnot(
 # --- The exercise as specified ------------------------------------------------
 
 design <- list(
-  # Methods, "Relevant elements of the table-top exercise".
+  # Methods, "Study implementation", p. 609: a 90-minute exercise, 20 patient
+  # cards per group, played by the game leader four times at fixed points.
   duration = 90,
   n_cards = 20L,
   card_rounds = 4L,
+  # Methods, "Relevant elements of the table-top exercise", p. 609: teams of
+  # three and their roles (also named in the Background, p. 608).
   team_size = 3L,
   roles = c(
     LArS = "Senior Triage Coordinator",
     ZONK = "Emergency Operational and Medical Coordinator",
     helper = "ZONK helper, leads the whiteboard"
   ),
+  # Same section, p. 609.
   scenario = paste0(
     "Explosion at a rock concert with more than 2000 spectators; ",
     "20 casualties reach one hospital."
   ),
-  # The board, numbered and laid out as in Fig. 1. `area` names the package's
-  # board areas, `label` is what the figure calls them, and xmin/xmax/ymin/ymax
-  # place each area on a 20-by-2 grid reproducing the figure's two rows: four
-  # wide areas along the top, five along the bottom.
+  # The board, numbered and laid out as in Fig. 1, p. 610. `area` names the
+  # package's board areas, `label` is what the figure calls them, and
+  # xmin/xmax/ymin/ymax place each area on a 20-by-2 grid reproducing the
+  # figure's two rows: four wide areas along the top, five along the bottom.
   board = data.frame(
     position = 1:9,
     area = c("triage", "ed_red", "diagnostics", "or", "recovery",
@@ -137,12 +161,15 @@ design <- list(
     ymax = c(1, 1, 1, 2, 2, 1, 2, 1, 2),
     stringsAsFactors = FALSE
   ),
-  # The four tasks the exercise drills, in order.
+  # The four tasks the exercise drills, in order. Methods, p. 609.
   tasks = c("Categorising", "Prioritising", "Coordinating", "Implementing"),
-  # Life points as printed on the version 2.0 patient card (Fig. 1): a death
-  # marker followed by six numbered points.
+  # Life points as printed on the version 2.0 patient card (Fig. 1, p. 610): a
+  # death marker followed by six numbered points.
   life_points = 1:6,
-  # The sighting algorithm the exercise uses, and its published benchmark.
+  # The sighting algorithm the exercise uses, and its published benchmark: an
+  # 80% hit accuracy with the algorithm, reported in the Discussion, p. 615,
+  # from Kleber C, Solarek A, Cwojdzinski D (2020), Unfallchirurg
+  # 123(3):187-198, doi:10.1007/s00113-019-0668-y.
   triage_algorithm = "Berlin hospital screening algorithm (SK I / II / III)",
   triage_algorithm_benchmark = 0.80
 )

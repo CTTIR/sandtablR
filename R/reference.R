@@ -27,6 +27,32 @@
 #' Calibration tests use `published` only. Mixing the two would test the
 #' package against its own assumptions.
 #'
+#' @section Sources:
+#' Every `published` and `design` value is taken from Achatz G, Reckziegel A,
+#' Friemert B, et al. (2023), *Eur J Trauma Emerg Surg* 49(2):607--617,
+#' \doi{10.1007/s00068-022-02217-1}. Page numbers are those of the printed
+#' article; `data-raw/tdsc_reference.R` in the source repository names the
+#' figure or paragraph beside every value.
+#'
+#' * `triage_mix`, `triage_hit`, `triage_hit_min`, `triage_hit_max`,
+#'   `casualties_per_category`: Results, "Sighting frequency and hit accuracy
+#'   of the triage categories", and Fig. 5, p. 612; `triage_hit_overall`,
+#'   p. 613.
+#' * `end_state`: Fig. 6 and the list beside it, p. 613.
+#' * `diagnostics_mix`, `diagnostics_total`: Fig. 7 and its paragraph, p. 613.
+#' * `therapy_mix`, `therapy_n`, `therapy_total`: Fig. 8 and its paragraph,
+#'   p. 614.
+#' * `n_charts`, `n_charts_played`: Results, p. 612, and the Fig. 6 caption,
+#'   p. 613 (360 for version 2.0, 369 for version 1.0; the Abstract, p. 607,
+#'   and Methods, p. 609, swap the two). `n_groups`, `n_participants`,
+#'   `n_courses`: pp. 608, 609 and 611.
+#' * `design`: duration, card count, card rounds, team roles, scenario and
+#'   tasks from the Methods, p. 609; the board and the version 2.0 life-point
+#'   scale from Fig. 1, p. 610. `triage_algorithm_benchmark` (0.80) is the hit
+#'   accuracy the Discussion, p. 615, reports for the Berlin algorithm from
+#'   Kleber C, Solarek A, Cwojdzinski D (2020), *Unfallchirurg*
+#'   123(3):187--198, \doi{10.1007/s00113-019-0668-y}.
+#'
 #' @param which Which part to return: `"all"`, `"published"`, `"design"`,
 #'   `"defaults"` or `"meta"`.
 #' @param version Which evaluated version of the exercise the published

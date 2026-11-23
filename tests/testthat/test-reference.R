@@ -60,6 +60,24 @@ test_that("published counts agree with the proportions they came from", {
   }
 })
 
+test_that("the chart counts follow the paper's results, not its abstract", {
+  # Achatz et al. (2023) give 360 evaluated charts for version 2.0 and 369 for
+  # version 1.0 in the Results (p. 612) and the Fig. 6 caption (p. 613); the
+  # Abstract and Methods swap them. The arithmetic decides: 18 groups x 20
+  # cards for 2.0, and 19 x 20 less the 11 cards never reached (p. 610) for
+  # 1.0. Both versions used to carry 360 and 369 at once.
+  v2 <- sdt_reference("published", version = "2.0")
+  v1 <- sdt_reference("published", version = "1.0")
+  n_cards <- sdt_reference("design")$n_cards
+  expect_identical(v2$n_charts, v2$n_groups * n_cards)
+  expect_identical(v1$n_charts, v1$n_groups * n_cards - 11L)
+  for (pub in list(v2, v1)) {
+    expect_identical(pub$n_charts_played, pub$n_charts)
+  }
+  # "A total of 729 patient charts could be evaluated" (p. 609).
+  expect_identical(v2$n_charts + v1$n_charts, 729L)
+})
+
 test_that("the design records the exercise as published", {
   d <- sdt_reference("design")
   expect_identical(d$duration, 90)
