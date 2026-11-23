@@ -5,10 +5,9 @@
 #
 # WHY THIS FILE EXISTS. Every triage number computable from a course export
 # alone is inter-team agreement, not accuracy: the export records what teams
-# did, never what the card was. The field that looks like an answer key
-# (`IdealSk`) is a round-robin placeholder. The codebook read here *is* the
-# answer key, which turns "was this call right?" into a question with an
-# answer.
+# did, never what the card was, and a field that looks like an answer key can
+# be a placeholder. The codebook read here *is* the answer key, which turns
+# "was this call right?" into a question with an answer.
 #
 # THREE COLUMNS OF THE COHORT CONTRACT CHANGE STATUS when it is applied:
 #   triage  surrogate (inter-team consensus, circular) -> ground truth
@@ -17,33 +16,57 @@
 # `sdt_apply_gold_standard()` keeps each replaced column as `<col>_original`,
 # so the inference can still be scored against the truth that replaced it.
 #
-# THE SHEET IS NOT A CLEAN RECTANGLE. Below the deck sit duplicate test rows
-# and a column-shifted legend block. Both are removed by rule -- a card id
-# that is not a number, or a number outside the deck -- never by row position,
+# THE SHEET NEED NOT BE A CLEAN RECTANGLE. A codebook can carry duplicate
+# test rows and a column-shifted legend block. Both are removed by rule -- a
+# card id that is not a number, or a number outside the deck -- never by row
+# position,
 # because row positions are exactly what an edited workbook changes. The
 # legend is then read back and used as an independent check on the parse.
 
-# The deck. Fixed by the exercise, not by the workbook, so a codebook that
-# does not describe all 46 cards is a reading error rather than a short deck.
-.gold_deck_size <- function() 46L
+# The deck. Its size belongs to the exercise, not to the workbook: a codebook
+# that does not describe every card is a reading error rather than a short
+# deck. Pass `deck_size` to state it; left NULL, the deck is taken to run from
+# card 1 to the highest card id on the sheet, so a missing card still shows as
+# a gap, and a stray numbered row beyond the deck shows as a deck too large to
+# be complete rather than as a silent extra card.
+.gold_resolve_deck <- function(ids, deck_size, call = rlang::caller_env()) {
+  if (!is.null(deck_size)) {
+    return(.check_count(deck_size, arg = "deck_size", call = call))
+  }
+  num <- suppressWarnings(as.integer(ids[!is.na(ids) &
+                                           grepl("^[0-9]+$", ids)]))
+  num <- num[!is.na(num) & num >= 1L]
+  if (!length(num)) {
+    cli::cli_abort(
+      c("The codebook sheet carries no numeric card id.",
+        "i" = "Card ids are expected to be numbers, 1 to the deck size."),
+      class = "sandtablR_error_gold", call = call
+    )
+  }
+  max(num)
+}
 
 # Column contract. Each field lists the normalised header keys accepted for
 # it, most canonical first; see `.gold_key()` for the normalisation.
 #
-# Two workbook generations are in circulation and both must read. The regraded
-# codebook writes "Sichtungskategorie" where the earlier one wrote
-# "Sichtungskathegorie", and suffixes its two free-text columns
-# ("Code 001_Befund Sichtung"). Matching is exact on the normalised key rather
-# than by prefix, so a new spelling is one entry here -- and a column that is
-# genuinely absent still aborts instead of binding to something close.
+# Codebooks in circulation spell their headers differently -- German or
+# English, with or without a suffix on the free-text columns, with or without
+# a typo -- and every spelling listed must read. Matching is exact on the
+# normalised key rather than by prefix, so a new spelling is one entry here --
+# and a column that is genuinely absent still aborts instead of binding to
+# something close.
 .gold_columns <- function() {
   list(
-    card = c("patnraustdsc", "patnrtdsc", "patientenid", "patientennr"),
-    sex = "geschlecht",
-    age = "alter",
-    sk_raw = c("sichtungskathegorie", "sichtungskategorie", "sk"),
-    findings = c("code001befundsichtung", "code001befund", "befund"),
-    vitals = c("code001vitalwertesichtung", "code001vitalwerte", "vitalwerte")
+    card = c("card", "cardno", "cardid", "patnraustdsc", "patnrtdsc",
+             "patientenid", "patientennr"),
+    sex = c("sex", "geschlecht"),
+    age = c("age", "alter"),
+    sk_raw = c("sk", "triagecategory", "sichtungskathegorie",
+               "sichtungskategorie"),
+    findings = c("findings", "code001befundsichtung", "code001befund",
+                 "befund"),
+    vitals = c("vitals", "code001vitalwertesichtung", "code001vitalwerte",
+               "vitalwerte")
   )
 }
 
@@ -53,8 +76,8 @@
 }
 
 # Fold a header onto a lookup key so case, spacing and punctuation stop
-# mattering: "Pat. Nr aus TDSC", "pat_nr_aus_tdsc" and "PatNrAusTDSC" are one
-# entry rather than three.
+# mattering: "Card No.", "card_no" and "CardNo" are one entry rather than
+# three.
 .gold_key <- function(x) gsub("[^a-z0-9]+", "", tolower(as.character(x)))
 
 # Sighting category as the codebook writes it -> the package vocabulary.
@@ -146,7 +169,8 @@ new_sdt_gold_standard <- function(x, meta) {
 #' * `blank` — every contract column is empty.
 #' * `non_numeric_card` — the card id is not a number, which is what catches
 #'   both duplicate test rows carrying a letter id and the shifted legend.
-#' * `card_out_of_range` — the card id is a number outside the deck.
+#' * `card_out_of_range` — the card id is a number outside the deck, which
+#'   can only happen when `deck_size` is given.
 #'
 #' How many rows each guard removed is reported when `verbose = TRUE` and kept
 #' in the `meta` attribute, so a silent change in the workbook shows up as a
@@ -160,15 +184,30 @@ new_sdt_gold_standard <- function(x, meta) {
 #' in the same workbook. Disagreements are reported, never resolved by quietly
 #' preferring one source.
 #'
+#' # The column contract
+#'
+#' One row per card, with a column each for the card id, the recorded sex, the
+#' age, the sighting category (`1`/`2`/`3` or `SK I`/`SK II`/`SK III`), the
+#' findings and the vital signs. Headers are matched after folding case,
+#' spacing and punctuation, and several spellings are accepted for each
+#' (English ones such as `Card`, `Sex`, `Age`, `SK`, `Findings`, `Vitals`,
+#' and the German ones codebooks use). A missing column is named in the error.
+#'
 #' @param path Path to the codebook workbook (`.xlsx`). Read-only; nothing is
 #'   written to it or beside it.
-#' @param sheet Sheet to read. `NULL`, the default, takes the sheet whose name
-#'   begins with `"Verteilung"`, or the only sheet if the workbook has one.
+#' @param sheet Sheet to read. `NULL`, the default, takes the only sheet whose
+#'   headers carry every contract column, or the only sheet if the workbook
+#'   has one.
 #' @param verbose Report the parsed deck, the guard drops and the cross-checks
 #'   while reading.
+#' @param deck_size Number of cards in the exercise deck, ids `1` to
+#'   `deck_size`. `NULL`, the default, takes the highest card id on the sheet;
+#'   pass it when the sheet may carry numbered rows beyond the deck, so they
+#'   are dropped by the `card_out_of_range` guard instead of enlarging it.
 #'
 #' @return An `sdt_gold_standard` object: a [tibble::tibble()] subclass with
-#'   one row per card and the columns `card` (`"01"`–`"46"`), `triage`, `sex`,
+#'   one row per card and the columns `card` (zero-padded: `"01"`, `"02"`,
+#'   ...), `triage`, `sex`,
 #'   `age`, `findings`, `vitals` and `sk_raw`. The `meta` attribute carries the
 #'   path, the sheet, the guard drops, the legend cross-check and the working
 #'   sheet cross-check.
@@ -185,10 +224,12 @@ new_sdt_gold_standard <- function(x, meta) {
 #'   gold
 #'   attr(gold, "meta")$guards
 #' }
-sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
+sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE,
+                                   deck_size = NULL) {
   .check_string(path)
   .check_flag(verbose)
   if (!is.null(sheet)) .check_string(sheet)
+  if (!is.null(deck_size)) deck_size <- .check_count(deck_size)
   .require_pkgs("readxl")
   if (!file.exists(path)) {
     cli::cli_abort(
@@ -199,34 +240,38 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
   }
 
   sheets <- readxl::excel_sheets(path)
-  sheet <- .gold_resolve_sheet(sheets, sheet)
+  sheet <- .gold_resolve_sheet(path, sheets, sheet)
   raw <- readxl::read_excel(path, sheet = sheet, col_types = "text",
                             .name_repair = "minimal")
   raw <- tibble::as_tibble(raw)
   n_source <- nrow(raw)
 
   mapped <- .gold_map_columns(raw)
-  guarded <- .gold_guards(mapped)
+  deck_given <- !is.null(deck_size)
+  deck_size <- .gold_resolve_deck(mapped$card, deck_size)
+  guarded <- .gold_guards(mapped, deck_size)
   out <- .gold_parse(guarded$kept)
-  .gold_validate(out)
+  .gold_validate(out, deck_size, deck_given)
 
   legend <- .gold_legend(raw)
   legend_check <- .gold_check_legend(out, guarded$dropped, legend)
-  working <- .gold_check_working(path, sheets, sheet, out)
+  working <- .gold_check_working(path, sheets, sheet, out, deck_size)
 
   meta <- list(
     path = path, sheet = sheet, read_at = Sys.time(),
     n_source_rows = n_source, n_cards = nrow(out),
     guards = guarded$guards, dropped = guarded$dropped,
     legend = legend_check, working_sheet = working,
-    deck_size = .gold_deck_size()
+    deck_size = deck_size,
+    deck_size_source = if (deck_given) "argument" else "highest card id"
   )
   out <- new_sdt_gold_standard(out, meta)
   if (verbose) .gold_report(out)
   out
 }
 
-.gold_resolve_sheet <- function(sheets, sheet, call = rlang::caller_env()) {
+.gold_resolve_sheet <- function(path, sheets, sheet,
+                                call = rlang::caller_env()) {
   if (!is.null(sheet)) {
     if (!sheet %in% sheets) {
       cli::cli_abort(
@@ -237,17 +282,33 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
     }
     return(sheet)
   }
-  hit <- grep("^Verteilung", sheets)
-  if (length(hit)) {
-    return(sheets[[hit[[1L]]]])
-  }
   if (length(sheets) == 1L) {
     return(sheets[[1L]])
   }
+  # Found by content, not by name: the codebook is the sheet whose headers
+  # carry every contract column. A working sheet with only an id and a
+  # category column is not a candidate.
+  complete <- vapply(sheets, function(s) {
+    head <- tryCatch(
+      readxl::read_excel(path, sheet = s, n_max = 0L,
+                         .name_repair = "minimal"),
+      error = function(e) NULL
+    )
+    if (is.null(head)) {
+      return(FALSE)
+    }
+    keys <- .gold_key(names(head))
+    all(vapply(.gold_columns(), function(k) any(k %in% keys), logical(1)))
+  }, logical(1))
+  if (sum(complete) == 1L) {
+    return(sheets[complete][[1L]])
+  }
   n_sheets <- length(sheets)
+  n_complete <- sum(complete)
   cli::cli_abort(
     c("Cannot tell which sheet holds the codebook.",
-      "x" = "{n_sheets} sheet{?s} found, none named {.val Verteilung...}.",
+      "x" = "{n_sheets} sheet{?s} found, {n_complete} of them carrying every
+             contract column.",
       "i" = "Name one with {.arg sheet}: {.val {sheets}}."),
     class = "sandtablR_error_gold", call = call
   )
@@ -285,7 +346,7 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
 
 # The three guards. Each is a rule over the values, and each reports what it
 # removed, so that a workbook edit shows up as a changed count.
-.gold_guards <- function(x) {
+.gold_guards <- function(x, deck_size) {
   fields <- names(.gold_columns())
   filled <- rowSums(!is.na(as.data.frame(x[, fields])))
   blank <- filled == 0L
@@ -295,7 +356,7 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
 
   num <- suppressWarnings(as.integer(id))
   out_of_range <- !blank & !non_numeric &
-    (is.na(num) | num < 1L | num > .gold_deck_size())
+    (is.na(num) | num < 1L | num > deck_size)
 
   reason <- rep(NA_character_, nrow(x))
   reason[out_of_range] <- "card_out_of_range"
@@ -341,7 +402,8 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
 
 # Every offending row at once, in the shape `validate_cohort()` uses, so a
 # codebook with four bad cells is reported once rather than four times.
-.gold_validate <- function(x, call = rlang::caller_env()) {
+.gold_validate <- function(x, deck_size, deck_given = TRUE,
+                           call = rlang::caller_env()) {
   levels <- sdt_triage_levels()
   sexes <- sdt_sex_levels()
   checks <- list(
@@ -360,14 +422,20 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
   )
   problems <- unlist(lapply(checks, .field_problem), use.names = FALSE)
 
-  n_deck <- .gold_deck_size()
+  n_deck <- deck_size
   n_have <- length(unique(stats::na.omit(x$card)))
   if (n_have != n_deck) {
+    hint <- if (deck_given) {
+      ""
+    } else {
+      paste(" (the deck was taken to end at the highest card id;",
+            "pass deck_size if the sheet numbers rows beyond the deck)")
+    }
     problems <- c(
       problems,
-      cli::format_inline(
-        "{.field card}: expected {n_deck} unique cards, found {n_have}."
-      )
+      paste0(cli::format_inline(
+        "{.field card}: expected {n_deck} unique cards, found {n_have}"
+      ), hint, ".")
     )
   }
   if (length(problems)) {
@@ -446,7 +514,7 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
 
 # Any other sheet in the same workbook is an independent statement of the same
 # deck. Read it, compare card by card, and report where the two disagree.
-.gold_check_working <- function(path, sheets, sheet, gold) {
+.gold_check_working <- function(path, sheets, sheet, gold, deck_size) {
   others <- setdiff(sheets, sheet)
   if (!length(others)) {
     return(NULL)
@@ -461,8 +529,8 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
     return(list(sheet = name, usable = FALSE, note = "sheet is empty"))
   }
   keys <- .gold_key(names(raw))
-  id_col <- match(c("patientenid", "patnraustdsc", "patientennr"), keys)
-  sk_col <- match(c("sk", "sichtungskathegorie", "sichtungskategorie"), keys)
+  id_col <- match(.gold_columns()$card, keys)
+  sk_col <- match(.gold_columns()$sk_raw, keys)
   id_col <- id_col[!is.na(id_col)]
   sk_col <- sk_col[!is.na(sk_col)]
   if (!length(id_col) || !length(sk_col)) {
@@ -473,7 +541,7 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE) {
   sk <- .gold_chr(raw[[sk_col[[1L]]]])
   keep <- !is.na(id) & grepl("^[0-9]+$", id)
   num <- suppressWarnings(as.integer(id[keep]))
-  keep2 <- !is.na(num) & num >= 1L & num <= .gold_deck_size()
+  keep2 <- !is.na(num) & num >= 1L & num <= deck_size
   cmp <- tibble::tibble(
     card = .gold_card_label(num[keep2]),
     triage_working = .gold_sk_triage(sk[keep][keep2])
@@ -591,8 +659,8 @@ tbl_sum.sdt_gold_standard <- function(x, ...) {
 #' and the inference that was there before can still be scored against the
 #' truth that replaced it.
 #'
-#' In the TDSC corpus the three replaceable columns start out as a circular
-#' surrogate (`triage`, the inter-team consensus call), a constant
+#' In a course export the three replaceable columns can start out as a
+#' circular surrogate (`triage`, the inter-team consensus call), a constant
 #' (`age`) and an inference from the log's gendered wording (`sex`). After this
 #' function they are the card's own values, and `triage_source` reads `"gold"`
 #' so a downstream result can say which label it routed on. The engine routes

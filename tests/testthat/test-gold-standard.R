@@ -15,22 +15,20 @@ skip_if_no_xlsx <- function() {
   testthat::skip_if_not_installed("writexl")
 }
 
+# Neutral English headers, plus one column the contract does not use.
 gold_headers <- function() {
-  c("Pat. Nr aus TDSC", "Geschlecht", "Alter", "Sichtungskathegorie",
-    "Code 000", "Code 001_Befund", "Code 001_Vitalwerte")
+  c("Card", "Sex", "Age", "SK", "Notes", "Findings", "Vitals")
 }
 
-# The regraded codebook writes three of those headers differently: the category
-# loses its "Kathegorie" typo, and the two free-text columns gain a " Sichtung"
-# suffix. Same seven columns, same contract, so the reader must accept both.
-gold_headers_regraded <- function() {
-  c("Pat. Nr aus TDSC", "Geschlecht", "Alter", "Sichtungskategorie",
-    "Code 000", "Code 001_Befund Sichtung", "Code 001_Vitalwerte Sichtung")
+# The same seven columns under German spellings the contract also accepts.
+# Same contract, so the reader must read both to the same table.
+gold_headers_german <- function() {
+  c("Patienten-Nr.", "Geschlecht", "Alter", "Sichtungskategorie",
+    "Notiz", "Befund", "Vitalwerte")
 }
 
 # One sheet row, given as seven cells. Everything is character, which is how
-# the real sheet reads once a shifted legend has forced text on a number
-# column.
+# a sheet reads once a shifted legend has forced text on a number column.
 gold_row <- function(...) {
   cells <- c(...)
   stopifnot(length(cells) == 7L)
@@ -39,13 +37,12 @@ gold_row <- function(...) {
   out
 }
 
-# A 46-card deck with no real content: findings and vitals are placeholders.
-# The 30 / 5 / 11 split is a stand-in, not the live deck -- the 2026 regrade put
-# the real one at 29 / 10 / 7. Nothing here should depend on which it is, and a
-# test that starts to is testing the fixture rather than the reader.
+# An invented 24-card deck: findings and vitals are placeholders, and the
+# 10 / 6 / 8 split is arbitrary. Nothing here should depend on it, and a test
+# that starts to is testing the fixture rather than the reader.
 gold_deck_rows <- function(sk = NULL, sex = NULL, age = NULL) {
-  n <- 46L
-  if (is.null(sk)) sk <- c(rep("1", 30L), rep("2", 5L), rep("3", 11L))
+  n <- 24L
+  if (is.null(sk)) sk <- c(rep("1", 10L), rep("2", 6L), rep("3", 8L))
   if (is.null(sex)) sex <- rep(c("m", "w"), length.out = n)
   if (is.null(age)) {
     age <- as.character(seq.int(20L, by = 1L, length.out = n))
@@ -63,7 +60,7 @@ gold_blank_row <- function() {
   gold_row(NA, NA, NA, NA, NA, NA, NA)
 }
 
-# The duplicate test rows the real workbook carries: a letter id, and a
+# Duplicate test rows of the kind a codebook can carry: a letter id, and a
 # category that the legend has already counted.
 gold_dup_rows <- function() {
   rbind(
@@ -74,7 +71,7 @@ gold_dup_rows <- function() {
 
 # The legend, written one column to the left of where the data sits, so that
 # its labels land in the age column and its counts in the category column.
-gold_legend_rows <- function(counts = c(32L, 5L, 11L)) {
+gold_legend_rows <- function(counts = c(12L, 6L, 8L)) {
   rbind(
     gold_row("m", "28", "SK I", as.character(counts[[1]]), NA, NA, NA),
     gold_row("w", "20", "SK II", as.character(counts[[2]]), NA, NA, NA),
@@ -85,12 +82,12 @@ gold_legend_rows <- function(counts = c(32L, 5L, 11L)) {
 # An earlier working sheet: the same deck, junk legend rows of its own, and
 # one card whose category was changed before the codebook was finalised.
 gold_working_sheet <- function(deck, disagree_card = "7") {
-  ids <- deck[["Pat. Nr aus TDSC"]]
-  sk <- deck[["Sichtungskathegorie"]]
+  ids <- deck[["Card"]]
+  sk <- deck[["SK"]]
   sk[ids == disagree_card] <- if (sk[ids == disagree_card] == "1") "3" else "1"
   data.frame(
-    `Patienten ID` = c(ids, "A", NA, "SKI", "SKII", "SKIII"),
-    SK = c(sk, "1", NA, "31", "5", "11"),
+    Card = c(ids, "A", NA, "SKI", "SKII", "SKIII"),
+    SK = c(sk, "1", NA, "11", "6", "8"),
     check.names = FALSE, stringsAsFactors = FALSE
   )
 }
@@ -98,12 +95,12 @@ gold_working_sheet <- function(deck, disagree_card = "7") {
 write_codebook <- function(dir, deck = gold_deck_rows(),
                            legend = gold_legend_rows(),
                            working = NULL, extra = NULL,
-                           sheet = "Verteilung Patienten",
+                           sheet = "Codebook",
                            headers = NULL,
                            file = "codebook.xlsx") {
   # Junk interleaved with data, never only below it.
   # Trailing all-blank rows are not written to the file at all, so the blank
-  # rows sit between blocks, which is also where the real workbook has them.
+  # rows sit between blocks.
   body <- rbind(
     gold_blank_row(),
     deck[seq_len(20L), , drop = FALSE],
@@ -118,7 +115,7 @@ write_codebook <- function(dir, deck = gold_deck_rows(),
   # indexed under the canonical header names.
   if (!is.null(headers)) names(body) <- headers
   sheets <- stats::setNames(list(body), sheet)
-  if (!is.null(working)) sheets[["Tabelle1"]] <- working
+  if (!is.null(working)) sheets[["Working"]] <- working
   path <- file.path(dir, file)
   writexl::write_xlsx(sheets, path)
   path
@@ -134,12 +131,12 @@ test_that("the reader returns one validated row per card", {
 
   expect_s3_class(gold, "sdt_gold_standard")
   expect_s3_class(gold, "tbl_df")
-  expect_identical(nrow(gold), 46L)
+  expect_identical(nrow(gold), 24L)
   expect_identical(
     names(gold),
     c("card", "triage", "sex", "age", "findings", "vitals", "sk_raw")
   )
-  expect_identical(gold$card, sprintf("%02d", seq_len(46)))
+  expect_identical(gold$card, sprintf("%02d", seq_len(24)))
   expect_identical(anyDuplicated(gold$card), 0L)
   expect_true(all(gold$triage %in% sdt_triage_levels()))
   expect_true(all(gold$sex %in% sdt_sex_levels()))
@@ -149,34 +146,49 @@ test_that("the reader returns one validated row per card", {
   expect_false(anyNA(gold$vitals))
 })
 
-test_that("both codebook header spellings read to the same table", {
+test_that("English and German header spellings read to the same table", {
   skip_if_no_xlsx()
   dir <- withr::local_tempdir()
 
-  original <- sdt_read_gold_standard(
+  english <- sdt_read_gold_standard(
     write_codebook(dir), verbose = FALSE
   )
-  regraded <- sdt_read_gold_standard(
-    write_codebook(dir, headers = gold_headers_regraded(),
-                   file = "codebook-regraded.xlsx"),
+  german <- sdt_read_gold_standard(
+    write_codebook(dir, headers = gold_headers_german(),
+                   file = "codebook-german.xlsx"),
     verbose = FALSE
   )
 
   # The header names are the only difference, so the parse must be identical
-  # down to the free text -- a suffixed "Code 001_Befund Sichtung" must not
-  # fall through and leave `findings` unmatched. Compared column by column,
-  # because `meta` legitimately records a different path and read time.
+  # down to the free text. Compared column by column, because `meta`
+  # legitimately records a different path and read time.
   cells <- function(x) {
     stats::setNames(lapply(names(x), function(nm) x[[nm]]), names(x))
   }
-  expect_identical(cells(regraded), cells(original))
-  expect_false(anyNA(regraded$findings))
-  expect_false(anyNA(regraded$vitals))
+  expect_identical(cells(german), cells(english))
+  expect_false(anyNA(german$findings))
+  expect_false(anyNA(german$vitals))
+})
+
+test_that("every accepted header spelling maps onto its field", {
+  # The contract lists several normalised keys per field; each must be found
+  # on its own, so a codebook using any one of them reads.
+  for (field in names(sandtablR:::.gold_columns())) {
+    for (key in sandtablR:::.gold_columns()[[field]]) {
+      expect_identical(sandtablR:::.gold_key(key), key, info = key)
+    }
+  }
+  headers <- gold_headers()
+  raw <- stats::setNames(
+    as.data.frame(as.list(letters[1:7]), stringsAsFactors = FALSE), headers
+  )
+  mapped <- sandtablR:::.gold_map_columns(raw)
+  expect_identical(names(mapped), names(sandtablR:::.gold_columns()))
 })
 
 test_that("an unmatched free-text column is named, not silently dropped", {
   skip_if_no_xlsx()
-  headers <- gold_headers_regraded()
+  headers <- gold_headers_german()
   headers[[6]] <- "Kommentar"
 
   expect_error(
@@ -199,11 +211,11 @@ test_that("the category and sex codes are folded onto the vocabularies", {
   expect_identical(gold$triage[gold$sk_raw == "3"][[1]], "green")
   expect_identical(
     as.integer(table(factor(gold$triage, levels = sdt_triage_levels()))),
-    c(30L, 5L, 11L)
+    c(10L, 6L, 8L)
   )
   # "w" is weiblich, and must not survive into the cohort as its own level.
   expect_identical(sort(unique(gold$sex)), c("f", "m"))
-  expect_identical(sum(gold$sex == "f"), 23L)
+  expect_identical(sum(gold$sex == "f"), 12L)
 })
 
 test_that("guards drop by rule, not by row position", {
@@ -217,11 +229,11 @@ test_that("guards drop by rule, not by row position", {
                    c("blank", "non_numeric_card", "card_out_of_range"))
   # 3 blank rows; 2 duplicate "A" rows plus the 3 shifted legend rows.
   expect_identical(guards$n_dropped, c(3L, 5L, 0L))
-  expect_identical(attr(gold, "meta")$n_source_rows, 54L)
+  expect_identical(attr(gold, "meta")$n_source_rows, 32L)
   expect_true(grepl("A", guards$ids[guards$guard == "non_numeric_card"]))
 })
 
-test_that("a card id outside the deck is dropped and counted", {
+test_that("a card id outside a stated deck is dropped and counted", {
   skip_if_no_xlsx()
   extra <- rbind(
     gold_row("99", "m", "30", "1", "c", "f", "v"),
@@ -229,10 +241,12 @@ test_that("a card id outside the deck is dropped and counted", {
   )
   path <- write_codebook(withr::local_tempdir(), extra = extra)
 
-  gold <- sdt_read_gold_standard(path, verbose = FALSE)
+  gold <- sdt_read_gold_standard(path, verbose = FALSE, deck_size = 24L)
   guards <- attr(gold, "meta")$guards
 
-  expect_identical(nrow(gold), 46L)
+  expect_identical(nrow(gold), 24L)
+  expect_identical(attr(gold, "meta")$deck_size, 24L)
+  expect_identical(attr(gold, "meta")$deck_size_source, "argument")
   expect_identical(guards$n_dropped[guards$guard == "card_out_of_range"], 2L)
   expect_identical(
     guards$ids[guards$guard == "card_out_of_range"], "99, 0"
@@ -247,18 +261,18 @@ test_that("the legend is read back and compared with the parse", {
   legend <- attr(gold, "meta")$legend
 
   expect_identical(legend$triage, sdt_triage_levels())
-  expect_identical(legend$n_parsed, c(30L, 5L, 11L))
+  expect_identical(legend$n_parsed, c(10L, 6L, 8L))
   # The legend counts the duplicates, so the comparable number adds them back.
   expect_identical(legend$n_dropped, c(2L, 0L, 0L))
-  expect_identical(legend$n_with_dropped, c(32L, 5L, 11L))
-  expect_identical(legend$n_legend, c(32L, 5L, 11L))
+  expect_identical(legend$n_with_dropped, c(12L, 6L, 8L))
+  expect_identical(legend$n_legend, c(12L, 6L, 8L))
   expect_true(all(legend$agrees))
 })
 
 test_that("a legend that disagrees is reported, not silently preferred", {
   skip_if_no_xlsx()
   path <- write_codebook(withr::local_tempdir(),
-                         legend = gold_legend_rows(c(30L, 7L, 11L)))
+                         legend = gold_legend_rows(c(10L, 8L, 8L)))
 
   expect_message(
     gold <- sdt_read_gold_standard(path, verbose = TRUE),
@@ -267,8 +281,8 @@ test_that("a legend that disagrees is reported, not silently preferred", {
   legend <- attr(gold, "meta")$legend
 
   # The parse still stands; the disagreement is reported beside it.
-  expect_identical(nrow(gold), 46L)
-  expect_identical(legend$n_legend, c(30L, 7L, 11L))
+  expect_identical(nrow(gold), 24L)
+  expect_identical(legend$n_legend, c(10L, 8L, 8L))
   expect_identical(legend$agrees, c(FALSE, FALSE, TRUE))
 })
 
@@ -283,9 +297,9 @@ test_that("an earlier working sheet is cross-checked card by card", {
   work <- attr(gold, "meta")$working_sheet
 
   expect_true(work$usable)
-  expect_identical(work$sheet, "Tabelle1")
-  expect_identical(work$n_compared, 46L)
-  expect_identical(work$n_agree, 45L)
+  expect_identical(work$sheet, "Working")
+  expect_identical(work$n_compared, 24L)
+  expect_identical(work$n_agree, 23L)
   expect_identical(work$disagreements$card, "07")
   expect_identical(work$disagreements$triage_gold, "red")
   expect_identical(work$disagreements$triage_working, "green")
@@ -307,10 +321,10 @@ test_that("verbose reading reports the deck, the drops and the checks", {
                          deck = deck,
                          working = gold_working_sheet(deck, "7"))
 
-  expect_message(sdt_read_gold_standard(path), "Read 46 cards")
+  expect_message(sdt_read_gold_standard(path), "Read 24 cards")
   expect_message(sdt_read_gold_standard(path), "removed by rule")
   expect_message(sdt_read_gold_standard(path), "Legend cross-check")
-  expect_message(sdt_read_gold_standard(path), "45/46 cards agree")
+  expect_message(sdt_read_gold_standard(path), "23/24 cards agree")
   expect_silent(sdt_read_gold_standard(path, verbose = FALSE))
 })
 
@@ -318,10 +332,10 @@ test_that("the sheet can be named, and an unknown name is refused", {
   skip_if_no_xlsx()
   path <- write_codebook(withr::local_tempdir(), sheet = "Deck")
 
-  # No "Verteilung..." sheet, but only one sheet, so it is unambiguous.
-  expect_identical(nrow(sdt_read_gold_standard(path, verbose = FALSE)), 46L)
+  # Only one sheet, so it is unambiguous whatever it is called.
+  expect_identical(nrow(sdt_read_gold_standard(path, verbose = FALSE)), 24L)
   expect_identical(
-    nrow(sdt_read_gold_standard(path, sheet = "Deck", verbose = FALSE)), 46L
+    nrow(sdt_read_gold_standard(path, sheet = "Deck", verbose = FALSE)), 24L
   )
   expect_error(
     sdt_read_gold_standard(path, sheet = "nope", verbose = FALSE),
@@ -329,15 +343,33 @@ test_that("the sheet can be named, and an unknown name is refused", {
   )
 })
 
-test_that("an ambiguous workbook asks which sheet to read", {
+test_that("the codebook sheet is found by its columns, not its name", {
   skip_if_no_xlsx()
   deck <- gold_deck_rows()
+  # A working sheet carries only an id and a category, so it is no candidate,
+  # whatever either sheet is called.
   path <- write_codebook(withr::local_tempdir(), deck = deck,
                          working = gold_working_sheet(deck), sheet = "Deck")
+  gold <- sdt_read_gold_standard(path, verbose = FALSE)
+  expect_identical(attr(gold, "meta")$sheet, "Deck")
+  expect_identical(nrow(gold), 24L)
+})
+
+test_that("an ambiguous workbook asks which sheet to read", {
+  skip_if_no_xlsx()
+  dir <- withr::local_tempdir()
+  # Two sheets that both carry every contract column.
+  path <- file.path(dir, "two.xlsx")
+  writexl::write_xlsx(
+    list(First = gold_deck_rows(), Second = gold_deck_rows()), path
+  )
 
   expect_error(
     sdt_read_gold_standard(path, verbose = FALSE),
     class = "sandtablR_error_gold"
+  )
+  expect_identical(
+    nrow(sdt_read_gold_standard(path, sheet = "Second", verbose = FALSE)), 24L
   )
 })
 
@@ -350,9 +382,9 @@ test_that("a missing file and a missing column are named, not guessed", {
   )
 
   deck <- gold_deck_rows()
-  deck[["Sichtungskathegorie"]] <- NULL
+  deck[["SK"]] <- NULL
   path <- file.path(dir, "short.xlsx")
-  writexl::write_xlsx(list(`Verteilung Patienten` = deck), path)
+  writexl::write_xlsx(list(Codebook = deck), path)
   expect_error(
     sdt_read_gold_standard(path, verbose = FALSE),
     class = "sandtablR_error_gold"
@@ -364,11 +396,11 @@ test_that("a missing file and a missing column are named, not guessed", {
 
 test_that("every invalid cell is reported at once", {
   skip_if_no_xlsx()
-  sk <- c(rep("1", 30L), rep("2", 5L), rep("3", 11L))
+  sk <- c(rep("1", 10L), rep("2", 6L), rep("3", 8L))
   sk[[2]] <- "9"
-  sex <- rep(c("m", "w"), length.out = 46L)
+  sex <- rep(c("m", "w"), length.out = 24L)
   sex[[4]] <- "unbekannt"
-  age <- as.character(seq.int(20L, by = 1L, length.out = 46L))
+  age <- as.character(seq.int(20L, by = 1L, length.out = 24L))
   age[[6]] <- "999"
   age[[8]] <- "keine Angabe"
   path <- write_codebook(
@@ -391,12 +423,41 @@ test_that("every invalid cell is reported at once", {
 
 test_that("a short deck is a reading error, not a short deck", {
   skip_if_no_xlsx()
-  deck <- gold_deck_rows()[seq_len(45L), , drop = FALSE]
-  path <- write_codebook(withr::local_tempdir(), deck = deck)
-
+  dir <- withr::local_tempdir()
+  # Truncated: only a stated deck size can tell the last card is missing.
+  deck <- gold_deck_rows()[seq_len(23L), , drop = FALSE]
+  path <- write_codebook(dir, deck = deck)
+  expect_error(
+    sdt_read_gold_standard(path, verbose = FALSE, deck_size = 24L),
+    "expected 24 unique cards, found 23"
+  )
+  # A gap shows without one: the deck runs to the highest card id.
+  gap <- gold_deck_rows()[-7L, , drop = FALSE]
+  path <- write_codebook(dir, deck = gap, file = "gap.xlsx")
   expect_error(
     sdt_read_gold_standard(path, verbose = FALSE),
-    "expected 46 unique cards, found 45"
+    "expected 24 unique cards, found 23"
+  )
+})
+
+test_that("the deck size defaults to the highest card id on the sheet", {
+  skip_if_no_xlsx()
+  dir <- withr::local_tempdir()
+  gold <- sdt_read_gold_standard(write_codebook(dir), verbose = FALSE)
+  expect_identical(attr(gold, "meta")$deck_size, 24L)
+  expect_identical(attr(gold, "meta")$deck_size_source, "highest card id")
+  # A stray numbered row beyond the deck enlarges the derived deck, which is
+  # then incomplete: an error that says to state the size, never a silent
+  # extra card.
+  extra <- gold_row("99", "m", "30", "1", "c", "f", "v")
+  path <- write_codebook(dir, extra = extra, file = "stray.xlsx")
+  expect_error(
+    sdt_read_gold_standard(path, verbose = FALSE),
+    "pass deck_size"
+  )
+  expect_error(
+    sdt_read_gold_standard(path, verbose = FALSE, deck_size = 0L),
+    "deck_size"
   )
 })
 

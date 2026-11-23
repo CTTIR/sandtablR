@@ -41,8 +41,8 @@ and the inference that was there before can still be scored against the
 truth that replaced it.
 }
 \details{
-In the TDSC corpus the three replaceable columns start out as a circular
-surrogate (\code{triage}, the inter-team consensus call), a constant
+In a course export the three replaceable columns can start out as a
+circular surrogate (\code{triage}, the inter-team consensus call), a constant
 (\code{age}) and an inference from the log's gendered wording (\code{sex}). After this
 function they are the card's own values, and \code{triage_source} reads \code{"gold"}
 so a downstream result can say which label it routed on. The engine routes

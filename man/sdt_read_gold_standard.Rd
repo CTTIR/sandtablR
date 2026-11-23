@@ -4,21 +4,28 @@
 \alias{sdt_read_gold_standard}
 \title{Read the gold-standard triage codebook}
 \usage{
-sdt_read_gold_standard(path, sheet = NULL, verbose = TRUE)
+sdt_read_gold_standard(path, sheet = NULL, verbose = TRUE, deck_size = NULL)
 }
 \arguments{
 \item{path}{Path to the codebook workbook (\code{.xlsx}). Read-only; nothing is
 written to it or beside it.}
 
-\item{sheet}{Sheet to read. \code{NULL}, the default, takes the sheet whose name
-begins with \code{"Verteilung"}, or the only sheet if the workbook has one.}
+\item{sheet}{Sheet to read. \code{NULL}, the default, takes the only sheet whose
+headers carry every contract column, or the only sheet if the workbook
+has one.}
 
 \item{verbose}{Report the parsed deck, the guard drops and the cross-checks
 while reading.}
+
+\item{deck_size}{Number of cards in the exercise deck, ids \code{1} to
+\code{deck_size}. \code{NULL}, the default, takes the highest card id on the sheet;
+pass it when the sheet may carry numbered rows beyond the deck, so they
+are dropped by the \code{card_out_of_range} guard instead of enlarging it.}
 }
 \value{
 An \code{sdt_gold_standard} object: a \code{\link[tibble:tibble]{tibble::tibble()}} subclass with
-one row per card and the columns \code{card} (\code{"01"}–\code{"46"}), \code{triage}, \code{sex},
+one row per card and the columns \code{card} (zero-padded: \code{"01"}, \code{"02"},
+...), \code{triage}, \code{sex},
 \code{age}, \code{findings}, \code{vitals} and \code{sk_raw}. The \code{meta} attribute carries the
 path, the sheet, the guard drops, the legend cross-check and the working
 sheet cross-check.
@@ -45,7 +52,8 @@ positions are the first thing an edited workbook changes:
 \item \code{blank} — every contract column is empty.
 \item \code{non_numeric_card} — the card id is not a number, which is what catches
 both duplicate test rows carrying a letter id and the shifted legend.
-\item \code{card_out_of_range} — the card id is a number outside the deck.
+\item \code{card_out_of_range} — the card id is a number outside the deck, which
+can only happen when \code{deck_size} is given.
 }
 
 How many rows each guard removed is reported when \code{verbose = TRUE} and kept
@@ -59,6 +67,15 @@ with the parse: the sheet's own \verb{SK I}/\verb{SK II}/\verb{SK III} legend, w
 include the duplicate rows the guards removed, and any earlier working sheet
 in the same workbook. Disagreements are reported, never resolved by quietly
 preferring one source.
+}
+
+\section{The column contract}{
+One row per card, with a column each for the card id, the recorded sex, the
+age, the sighting category (\code{1}/\code{2}/\code{3} or \verb{SK I}/\verb{SK II}/\verb{SK III}), the
+findings and the vital signs. Headers are matched after folding case,
+spacing and punctuation, and several spellings are accepted for each
+(English ones such as \code{Card}, \code{Sex}, \code{Age}, \code{SK}, \code{Findings}, \code{Vitals},
+and the German ones codebooks use). A missing column is named in the error.
 }
 
 \examples{
