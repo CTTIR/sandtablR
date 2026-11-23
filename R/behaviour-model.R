@@ -138,8 +138,9 @@
               function(d) .beh_in(d[["called_triage"]], c("yellow", "gelb")),
               "triaged yellow"),
     .beh_spec("green", list("called_triage"),
-              function(d) .beh_in(d[["called_triage"]], c("green", "gruen",
-                                                          "gr\u00fcn")),
+              function(d) {
+                .beh_in(d[["called_triage"]], c("green", "gruen", "gr\u00fcn"))
+              },
               "triaged green"),
     .beh_spec("icu", list("general_location"),
               function(d) .beh_in(d[["general_location"]], .beh_icu_levels()),
@@ -850,7 +851,9 @@ sdt_fit_behaviour <- function(data,
   t0 <- Sys.time()
   gid <- as.character(data[[group]])
   cid <- as.character(data[[card]])
-  bid <- if (is.null(block)) rep("all", nrow(data)) else {
+  bid <- if (is.null(block)) {
+    rep("all", nrow(data))
+  } else {
     as.character(data[[block]])
   }
   if (anyNA(gid) || anyNA(cid) || anyNA(bid)) {
@@ -1307,7 +1310,9 @@ sdt_fit_behaviour <- function(data,
 format.sdt_behaviour_model <- function(x, ...) {
   rlang::check_dots_empty()
   m <- x$meta
-  cov <- if (is.na(m$frame$min_coverage)) "all rows" else {
+  cov <- if (is.na(m$frame$min_coverage)) {
+    "all rows"
+  } else {
     sprintf("coverage >= %d", m$frame$min_coverage)
   }
   out <- c(

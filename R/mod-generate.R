@@ -532,8 +532,8 @@ mod_generate_server <- function(id, state) {
           sprintf("%d rows, %d columns", nrow(src$data), ncol(src$data))
         ),
         htmltools::div(lapply(det$available %||% character(), function(nm) {
-          .sdt_chip(nm, if (nm %in% .fid_default_controls()) "muted" else
-            "glass")
+          role <- if (nm %in% .fid_default_controls()) "muted" else "glass"
+          .sdt_chip(nm, role)
         })),
         htmltools::div(
           class = "sdt-metric-note",
@@ -1371,8 +1371,8 @@ mod_generate_server <- function(id, state) {
     as.character(.sdt_chip(v, if (identical(v, "PASS")) "green" else "red"))
   }, character(1), USE.NAMES = FALSE)
   shown$Role <- vapply(shown$Role, function(v) {
-    as.character(.sdt_chip(v, if (identical(v, "control")) "yellow" else
-      "glass"))
+    role <- if (identical(v, "control")) "yellow" else "glass"
+    as.character(.sdt_chip(v, role))
   }, character(1), USE.NAMES = FALSE)
   shown
 }
@@ -1383,8 +1383,8 @@ mod_generate_server <- function(id, state) {
     Role = reactable::colDef(
       minWidth = 110,
       cell = function(value) {
-        .sdt_chip(value, if (identical(value, "control")) "yellow" else
-          "glass")
+        role <- if (identical(value, "control")) "yellow" else "glass"
+        .sdt_chip(value, role)
       }
     ),
     Verdict = reactable::colDef(

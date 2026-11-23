@@ -44,8 +44,9 @@
 .fid_rep_names <- function() {
   c(".replicate", "sim", ".sim", "replicate", "replication")
 }
-.fid_block_names <- function() c("session_id", "session", "block", "sid",
-                                 "file")
+.fid_block_names <- function() {
+  c("session_id", "session", "block", "sid", "file")
+}
 
 .fid_key_names <- function() {
   c(.fid_group_names(), .fid_card_names(), .fid_rep_names(),

@@ -609,7 +609,9 @@ sdt_describe_participants <- function(x, by = "short_course_id", ...) {
       if (b$missing_row[[i]]) "-" else format(b$n_level_imputed[[i]])
     )
     if (show_obs) {
-      vals <- c(vals, if (b$missing_row[[i]]) "-" else {
+      vals <- c(vals, if (b$missing_row[[i]]) {
+        "-"
+      } else {
         .describe_pct(b$pct_observed[[i]], digits)
       })
     }

@@ -991,7 +991,9 @@ sdt_participant_summary <- function(x, fields = NULL, by = NULL) {
       )
     }
   }
-  groups <- if (is.null(by)) list(all = seq_len(nrow(x))) else {
+  groups <- if (is.null(by)) {
+    list(all = seq_len(nrow(x)))
+  } else {
     split(seq_len(nrow(x)), factor(x[[by]]))
   }
   src <- .summary_source()

@@ -884,8 +884,9 @@ sdt_triage_accuracy <- function(x, truth = "triage",
   label <- do.call(paste, c(keys, list(sep = " | ")))
   order <- unique(label)
   parts <- split(seq_along(label), factor(label, levels = order))
-  blocks <- lapply(parts, function(i) .triage_block(t_val[usable][i],
-                                                    e_val[usable][i]))
+  blocks <- lapply(parts, function(i) {
+    .triage_block(t_val[usable][i], e_val[usable][i])
+  })
   tables <- lapply(order, function(k) {
     tab <- blocks[[k]]$table
     first <- parts[[k]][[1L]]

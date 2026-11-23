@@ -62,8 +62,8 @@
 #' @keywords internal
 #' @export
 sdt_transformer_fit <- function(x, y, d_model = 16L, num_heads = 2L,
-                                 epochs = 30L, batch_size = 64L,
-                                 dropout = 0.1, ...) {
+                                epochs = 30L, batch_size = 64L,
+                                dropout = 0.1, ...) {
   if (!.sdt_keras_ready()) {
     cli::cli_abort(c(
       "The {.val transformer} engine needs a working {.pkg keras3} backend.",
