@@ -26,9 +26,11 @@
 # The deck. Its size belongs to the exercise, not to the workbook: a codebook
 # that does not describe every card is a reading error rather than a short
 # deck. Pass `deck_size` to state it; left NULL, the deck is taken to run from
-# card 1 to the highest card id on the sheet, so a missing card still shows as
-# a gap, and a stray numbered row beyond the deck shows as a deck too large to
-# be complete rather than as a silent extra card.
+# card 1 to the highest card id on the sheet, so a card missing inside the deck
+# still shows as a gap, and a stray numbered row beyond the deck shows as a
+# deck too large to be complete rather than as a silent extra card. Cards
+# missing from the end are invisible that way; only a stated size, or the
+# legend cross-check, catches them.
 .gold_resolve_deck <- function(ids, deck_size, call = rlang::caller_env()) {
   if (!is.null(deck_size)) {
     return(.check_count(deck_size, arg = "deck_size", call = call))
@@ -154,8 +156,8 @@ new_sdt_gold_standard <- function(x, meta) {
 #'
 #' This is the ground truth the course exports do not contain. An export
 #' records the calls teams made, so any triage number computed from it alone
-#' is inter-team agreement; the field that looks like an answer key is a
-#' round-robin placeholder. Pair this reader with
+#' is inter-team agreement, and a field that looks like an answer key can be a
+#' placeholder. Pair this reader with
 #' [sdt_apply_gold_standard()] and [sdt_triage_accuracy()] to score calls
 #' against the deck rather than against each other.
 #'
@@ -201,9 +203,11 @@ new_sdt_gold_standard <- function(x, meta) {
 #' @param verbose Report the parsed deck, the guard drops and the cross-checks
 #'   while reading.
 #' @param deck_size Number of cards in the exercise deck, ids `1` to
-#'   `deck_size`. `NULL`, the default, takes the highest card id on the sheet;
-#'   pass it when the sheet may carry numbered rows beyond the deck, so they
-#'   are dropped by the `card_out_of_range` guard instead of enlarging it.
+#'   `deck_size`. `NULL`, the default, takes the highest card id on the sheet,
+#'   which cannot tell that cards are missing from the end of the deck. Pass
+#'   it to check that the deck is complete, and when the sheet may carry
+#'   numbered rows beyond the deck, so they are dropped by the
+#'   `card_out_of_range` guard instead of enlarging it.
 #'
 #' @return An `sdt_gold_standard` object: a [tibble::tibble()] subclass with
 #'   one row per card and the columns `card` (zero-padded: `"01"`, `"02"`,
@@ -571,6 +575,15 @@ sdt_read_gold_standard <- function(path, sheet = NULL, verbose = TRUE,
     "i" = "Sex: {n_female} female of {nrow(x)}; age {age_range[[1]]}
            to {age_range[[2]]}."
   ))
+  # A deck that ends at the highest card id cannot show a card missing from
+  # its end, so the reader says where the size came from.
+  if (identical(meta$deck_size_source, "highest card id")) {
+    n_deck <- meta$deck_size
+    cli::cli_inform(c(
+      "i" = "Deck size {n_deck}, taken from the highest card id. Pass
+             {.arg deck_size} to check that no card is missing at the end."
+    ))
+  }
   g <- meta$guards
   drops <- g[g$n_dropped > 0L, , drop = FALSE]
   if (nrow(drops)) {

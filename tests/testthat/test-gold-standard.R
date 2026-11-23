@@ -443,9 +443,22 @@ test_that("a short deck is a reading error, not a short deck", {
 test_that("the deck size defaults to the highest card id on the sheet", {
   skip_if_no_xlsx()
   dir <- withr::local_tempdir()
-  gold <- sdt_read_gold_standard(write_codebook(dir), verbose = FALSE)
+  plain <- write_codebook(dir)
+  gold <- sdt_read_gold_standard(plain, verbose = FALSE)
   expect_identical(attr(gold, "meta")$deck_size, 24L)
   expect_identical(attr(gold, "meta")$deck_size_source, "highest card id")
+  # A card missing from the end of the deck cannot show without a stated
+  # size, so the reader says where the size came from, and only then.
+  expect_message(sdt_read_gold_standard(plain),
+                 "Deck size 24, taken from the highest card id")
+  stated <- testthat::capture_messages(
+    sdt_read_gold_standard(plain, deck_size = 24L)
+  )
+  expect_false(any(grepl("highest card id", stated)))
+  truncated <- write_codebook(dir, deck = gold_deck_rows()[seq_len(23L), ],
+                              file = "truncated.xlsx")
+  expect_message(sdt_read_gold_standard(truncated),
+                 "Deck size 23, taken from the highest card id")
   # A stray numbered row beyond the deck enlarges the derived deck, which is
   # then incomplete: an error that says to state the size, never a silent
   # extra card.

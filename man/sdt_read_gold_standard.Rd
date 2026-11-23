@@ -18,9 +18,11 @@ has one.}
 while reading.}
 
 \item{deck_size}{Number of cards in the exercise deck, ids \code{1} to
-\code{deck_size}. \code{NULL}, the default, takes the highest card id on the sheet;
-pass it when the sheet may carry numbered rows beyond the deck, so they
-are dropped by the \code{card_out_of_range} guard instead of enlarging it.}
+\code{deck_size}. \code{NULL}, the default, takes the highest card id on the sheet,
+which cannot tell that cards are missing from the end of the deck. Pass
+it to check that the deck is complete, and when the sheet may carry
+numbered rows beyond the deck, so they are dropped by the
+\code{card_out_of_range} guard instead of enlarging it.}
 }
 \value{
 An \code{sdt_gold_standard} object: a \code{\link[tibble:tibble]{tibble::tibble()}} subclass with
@@ -38,8 +40,8 @@ sex, age, clinical findings and vital signs.
 \details{
 This is the ground truth the course exports do not contain. An export
 records the calls teams made, so any triage number computed from it alone
-is inter-team agreement; the field that looks like an answer key is a
-round-robin placeholder. Pair this reader with
+is inter-team agreement, and a field that looks like an answer key can be a
+placeholder. Pair this reader with
 \code{\link[=sdt_apply_gold_standard]{sdt_apply_gold_standard()}} and \code{\link[=sdt_triage_accuracy]{sdt_triage_accuracy()}} to score calls
 against the deck rather than against each other.
 }
