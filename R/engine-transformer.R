@@ -9,10 +9,11 @@
 # registry grades it "closed" rather than "black": the distinction is whether
 # an explanation is FAITHFUL, not whether one can be produced.
 #
-# WHY IT IS HERE AT ALL. On this corpus it is the wrong tool and is expected to
-# say so: the effective sample size is 46 cards, not 5,173 rows, and a model
-# with thousands of parameters cannot learn more from 46 facts than a logistic
-# regression does. It earns its place by being the honest upper bound on that
+# WHY IT IS HERE AT ALL. On a course export it is the wrong tool and is
+# expected to say so: the effective sample size is the number of distinct
+# cards, not the number of rows, and a model with thousands of parameters
+# cannot learn more from a few dozen facts than a logistic regression does.
+# It earns its place by being the honest upper bound on that
 # claim -- and by being the model class that becomes reasonable once the
 # simulator is used to expand the training set, which is the whole point of a
 # behaviourally benchmarked synthetic cohort.

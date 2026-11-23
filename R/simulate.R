@@ -677,9 +677,8 @@ summary.game_run <- function(object, reference = FALSE,
   # Break the tie on `step`, not on row order. A simulated run draws continuous
   # start times and never ties, so this is invisible there -- but an observed
   # log records many moves inside one round, and `with_ties = FALSE` was then
-  # returning whichever row happened to come first. On 19 real course exports
-  # that mis-assigned 351 of 6,048 end states, and reversing the row order of
-  # the same data changed the answer.
+  # returning whichever row happened to come first, so reversing the row
+  # order of the same log could change a casualty's end state.
   grouped <- dplyr::group_by(ev, .data$replication, .data$id)
   latest <- dplyr::slice_max(
     grouped, dplyr::pick("start", "step"), n = 1L, with_ties = FALSE

@@ -125,9 +125,9 @@ casualty (an eFAST leading to a CT) is likewise absent.
 Every simulated group is also dealt every card, while an observed group can
 have missing outcome values -- a casualty its team never triaged. Those
 groups differ in \emph{which} cards contribute to their rate, and that is spread
-the simulation has no way to produce. On the validation corpus \code{red} is
-missing in 105 of 3410 cells and its dispersion ratio reads 1.20 over all
-110 groups but 0.97 over the 64 groups with a complete card set.
+the simulation has no way to produce. Even a small share of missing cells
+can push a dispersion ratio above one over all groups while it stays close
+to one over the groups with a complete card set.
 \code{model$meta$sds$n_missing} counts those cells, so a fidelity comparison can
 restrict itself to the groups that have none.
 }

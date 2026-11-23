@@ -11,11 +11,11 @@
 #
 # Two things here are unlike the rest of the workbench.
 #
-# The fit is slow. It is one mixed model per outcome, and the fourteen-outcome
-# fit on the validation corpus takes ninety seconds. A button that stalls for a
-# minute and a half with no warning reads as a hung app, so the outcome picker
-# defaults to a small set, says what a longer one costs before the press, and
-# the elapsed time of the last fit is reported afterwards.
+# The fit is slow. It is one mixed model per outcome, and fitting every
+# outcome on a large course export can take minutes. A button that stalls that
+# long with no warning reads as a hung app, so the outcome picker defaults to
+# a small set, says what a longer one costs before the press, and the elapsed
+# time of the last fit is reported afterwards.
 #
 # And the data need not come from this session at all. The point of the feature
 # is to take somebody else's course export and hand back further groups, so
@@ -551,9 +551,9 @@ mod_generate_server <- function(id, state) {
         class = "sdt-metric-note",
         if (slow) .sdt_chip("Slow", "red"),
         sprintf(
-          paste("%d outcome%s selected. Each one is a separate mixed model:",
-                "three of them take about 20 seconds on the 4868-row course",
-                "corpus, and all fourteen take 91 seconds."),
+          paste("%d outcome%s selected. Each one is a separate mixed model,",
+                "so the fit grows with every outcome added; on a large course",
+                "export, fitting many outcomes can take minutes."),
           n, if (n == 1L) "" else "s"
         )
       )
@@ -956,8 +956,8 @@ mod_generate_server <- function(id, state) {
 }
 
 # Above this many outcomes the fit is worth warning about before it is asked
-# for. Three take about twenty seconds on the course corpus, which a progress
-# bar carries; beyond that a press starts to look like a hung app.
+# for. A few outcomes fit in the time a progress bar carries; beyond that a
+# press starts to look like a hung app.
 .sdt_gen_slow_at <- function() 3L
 
 # A number arriving from a control, sanitised. A cleared numericInput arrives

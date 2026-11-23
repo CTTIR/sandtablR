@@ -6,12 +6,10 @@
 # further twenty teams have done?", because it has no team-level term at all:
 # every replication draws from the same routing probabilities, so its spread is
 # the Monte Carlo noise of one fixed policy, and it shrinks as the cohort grows
-# rather than settling on the spread of real teams. Measured like for like on
-# the validation corpus -- the same 31-card composition, 20 engine
-# replications against 110 real groups -- the engine puts 8.4% of casualties
-# through the operating room with an SD of 0.038, where the real groups put
-# 24.1% through with an SD of 0.072 and a range of 0.10 to 0.45. It is the
-# wrong level and half the spread, and no seed fixes either.
+# rather than settling on the spread of real teams. Compared like for like
+# with observed groups on the same cards, the engine can sit at a different
+# level from them, and its replications spread far less than real teams do.
+# No seed fixes either.
 #
 # What follows is the other half: a per-outcome hierarchical logistic model
 #
@@ -31,14 +29,14 @@
 #     happened to reach as well as what it did with them. A simulator deals
 #     every card to every simulated group, so it cannot produce that first
 #     part, and the comparison is off for a reason that has nothing to do with
-#     the model: measured on the full deck the ratio is 1.10 for TASC and 1.33
-#     for eFAST, against 1.00 and 1.02 on the matched frame built from the same
-#     rows. `frame = "matched"` restricts to cards seen by enough groups and to
-#     the groups that saw all of them, and is the default for that reason.
+#     the model: on the full deck the dispersion ratio drifts above one, while
+#     on the matched frame built from the same rows it is close to one.
+#     `frame = "matched"` restricts to cards seen by enough groups and to the
+#     groups that saw all of them, and is the default for that reason.
 #   * The team random effect is what makes the simulation faithful. With
 #     `(1 | group)` the simulated between-group SD matches the observed one;
-#     without it the simulator is too consistent, and the ratio moves away from
-#     one by up to 60%.
+#     without it the simulator is too consistent, and the ratio moves well
+#     away from one.
 #
 # Each outcome is fitted separately. That is a deliberate simplification and a
 # real limitation: a simulated team's tendencies are independent across
@@ -57,9 +55,10 @@
 # can never explain the TEAM random effect, which is the one the simulator
 # draws from. The random block intercept stays in the formula regardless: the
 # covariates are there to explain part of it, not to stand in for it, and
-# with fifteen informative courses a handful of between-course slopes cannot
-# be trusted to do the second job. Whether they manage even the first is
-# reported rather than assumed -- `$meta$block_variance` carries the block SD
+# with as few courses as a register typically holds, a handful of
+# between-course slopes cannot be trusted to do the second job. Whether they
+# manage even the first is reported rather than assumed --
+# `$meta$block_variance` carries the block SD
 # before and after, per outcome, and it is allowed to come out at zero.
 
 
@@ -305,7 +304,7 @@
 # One row per block, joined on the block key, centred and scaled over the
 # distinct blocks so that each course counts once however many groups it
 # happened to run. The centring is kept because the simulator has to invert
-# it: a caller describes a course on the natural scale ("59% surgeons") and
+# it: a caller describes a course on the natural scale ("half surgeons") and
 # the fitted slope lives in standard-deviation units.
 #
 # Every check below collects rather than aborts on the first offender, so a
@@ -351,9 +350,9 @@
 
 # Two covariates a between-block regression cannot tell apart. This is not a
 # remote possibility on a course corpus: a missingness indicator is often an
-# exact copy of "this course had no participants at all", and in the real
-# register the title non-response rate correlates with the doctorate share at
-# -0.96 for the mechanical reason that both are computed from the same box.
+# exact copy of "this course had no participants at all", and a title
+# non-response rate can be almost perfectly correlated with a doctorate share
+# for the mechanical reason that both are computed from the same box.
 .beh_cov_collinear <- function(z, names, call) {
   p <- ncol(z)
   if (p < 2L) {
@@ -683,9 +682,9 @@
 #' them, so every group in the fit answered the same questions. `frame = "all"`
 #' fits on everything and warns: a simulator deals every card to every group,
 #' so it cannot reproduce composition spread, and the dispersion ratio is then
-#' wrong for a reason that has nothing to do with the model. Measured on the
-#' validation corpus, the full deck reports 1.10 for TASC and 1.33 for eFAST
-#' where the matched frame built from the same rows reports 1.00 and 1.02.
+#' wrong for a reason that has nothing to do with the model: on the full deck
+#' it drifts above one, while on the matched frame built from the same rows it
+#' is close to one.
 #'
 #' With `min_coverage = NULL` the threshold is chosen to maximise cards times
 #' groups -- the number of complete decision episodes -- with ties going to the
@@ -725,8 +724,8 @@
 #' them on exactly the same rows, and `$meta$block_variance` reports the
 #' block SD before and after, the share of block variance removed, and the
 #' deviance and AIC change. That doubles the fitting time and it is the point
-#' of the exercise: the answer is allowed to be "nothing", and on this corpus
-#' it usually is.
+#' of the exercise: the answer is allowed to be "nothing", and with
+#' composition a course-level covariate it often is.
 #'
 #' @section Outcomes:
 #' `outcomes = NULL` auto-detects everything the catalogue can build from the
@@ -1085,17 +1084,16 @@ sdt_fit_behaviour <- function(data,
     "x" = "Groups saw different cards, so between-group dispersion measured
            here is composition variance, not team variance.",
     "i" = "A simulator deals every card to every group, so it cannot
-           reproduce that composition spread. Measured on the validation
-           corpus, the full deck reports a dispersion ratio of 1.10 for TASC
-           and 1.33 for eFAST where the matched frame reports 1.00 and 1.02
-           from the same rows.",
+           reproduce that composition spread: the dispersion ratio drifts
+           away from one here, while on a matched frame built from the same
+           rows it is close to one.",
     "i" = "Use {.code frame = \"matched\"} for anything you intend to report."
   ), class = "sandtablR_warning_behaviour")
 }
 
 # Say so out loud when the covariates were asked to explain a session spread
-# that was not there to begin with. On this corpus that is the usual answer
-# rather than an exception, and it is a fact about the design -- composition
+# that was not there to begin with. That is a common answer rather than an
+# exception, and it is a fact about the design -- composition
 # is a course-level covariate -- not a fault in the covariates.
 .beh_warn_flat_blocks <- function(block_variance) {
   if (is.null(block_variance) || !nrow(block_variance)) {
@@ -1253,11 +1251,12 @@ sdt_fit_behaviour <- function(data,
 
 # lme4 integrates the random effects out by a Laplace approximation at
 # `nAGQ = 1`, and that approximation is biased UPWARD in the variance component
-# when a cluster carries very few events. On this corpus X-ray averages 0.65
-# events per team and its fitted team SD is about 11% too large, which makes a
-# simulated cohort more dispersed than the real one and reads as a fidelity
-# failure. Adaptive Gauss-Hermite quadrature removes most of that bias, but
-# lme4 supports it only for a model with ONE grouping factor. This is the gate:
+# when a cluster carries very few events. For a rare outcome, with well under
+# one event per team, the fitted team SD comes out noticeably too large, which
+# makes a simulated cohort more dispersed than the real one and reads as a
+# fidelity failure. Adaptive Gauss-Hermite quadrature removes most of that
+# bias, but lme4 supports it only for a model with ONE grouping factor. This
+# is the gate:
 # a caller that asks for quadrature on a cross-classified model is told why it
 # cannot have it rather than handed a Laplace fit that silently ignored the
 # request.
@@ -1374,8 +1373,8 @@ format.sdt_behaviour_model <- function(x, ...) {
 
 # A team standard deviation this wide on the logit scale is separation, not a
 # smooth tendency: the middle 95% of teams would span a rate from about
-# 1 in 20,000 to its mirror image. Measured on the validation corpus it is the
-# signature of an outcome most teams never produced at all.
+# 1 in 20,000 to its mirror image. In practice it is the signature of an
+# outcome most teams never produced at all.
 .beh_wide_sd <- function() 5
 
 #' @export
@@ -1464,9 +1463,9 @@ print.sdt_behaviour_model <- function(x, ...) {
 #' Every simulated group is also dealt every card, while an observed group can
 #' have missing outcome values -- a casualty its team never triaged. Those
 #' groups differ in *which* cards contribute to their rate, and that is spread
-#' the simulation has no way to produce. On the validation corpus `red` is
-#' missing in 105 of 3410 cells and its dispersion ratio reads 1.20 over all
-#' 110 groups but 0.97 over the 64 groups with a complete card set.
+#' the simulation has no way to produce. Even a small share of missing cells
+#' can push a dispersion ratio above one over all groups while it stays close
+#' to one over the groups with a complete card set.
 #' `model$meta$sds$n_missing` counts those cells, so a fidelity comparison can
 #' restrict itself to the groups that have none.
 #'

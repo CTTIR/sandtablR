@@ -2,9 +2,8 @@
 #
 # The panel wraps three slow, stateful engine calls and one file writer, so
 # these drive the whole path -- ingest, fit, simulate, score, download -- on a
-# fixture small enough to fit in a unit test. The corpus the feature was built
-# against is 4868 rows and 149 groups; nothing here loads it, because a test
-# that takes ninety seconds is a test nobody runs.
+# fixture small enough to fit in a unit test. Nothing here loads a real course
+# export, because a test that takes minutes is a test nobody runs.
 #
 # The failure paths matter more than the happy one. A panel like this is
 # trusted, and the three ways it can quietly mislead are a file it read wrong,
@@ -761,7 +760,9 @@ test_that("the cost line warns before a long fit, and only then", {
     session$setInputs(source = "file", upload = gen_upload(path))
     cheap <- gen_html(output$cost)
     expect_match(cheap, "3 outcomes selected", fixed = TRUE)
-    expect_match(cheap, "91 seconds", fixed = TRUE)
+    expect_match(cheap, "can take minutes", fixed = TRUE)
+    # The cost line states no timing measured on any particular data set.
+    expect_false(grepl("[0-9]+ seconds", cheap))
     expect_false(grepl("sdt-chip-red", cheap, fixed = TRUE))
     session$setInputs(outcomes = c("efast", "ct", "died"))
     expect_length(chosen_outcomes(), 3L)

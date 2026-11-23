@@ -44,8 +44,8 @@ composition-matched frame of \code{\link[=sdt_fit_behaviour]{sdt_fit_behaviour()
 from that function on purpose: there dispersion is measured off the same
 frame that was fitted, while here the card term is in the model and the
 between-team dispersion is measured separately by \code{\link[=sdt_error_fidelity]{sdt_error_fidelity()}},
-which does its own matching. Matching here would cost a category its
-cards -- on this corpus the matched frame keeps 2 of the 5 yellow cards.}
+which does its own matching. Matching here can cost a category with only
+a few cards most of them.}
 
 \item{min_coverage}{Passed to the matched frame; \code{NULL} chooses it.}
 
@@ -103,13 +103,13 @@ accuracy and its error direction, and \code{joint = TRUE} estimates exactly that
 }
 
 \section{Why the card term is load-bearing}{
-Cards inside one true category are not alike. On the validation corpus red
-card 14 was called correctly by 26\% of teams and 15 of the 30 red cards by
-every team. Removing the card term does not shrink the team effect, it
-\strong{erases} it: the fitted team SD goes to exactly 0 for red and for yellow,
-against 0.544 and 0.639 with the card term, and the AIC is 473 and 137
-worse. Every group saw nearly the same deck, so the spread of raw hit rates
-across teams is \emph{narrower} than binomial noise around a single pooled
+Cards inside one true category are not alike: one card can be called
+correctly by a minority of teams, others by every team. Removing the card
+term then does not shrink the team effect, it can \strong{erase} it: the fitted
+team SD goes to exactly 0, against a clearly positive one with the card
+term, at a much worse AIC. When every group sees nearly the same deck, the
+spread of raw hit rates across teams can be \emph{narrower} than binomial noise
+around a single pooled
 probability, and a model with one probability per category can only account
 for that by setting the team variance to zero.
 
@@ -118,12 +118,11 @@ one value for both parts, or two -- \code{c("fixed", "none")} sets the hit part
 then the split part -- or a named vector such as
 \code{c(hit = "fixed", split = "random")}.
 
-The split part defaults to \code{"none"}, and that is measured rather than
-assumed. Its cells hold few error rows with a small minority (176, 124 and
-529 rows with 10, 24 and 38 minority calls on this corpus); a card-fixed
-split runs the yellow team SD up to 41 on the logit scale, is worse by AIC
-than no card term for red, and leaves any card that no team ever miscalled
-with no coefficient at all. It also costs little, because for red both
+The split part defaults to \code{"none"}. Its cells hold few error rows with a
+small minority; a card-fixed split can run a team SD up to separation on
+the logit scale, can be worse by AIC than no card term, and leaves any card
+that no team ever miscalled with no coefficient at all. It also costs
+little, because for red both
 wrong answers are under-triage and for green both are over-triage: the
 split moves cells \emph{inside} the confusion matrix without moving the
 over- and under-triage rates.
@@ -145,12 +144,13 @@ and flagged \code{singular}: teams not differing is a finding, not a failure.
 \code{joint = TRUE} stacks a category's two parts and fits them together with an
 unstructured team covariance, which is the full multinomial mixed model for
 that category. It is a \strong{diagnostic}: it measures the one parameter the
-default gives up, and \code{\link[=sdt_simulate_triage]{sdt_simulate_triage()}} never reads it. Run on the
-validation corpus it converged for green only -- correlation \code{-0.050}, and
-a joint AIC equal to the sum of the two separate ones -- while red came
-back rank deficient with a team correlation of 0.99 and yellow ran its
-split SD to 33-40. The full multinomial does not fit reliably at this n,
-and where it does fit it says the constraint costs nothing.
+default gives up, and \code{\link[=sdt_simulate_triage]{sdt_simulate_triage()}} never reads it. At
+course-sized n it often converges for some categories only: where it does,
+the correlation is near zero and the joint AIC equals the sum of the two
+separate ones; elsewhere it comes back rank deficient, with a team
+correlation near one or a split SD at separation. The full multinomial need
+not fit reliably at this n, and where it does fit it says the constraint
+costs nothing.
 }
 
 \section{The team term}{

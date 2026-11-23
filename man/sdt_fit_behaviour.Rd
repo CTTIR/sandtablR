@@ -99,9 +99,9 @@ seen by at least \code{min_coverage} groups and only the groups that saw all of
 them, so every group in the fit answered the same questions. \code{frame = "all"}
 fits on everything and warns: a simulator deals every card to every group,
 so it cannot reproduce composition spread, and the dispersion ratio is then
-wrong for a reason that has nothing to do with the model. Measured on the
-validation corpus, the full deck reports 1.10 for TASC and 1.33 for eFAST
-where the matched frame built from the same rows reports 1.00 and 1.02.
+wrong for a reason that has nothing to do with the model: on the full deck
+it drifts above one, while on the matched frame built from the same rows it
+is close to one.
 
 With \code{min_coverage = NULL} the threshold is chosen to maximise cards times
 groups -- the number of complete decision episodes -- with ties going to the
@@ -142,8 +142,8 @@ Each outcome is then fitted \strong{twice}, with the covariates and without
 them on exactly the same rows, and \verb{$meta$block_variance} reports the
 block SD before and after, the share of block variance removed, and the
 deviance and AIC change. That doubles the fitting time and it is the point
-of the exercise: the answer is allowed to be "nothing", and on this corpus
-it usually is.
+of the exercise: the answer is allowed to be "nothing", and with
+composition a course-level covariate it often is.
 }
 
 \section{Outcomes}{

@@ -279,10 +279,10 @@ defaults <- list(
   #                              already absorbs the green area into. This is a
   #                              modelling choice, not a published fact, and it
   #                              is the one summary.game_run(map=) exists to let
-  #                              a caller vary: on real course data, folding
-  #                              them to "ward" versus dropping them from the
-  #                              denominator moves max|difference| against the
-  #                              published v1.0 marginal from 0.043 to 0.061.
+  #                              a caller vary: folding them to "ward" or
+  #                              dropping them from the denominator are both
+  #                              defensible, and the choice moves the
+  #                              comparison with the published marginal.
   end_state_map = c(
     triage = "triage", ed_red = "ed", ed_yellow = "ed",
     diagnostics = "diagnostics", or = "or", recovery = "recovery",
@@ -296,14 +296,14 @@ defaults <- list(
   # end_state_map alone hides, because the map folds the green area onto the
   # ward and thereby makes a holding area look like a disposition.
   #
-  # Measured on 19 real course exports (149 team play-throughs): the green
-  # area is terminal for only 10.4% of visits (n = 838) against 98.3% for the
-  # ward, and 58.1% of the casualties who leave it are escalated to the yellow
-  # emergency department. It is a holding and re-triage area, not a bed.
+  # In observed play the green area is rarely where a casualty ends up: many
+  # of the casualties who leave it are escalated to the yellow emergency
+  # department, while the ward is almost always terminal. It is a holding and
+  # re-triage area, not a bed.
   #
   # The published calibration depends on the green area folding to the ward,
   # so this is documentation of a known divergence, not a lever: changing the
-  # fold moves max|difference| from 0.040 to 0.272.
+  # fold moves the calibrated end state far from the published one.
   area_roles = c(
     triage = "transit", ed_red = "transit", ed_yellow = "transit",
     diagnostics = "transit", or = "transit", recovery = "transit",

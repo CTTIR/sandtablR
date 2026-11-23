@@ -13,11 +13,10 @@
 # Everything here is computed on a composition-matched frame, and that is not a
 # stylistic choice. Groups are truncated at different points, so on the full
 # deck every group is scored on a different card set and that composition
-# variance is indistinguishable from behavioural variance. Measured on the 19
-# real course exports: the observed between-group SD of the TASC rate is
-# 0.1535 across the 149 groups on the full 46-card deck, and 0.1888 across the
-# 140 groups that all saw the same 22 cards -- a 19% understatement of the
-# team effect before a simulator is involved at all. `.fid_match()` therefore
+# variance is indistinguishable from behavioural variance: the observed
+# between-group SD of a rate on the full deck can differ markedly from the
+# same SD over the groups that all saw the same cards, misstating the team
+# effect before a simulator is involved at all. `.fid_match()` therefore
 # intersects the cards, keeps only the groups that saw all of them, and
 # records what it dropped.
 
@@ -101,10 +100,10 @@
 #' Between-group dispersion is only meaningful when every group is scored on
 #' the same cards. `sdt_fidelity()` enforces that: it intersects the card sets
 #' of the two frames, then keeps only groups that saw every card in the
-#' intersection, and records what it dropped in the `"frame"` attribute. On
-#' the real course corpus, skipping this step reports no team signal at all,
-#' because each truncated group saw a different deck and that composition
-#' variance swamps the behavioural one.
+#' intersection, and records what it dropped in the `"frame"` attribute.
+#' Skipping this step can report no team signal at all, because each
+#' truncated group saw a different deck and that composition variance swamps
+#' the behavioural one.
 #'
 #' @section Negative controls:
 #'
@@ -795,8 +794,8 @@ sdt_plot_fidelity <- function(x) {
   # A group that saw every shared card but has no recorded value on three of
   # them is scored over the cells it has, while the simulated side is scored
   # over all of them -- and the two denominators then differ. That inflates
-  # the dispersion ratio: on this corpus `red` is missing in 105 of 3410
-  # cells and reads 1.204 unmatched against 0.968 matched. So a group is
+  # the dispersion ratio: even a small share of missing cells can lift it
+  # above one unmatched while it sits near one matched. So a group is
   # dropped here unless its non-missing cells cover every shared card.
   n_incomplete <- 0L
   if (!is.null(cards) && !is.null(df$.fid_card)) {
@@ -905,11 +904,11 @@ sdt_plot_fidelity <- function(x) {
 #
 # `.fid_boot_ci()` resamples GROUPS on each side and holds the simulator's draw
 # fixed, so it answers "how much would the ratio move if these teams had been a
-# different sample of teams?". At a 2% event rate that is not the question that
-# matters. The dominant uncertainty is that a fresh RUN of the simulator gives
-# a materially different simulated SD -- the replicate SDs for `xray` on this
-# corpus span more than a factor of two -- and the bootstrap cannot see it,
-# because it never redraws the cohort.
+# different sample of teams?". For a rare outcome that is not the question
+# that matters. The dominant uncertainty is that a fresh RUN of the simulator
+# gives a materially different simulated SD -- replicate SDs for a rare
+# outcome can differ several-fold -- and the bootstrap cannot see it, because
+# it never redraws the cohort.
 #
 # This interval does. Each replicate is one complete simulated cohort, so
 # `observed / SD(replicate r)` is the ratio that run would have reported, and

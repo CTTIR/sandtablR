@@ -9,12 +9,12 @@
 # team call?". The response is the called category CONDITIONAL ON THE TRUE
 # ONE, and its distribution is a row of the confusion matrix.
 #
-# That conditioning is not a detail. Measured on the 19 course exports against
-# the gold standard, the overall hit rate is 0.821 -- but it is 0.937 on red,
-# 0.685 on yellow and 0.634 on green, and the errors are overwhelmingly in one
-# direction (over-triage 0.136, under-triage 0.043). A model of the marginal
-# "called red" rate reproduces none of that structure, because the marginal
-# rate is a mixture over truths and the mixture weights are the deck's.
+# That conditioning is not a detail. Against a gold standard, one overall hit
+# rate hides that accuracy can differ sharply between the true categories,
+# and that the errors can lean heavily in one direction (far more over-triage
+# than under-triage, say). A model of the marginal "called red" rate
+# reproduces none of that structure, because the marginal rate is a mixture
+# over truths and the mixture weights are the deck's.
 #
 # The parameterisation
 # ~~~~~~~~~~~~~~~~~~~~
@@ -33,44 +33,44 @@
 # accuracy and its error direction.
 #
 # `joint = TRUE` estimates that correlation, by stacking the two parts and
-# fitting `(0 + part | group)` with an unstructured 2x2 covariance. It was
-# tried on the real corpus, and it is why the decomposition is the default
+# fitting `(0 + part | group)` with an unstructured 2x2 covariance. What it
+# typically reports at course-sized n is why the decomposition is the default
 # rather than a shortcut:
 #
-#   green   converged in 4s, correlation -0.050, and the joint AIC (1651.0)
-#           equals the sum of the two separate AICs (1394.3 + 256.7). The
-#           correlation is worth nothing here.
-#   red     rank deficient -- 15 of the 30 red cards were never miscalled, so
-#           they exist in the hit part and not in the split part -- and the
-#           team covariance collapses onto a correlation of 0.99 with a split
-#           SD at the boundary (4.7 to 5.5).
-#   yellow  the split SD runs to 33-40 on the logit scale. That is separation
-#           in a cell with 124 error rows, not a team effect.
+#   * where it converges, the correlation is near zero and the joint AIC
+#     equals the sum of the two separate AICs: the correlation is worth
+#     nothing;
+#   * where many cards of a category were never miscalled, those cards exist
+#     in the hit part and not in the split part, the fit is rank deficient,
+#     and the team covariance collapses onto a correlation near one with a
+#     split SD at the boundary;
+#   * where error rows are few, the split SD runs to separation on the logit
+#     scale, which is not a team effect.
 #
-# So the full multinomial mixed model does NOT fit reliably at this n, in two
-# of the three cells, and the one cell where it does says the constraint the
-# fallback imposes costs nothing. `joint = TRUE` is kept so that statement is
+# So the full multinomial mixed model need not fit reliably at this n, and
+# where it does fit it says the constraint the fallback imposes costs
+# nothing. `joint = TRUE` is kept so that statement is
 # reproducible rather than a footnote, and it records its own failure per
 # category instead of quietly degrading.
 #
 # Why the card term is load-bearing
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Cards within one true category are wildly unequal: red card 14 was called
-# correctly by 26% of teams and 15 of the 30 red cards by 100% of them. Drop
-# the card effect and the team variance does not merely shrink, it VANISHES --
-# the fitted team SD is exactly 0 for red and for yellow, against 0.544 and
-# 0.639 with it, and the AIC is 473 and 137 worse. The reason is that every
-# group sees nearly the same deck, so the spread of raw hit rates across teams
-# is SMALLER than binomial noise around the pooled rate would imply; a model
+# Cards within one true category can be wildly unequal: one card is called
+# correctly by a minority of teams, others by every team. Drop the card effect
+# and the team variance does not merely shrink, it can VANISH -- the fitted
+# team SD goes to exactly 0, against a clearly positive one with the card
+# term, at a much worse AIC. The reason is that every group sees nearly the
+# same deck, so the spread of raw hit rates across teams can be SMALLER than
+# binomial noise around the pooled rate would imply; a model
 # with one probability per category can only explain that by setting the team
 # variance to zero. The card term is what makes the team term visible.
 #
-# The split part is fitted WITHOUT a card term by default, and that is
-# measured too. Its cells hold 176, 124 and 529 error rows with minority
-# counts of 10, 24 and 38; a card-fixed split blows the yellow team SD up to
-# 41, is worse by AIC than no card term at all for red, and leaves any card
-# that was never miscalled with no coefficient at all. It costs little: for
-# red both wrong answers are under-triage and for green both are over-triage,
+# The split part is fitted WITHOUT a card term by default. Its cells hold few
+# error rows with a small minority; a card-fixed split can blow a team SD up
+# to separation, can be worse by AIC than no card term at all, and leaves any
+# card that was never miscalled with no coefficient at all. It costs little:
+# for red both wrong answers are under-triage and for green both are
+# over-triage,
 # so the split moves cells inside the confusion matrix without moving the
 # over- and under-triage rates. Only yellow's split IS the direction of
 # error, and yellow is exactly the cell where a card term cannot be
@@ -286,9 +286,9 @@
 
 # Is a card term worth attempting on these rows at all? A fixed effect per
 # card needs at least as many minority events as there are cards before it is
-# anything but an interpolation of the cell -- the red split has 10 green
-# calls spread over 15 cards, and fitting a coefficient per card there is
-# fitting noise. The check is made before the optimiser is asked, because a
+# anything but an interpolation of the cell -- a handful of minority calls
+# spread over more cards than there are calls is fitting noise. The check is
+# made before the optimiser is asked, because a
 # fit that overfits does not fail, it succeeds and lies.
 .te_card_feasible <- function(d, card_effect) {
   if (identical(card_effect, "none")) {
@@ -636,13 +636,13 @@
 #'
 #' # Why the card term is load-bearing
 #'
-#' Cards inside one true category are not alike. On the validation corpus red
-#' card 14 was called correctly by 26% of teams and 15 of the 30 red cards by
-#' every team. Removing the card term does not shrink the team effect, it
-#' **erases** it: the fitted team SD goes to exactly 0 for red and for yellow,
-#' against 0.544 and 0.639 with the card term, and the AIC is 473 and 137
-#' worse. Every group saw nearly the same deck, so the spread of raw hit rates
-#' across teams is *narrower* than binomial noise around a single pooled
+#' Cards inside one true category are not alike: one card can be called
+#' correctly by a minority of teams, others by every team. Removing the card
+#' term then does not shrink the team effect, it can **erase** it: the fitted
+#' team SD goes to exactly 0, against a clearly positive one with the card
+#' term, at a much worse AIC. When every group sees nearly the same deck, the
+#' spread of raw hit rates across teams can be *narrower* than binomial noise
+#' around a single pooled
 #' probability, and a model with one probability per category can only account
 #' for that by setting the team variance to zero.
 #'
@@ -651,12 +651,11 @@
 #' then the split part -- or a named vector such as
 #' `c(hit = "fixed", split = "random")`.
 #'
-#' The split part defaults to `"none"`, and that is measured rather than
-#' assumed. Its cells hold few error rows with a small minority (176, 124 and
-#' 529 rows with 10, 24 and 38 minority calls on this corpus); a card-fixed
-#' split runs the yellow team SD up to 41 on the logit scale, is worse by AIC
-#' than no card term for red, and leaves any card that no team ever miscalled
-#' with no coefficient at all. It also costs little, because for red both
+#' The split part defaults to `"none"`. Its cells hold few error rows with a
+#' small minority; a card-fixed split can run a team SD up to separation on
+#' the logit scale, can be worse by AIC than no card term, and leaves any card
+#' that no team ever miscalled with no coefficient at all. It also costs
+#' little, because for red both
 #' wrong answers are under-triage and for green both are over-triage: the
 #' split moves cells *inside* the confusion matrix without moving the
 #' over- and under-triage rates.
@@ -678,12 +677,13 @@
 #' `joint = TRUE` stacks a category's two parts and fits them together with an
 #' unstructured team covariance, which is the full multinomial mixed model for
 #' that category. It is a **diagnostic**: it measures the one parameter the
-#' default gives up, and [sdt_simulate_triage()] never reads it. Run on the
-#' validation corpus it converged for green only -- correlation `-0.050`, and
-#' a joint AIC equal to the sum of the two separate ones -- while red came
-#' back rank deficient with a team correlation of 0.99 and yellow ran its
-#' split SD to 33-40. The full multinomial does not fit reliably at this n,
-#' and where it does fit it says the constraint costs nothing.
+#' default gives up, and [sdt_simulate_triage()] never reads it. At
+#' course-sized n it often converges for some categories only: where it does,
+#' the correlation is near zero and the joint AIC equals the sum of the two
+#' separate ones; elsewhere it comes back rank deficient, with a team
+#' correlation near one or a split SD at separation. The full multinomial need
+#' not fit reliably at this n, and where it does fit it says the constraint
+#' costs nothing.
 #'
 #' # The team term
 #'
@@ -712,8 +712,8 @@
 #'   from that function on purpose: there dispersion is measured off the same
 #'   frame that was fitted, while here the card term is in the model and the
 #'   between-team dispersion is measured separately by [sdt_error_fidelity()],
-#'   which does its own matching. Matching here would cost a category its
-#'   cards -- on this corpus the matched frame keeps 2 of the 5 yellow cards.
+#'   which does its own matching. Matching here can cost a category with only
+#'   a few cards most of them.
 #' @param min_coverage Passed to the matched frame; `NULL` chooses it.
 #' @param joint If `TRUE`, also fit the full multinomial mixed model per
 #'   category as a diagnostic. Slow, and not used by the simulator.
@@ -1484,7 +1484,7 @@ print.sdt_simulated_triage <- function(x, ...) {
 # the answer would be wrong; there is no answer.
 #
 # The conditional statistics also need a different denominator per category
-# (30 red cards against 5 yellow ones in this deck), a per-category
+# (a deck can hold many more red cards than yellow ones), a per-category
 # composition check of their own, and a pair of ratios per statistic rather
 # than one -- the level AND the between-team SD. So the frame matching, the
 # statistic catalogue and the row shape all differ. What is shared is the

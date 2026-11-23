@@ -251,9 +251,9 @@
 #' For a variable with a fill rule, `n_imputed + n_missing` is the number of
 #' rows nobody answered: some of them were filled and some were not, and the
 #' two are reported apart rather than added up for the reader. That is why
-#' `title_level` reports no missing values and 99 imputed ones on the TDSC
-#' register -- an empty title box is filled with `none`, and the fill is
-#' visible in every share it touches.
+#' `title_level` can report no missing values and many imputed ones on a
+#' participant register -- an empty title box is filled with `none`, and the
+#' fill is visible in every share it touches.
 #'
 #' A value that is present in a row whose own missing indicator is set is not
 #' an observation. It is counted as imputed when an imputation indicator or a
