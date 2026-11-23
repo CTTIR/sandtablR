@@ -160,7 +160,11 @@ test_that("one press of the demo button fills the whole workbench", {
   # shared state, so the expensive step stands in for itself -- and says the
   # stack is present, so the write is exercised on a thin machine too.
   local_mocked_bindings(.sdt_tidymodels_pkgs = function() "parsnip",
-                        sdt_workflowset = function(...) fake_bench())
+                        sdt_workflowset = function(...) {
+                          bench <- fake_bench()
+                          attr(bench, "models") <- list(tree = "fitted")
+                          bench
+                        })
   shiny::testServer(mod_overview_server, args = list(state = state), {
     session$setInputs(demo = 1)
 
@@ -173,8 +177,13 @@ test_that("one press of the demo button fills the whole workbench", {
     expect_s3_class(state$run, "game_run")
     expect_gt(nrow(state$run$events), 0L)
 
-    # The leaderboard the training step returned is the one the panel shows.
-    expect_identical(state$bench, fake_bench())
+    # The leaderboard the training step returned is the one the panel shows,
+    # and its fitted models are handed on, so the Explain panel has something
+    # to explain after the demo.
+    board <- state$bench
+    attr(board, "models") <- NULL
+    expect_identical(board, fake_bench())
+    expect_identical(state$models, list(tree = "fitted"))
 
     # The boxes are the only feedback the press gives, so they have to have
     # caught up with the state by the time the observer returns.

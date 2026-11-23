@@ -260,6 +260,10 @@ mod_overview_server <- function(id, state) {
     "Could not train the model bench"
   )
   state$bench <- bench
+  # The fitted models travel with the board, as they do when the Model lab
+  # compares all engines. Left behind, the Explain panel had nothing to
+  # explain after a demo that says it trained the bench.
+  state$models <- attr(bench, "models")
   !is.null(bench)
 }
 

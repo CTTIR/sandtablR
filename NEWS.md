@@ -41,6 +41,9 @@
   its count axis in whole places only.
 * The workbench names the transformer "Tabular transformer" and styles the
   closed-box grade's chip; it used to show the raw engine id as plain text.
+* The workbench's one-click demo hands the models it trained to the Explain
+  panel, as "Compare all engines" already did; after the demo, Explain said no
+  model had been trained.
 
 ## Documentation
 
