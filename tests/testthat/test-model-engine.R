@@ -565,6 +565,50 @@ test_that("a transformer that fails with a working backend is not skipped", {
   )
 })
 
+test_that("a transformer fit seeds the backend from R's random stream", {
+  skip_if_not_installed("keras3")
+  # Python's generators do not follow R's seed, so two sdt_fit() calls with
+  # the same `seed` used to train two different transformers. The seed handed
+  # to the backend is captured and the fit stopped there, so no backend is
+  # needed to check it.
+  seeds <- list()
+  local_mocked_bindings(.sdt_keras_ready = function() TRUE)
+  local_mocked_bindings(
+    set_random_seed = function(seed, ...) {
+      seeds[[length(seeds) + 1L]] <<- seed
+      stop("seeded")
+    },
+    .package = "keras3"
+  )
+  x <- matrix(c(0.1, 0.4, 0.3, 0.9, 0.2, 0.8), ncol = 2)
+  y <- factor(c("green", "red", "red"))
+  for (s in c(7L, 7L, 8L)) {
+    withr::with_seed(s, expect_error(sdt_transformer_fit(x, y), "seeded"))
+  }
+  expect_length(seeds, 3L)
+  expect_identical(seeds[[1]], seeds[[2]])
+  expect_false(identical(seeds[[1]], seeds[[3]]))
+})
+
+test_that("a transformer fitted twice with one seed is the same model", {
+  skip_on_cran()
+  skip_unless_bench()
+  skip_if_not(.sdt_keras_ready(), "no working keras3 backend")
+  # Sixty casualties can leave a class unpredicted, and yardstick says so for
+  # each fit; reproducibility is the point here, not that warning.
+  fit_once <- function() {
+    suppressWarnings(
+      sdt_fit(bench_cohort(), target = "called_triage",
+              engine = "transformer", tune = FALSE, folds = 2L, seed = 1,
+              verbose = FALSE)
+    )
+  }
+  first <- fit_once()
+  second <- fit_once()
+  expect_identical(sdt_predictions(second), sdt_predictions(first))
+  expect_identical(sdt_metrics(second), sdt_metrics(first))
+})
+
 test_that("sdt_workflowset() returns an empty leaderboard, not an error", {
   # No skip: with nothing usable it returns before it fits anything, so this
   # is exactly the path a machine with no engines installed takes.

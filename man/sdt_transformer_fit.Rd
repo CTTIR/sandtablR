@@ -41,6 +41,11 @@ resolves a registered model's fit and predict callbacks with
 \code{getExportedValue()}, so an internal dot-prefixed function is unreachable to
 it. Call \code{\link[=sdt_fit]{sdt_fit()}} rather than this.
 }
+\details{
+The backend's random generators are seeded from R's random-number stream,
+so a fit under the same \code{\link[=set.seed]{set.seed()}}, or the same \code{seed} in \code{\link[=sdt_fit]{sdt_fit()}},
+trains the same model.
+}
 \examples{
 # needs 'keras3' with a working Python 'TensorFlow' backend
 \dontrun{

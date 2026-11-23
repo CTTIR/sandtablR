@@ -43,6 +43,10 @@
 #' `getExportedValue()`, so an internal dot-prefixed function is unreachable to
 #' it. Call [sdt_fit()] rather than this.
 #'
+#' The backend's random generators are seeded from R's random-number stream,
+#' so a fit under the same [set.seed()], or the same `seed` in [sdt_fit()],
+#' trains the same model.
+#'
 #' @param x Numeric predictor matrix from the recipe.
 #' @param y Outcome factor.
 #' @param d_model Embedding width per feature.
@@ -71,6 +75,11 @@ sdt_transformer_fit <- function(x, y, d_model = 16L, num_heads = 2L,
       "i" = "Install it with {.code keras3::install_keras()}."
     ))
   }
+  # Weight initialisation, dropout and batch shuffling draw from Python's own
+  # generators, which R's seed does not reach: two sdt_fit() calls with the
+  # same `seed` used to train two different transformers. Seeding the backend
+  # from R's stream ties it to that seed, and to set.seed() for a direct call.
+  keras3::set_random_seed(sample.int(.Machine$integer.max, 1L))
   # keras3:: throughout, not asNamespace()$: `compile` and `fit` are
   # re-exported generics that do not exist as objects in the namespace, and
   # `predict` is an S3 method that is not exported at all, so `ns$compile`
