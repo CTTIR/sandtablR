@@ -146,7 +146,7 @@ sdt_plot_board <- function(run, at = NULL, replication = 1L,
   total <- nrow(tibble::as_tibble(run$scenario$cohort))
   waiting <- max(0L, total - shown)
   sprintf(
-    "Replication %d at %.0f min \u2014 %d of %d casualties on the board%s",
+    "Replication %d at %.0f min: %d of %d casualties on the board%s",
     replication, at, shown, total,
     if (waiting) sprintf(", %d not yet arrived", waiting) else ""
   )

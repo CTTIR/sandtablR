@@ -16,6 +16,9 @@
   figure, section and page of every published value, and the benchmark the
   source quotes for the Berlin algorithm now cites its origin (Kleber et al.
   2020).
+* `sdt_plot_board()` writes its subtitle in plain ASCII. The em dash it used
+  made the `pdf()` device, and any other device without that glyph, warn and
+  substitute a hyphen.
 
 ## CRAN preparation
 
