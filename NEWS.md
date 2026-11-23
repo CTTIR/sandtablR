@@ -2,6 +2,16 @@
 
 ## Fixes
 
+* A tuned `sdt_fit(engine = "svm_rbf")` no longer aborts. Tuning parameters
+  are now finalised on the predictors the model receives -- the recipe applied
+  to the training rows -- rather than on the raw rows, whose identifier and
+  unencoded columns broke the RBF kernel's range and inflated `mtry`'s upper
+  bound for "ranger" with columns no model sees. Tuned "ranger" grids change
+  accordingly.
+* `sdt_workflowset()` with its default `tune = TRUE` fits an engine that has
+  nothing to tune (the transformer) once as specified. With every engine
+  installed the default screen, and the workbench's "Run the whole thing"
+  button, failed on the RBF kernel and then on the transformer.
 * `sdt_scenario()` refuses a board capacity that is not a whole number of at
   least 1, naming every offending area. It used to coerce such values without
   a word: 0 and negative capacities became 1, 2.7 became 2 and text became

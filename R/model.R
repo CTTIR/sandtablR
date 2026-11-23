@@ -448,7 +448,17 @@ sdt_fit <- function(data,
       call = call
     )
   }
-  params <- dials::finalize(params, x = train)
+  # Finalised on the predictors the model will actually see -- the recipe
+  # applied to the training rows -- not on the raw rows. The raw rows carry the
+  # id, every outcome column and unencoded factors, so mtry's upper bound
+  # counted columns no model receives, and the RBF kernel's sigma range, which
+  # needs a numeric matrix, aborted every tuned "svm_rbf" fit.
+  rec <- workflows::extract_preprocessor(wf)
+  predictors <- recipes::bake(
+    recipes::prep(rec, training = train), new_data = NULL,
+    recipes::all_predictors()
+  )
+  params <- dials::finalize(params, x = predictors)
   suppressWarnings(tune::tune_grid(
     wf,
     resamples = resamples,
@@ -653,6 +663,12 @@ print.sdt_model <- function(x, ...) {
 
 # Screening every engine ------------------------------------------------------
 
+# Does the tuned specification of an engine expose anything to tune?
+.engine_tunable <- function(engine) {
+  spec <- .model_spec(engine, tune = TRUE)
+  nrow(hardhat::extract_parameter_set_dials(spec)) > 0L
+}
+
 #' Screen every engine on one cohort
 #'
 #' Fits each available engine to the same data with the same preprocessing and
@@ -664,7 +680,9 @@ print.sdt_model <- function(x, ...) {
 #' `skipped` attribute rather than silently dropped. So is the transformer
 #' when \pkg{keras3} is installed but has no working backend. The transformer
 #' is fitted after every other engine, so Python and its backend are not
-#' loaded into the session before their parallel workers are started.
+#' loaded into the session before their parallel workers are started. With
+#' `tune = TRUE`, an engine whose specification has nothing to tune (the
+#' transformer) is fitted once as specified.
 #'
 #' @inheritParams sdt_fit
 #' @param engines Which engines to screen. Defaults to all of them.
@@ -712,12 +730,15 @@ sdt_workflowset <- function(data,
   }
 
   usable <- engines[engines %in% available$engine[available$installed]]
+  # An engine with nothing to tune is fitted once as specified. sdt_fit()
+  # rightly refuses `tune = TRUE` for it, and that refusal used to abort the
+  # whole screen whenever the transformer had a working backend.
   fit_one <- function(e) {
     if (verbose) cli::cli_inform("Screening {.val {e}}.")
     sdt_fit(
       data, target = target, engine = e, predictors = predictors,
-      tune = tune, grid = grid, folds = folds, prop = prop,
-      seed = seed, verbose = FALSE
+      tune = tune && .engine_tunable(e), grid = grid, folds = folds,
+      prop = prop, seed = seed, verbose = FALSE
     )
   }
   models <- lapply(stats::setNames(nm = setdiff(usable, "transformer")),

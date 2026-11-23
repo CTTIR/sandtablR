@@ -229,6 +229,55 @@ test_that("sdt_roc() draws one curve per class and names the model", {
   )
 })
 
+test_that("tuning finalises parameters on the predictors the model sees", {
+  skip_unless_bench("kernlab", "ranger")
+  # dials::finalize() used to be handed the raw training rows -- id, every
+  # outcome column and unencoded factors. The RBF kernel's sigma range needs a
+  # numeric matrix, so every tuned "svm_rbf" fit aborted, taking a default
+  # sdt_workflowset() and the workbench's demo bench down with it; and mtry's
+  # upper bound counted columns no model receives.
+  co <- bench_cohort()
+  fit <- NULL
+  utils::capture.output(
+    fit <- suppressWarnings(
+      sdt_fit(co, target = "called_triage", engine = "svm_rbf", tune = TRUE,
+              grid = 2L, folds = 2L, seed = 1, verbose = FALSE)
+    ),
+    type = "message"
+  )
+  expect_s3_class(fit, "sdt_model")
+  expect_contains(names(fit$best), c("cost", "rbf_sigma"))
+
+  # mtry's range is bounded by the encoded predictor count, not the columns.
+  co$called_triage <- factor(co$called_triage)
+  wf <- workflows::add_model(
+    workflows::add_recipe(
+      workflows::workflow(),
+      .model_recipe(co, "called_triage", .default_predictors(co,
+                                                              "called_triage"))
+    ),
+    .model_spec("ranger", tune = TRUE)
+  )
+  n_pred <- ncol(recipes::bake(
+    recipes::prep(workflows::extract_preprocessor(wf), training = co),
+    new_data = NULL, recipes::all_predictors()
+  ))
+  captured <- NULL
+  testthat::local_mocked_bindings(
+    tune_grid = function(object, ..., param_info) {
+      captured <<- param_info
+      stop("stop here")
+    },
+    .package = "tune"
+  )
+  expect_error(
+    .tune_workflow(wf, NULL, co, 2L, sdt_metric_set()), "stop here"
+  )
+  mtry <- captured$object[[which(captured$id == "mtry")]]
+  expect_identical(as.integer(mtry$range$upper), n_pred)
+  expect_lt(n_pred, ncol(co))
+})
+
 test_that("sdt_roc() draws each sighting category in its own colour", {
   skip_unless_bench("rpart")
   # The default hue scale drew the red class green and the green class red.
@@ -692,4 +741,31 @@ test_that("the reference is read once and served from the cache after", {
   .sdt_cache$reference <- list(sentinel = TRUE)
   expect_identical(.tdsc_reference(), list(sentinel = TRUE))
   expect_true(is.list(first))
+})
+
+test_that("the screen fits an engine with nothing to tune untuned", {
+  skip_unless_bench("rpart")
+  # The transformer's specification exposes no tunable parameter, sdt_fit()
+  # refuses tune = TRUE for it, and with a working keras3 backend that refusal
+  # used to abort a default sdt_workflowset() outright.
+  expect_false(.engine_tunable("transformer"))
+  expect_true(.engine_tunable("tree"))
+  seen <- list()
+  real_fit <- sdt_fit
+  testthat::local_mocked_bindings(
+    sdt_fit = function(data, target, engine, ..., tune) {
+      seen[[engine]] <<- tune
+      real_fit(data, target = target, engine = "tree", ..., tune = FALSE)
+    },
+    sdt_engines = function() {
+      tibble::tibble(engine = c("tree", "transformer"),
+                     package = c("rpart", "keras3"),
+                     class_box = c("glass", "black"), installed = TRUE)
+    }
+  )
+  board <- sdt_workflowset(bench_cohort(), target = "called_triage",
+                           tune = TRUE, grid = 2L, folds = 2L, seed = 1,
+                           verbose = FALSE)
+  expect_identical(seen, list(tree = TRUE, transformer = FALSE))
+  expect_setequal(unique(board$engine), c("tree", "transformer"))
 })
