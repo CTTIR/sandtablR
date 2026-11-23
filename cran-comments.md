@@ -18,7 +18,7 @@ This is a new submission of sandtablR 0.1.0.
 0 errors | 0 warnings | 1 note
 
 * checking CRAN incoming feasibility ... NOTE
-  Maintainer: 'Raban Heller <raban.heller@uni-ulm.de>'
+  Maintainer: 'R. Heller <raban.heller@uni-ulm.de>'
   New submission
 
   This is the first submission of the package.
