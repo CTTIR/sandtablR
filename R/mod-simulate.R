@@ -463,8 +463,7 @@ mod_simulate_server <- function(id, state) {
 
     util_plot <- shiny::reactive({
       shiny::req(state$run)
-      sdt_plot_utilisation(state$run) +
-        ggplot2::scale_colour_hue(labels = .sdt_label_area)
+      sdt_plot_utilisation(state$run)
     })
 
     output$util_ui <- shiny::renderUI({

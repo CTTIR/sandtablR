@@ -313,12 +313,27 @@ sdt_plot_utilisation <- function(run) {
     ggplot2::aes(x = .data$time, y = .data$server, colour = .data$resource)
   ) +
     ggplot2::geom_step() +
-    ggplot2::facet_wrap(ggplot2::vars(.data$replication), ncol = 1L) +
+    # A strip reading "1" says nothing; the legend speaks the board's names,
+    # not its column names; and places in use are whole numbers.
+    ggplot2::facet_wrap(
+      ggplot2::vars(.data$replication), ncol = 1L,
+      labeller = ggplot2::labeller(
+        replication = function(x) paste("Replication", x)
+      )
+    ) +
+    ggplot2::scale_colour_hue(labels = .sdt_label_area) +
+    ggplot2::scale_y_continuous(breaks = .sdt_whole_breaks) +
     ggplot2::labs(
       title = "Resource utilisation over time",
-      x = "Time (min)", y = "In use", colour = "Board area"
+      x = "Time (min)", y = "Places in use", colour = "Board area"
     ) +
     .sdt_theme()
+}
+
+# Axis breaks for a count: pretty() over the limits, whole numbers only.
+.sdt_whole_breaks <- function(limits) {
+  breaks <- pretty(limits)
+  breaks[breaks == round(breaks)]
 }
 
 #' Plot the end-of-game distribution against the published reference

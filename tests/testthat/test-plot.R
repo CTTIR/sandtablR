@@ -40,3 +40,26 @@ test_that("area legends give every board state a key and a display label", {
     expect_identical(nrow(fills), length(sdt_board_areas()), info = type)
   }
 })
+
+test_that("the utilisation plot names its areas, replications and counts", {
+  skip_if_not_installed("simmer")
+  co <- sdt_synthetic_cohort(15, seed = 1)
+  run <- sdt_simulate(sdt_scenario(co), replications = 2, seed = 1,
+                      verbose = FALSE)
+  p <- sdt_plot_utilisation(run)
+  # The legend used to show column names ("icu_imc"), the strips a bare
+  # replication number, and the axis fractional places such as 0.5.
+  keys <- ggplot2::get_guide_data(p, "colour")
+  expect_true(all(keys$.label %in% sdt_area_labels()))
+  expect_false(any(keys$.label %in% c("icu_imc", "ed_red", "green_area")))
+  built <- ggplot2::ggplot_build(p)
+  strips <- built$layout$layout$replication
+  expect_identical(
+    p$facet$params$labeller(data.frame(replication = strips))[[1]],
+    paste("Replication", strips)
+  )
+  y_breaks <- built$layout$panel_params[[1]]$y$breaks
+  y_breaks <- y_breaks[!is.na(y_breaks)]
+  expect_true(all(y_breaks == round(y_breaks)))
+  expect_identical(.sdt_whole_breaks(c(0, 2)), c(0, 1, 2))
+})

@@ -26,6 +26,9 @@
 * `sdt_roc()`, and the workbench's ROC panel, draw the sighting categories
   in the package's red, yellow and green. The default hue scale drew the red
   class in green and the green class in red.
+* `sdt_plot_utilisation()` labels its legend with the board's display names,
+  its panels "Replication 1", "Replication 2" rather than a bare number, and
+  its count axis in whole places only.
 
 ## Documentation
 
