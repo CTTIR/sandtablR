@@ -55,12 +55,13 @@ sdt_scenario <- function(cohort, resources = list(), name = NULL, seed = NULL) {
     ))
   }
   # A capacity is a whole number of places, at least one. Anything else used to
-  # be coerced without a word -- 0 and negative values became 1, 2.7 became 2
-  # and text became NA -- so the board that was simulated was not the board
-  # that was asked for. Every offending area is named at once.
+  # be coerced without a word -- 0 and negative values became 1, 2.7 became 2,
+  # the text "2" became 2 and other text NA -- so the board that was simulated
+  # was not the board that was asked for. Every offending area is named at
+  # once.
   is_capacity <- function(x) {
     is.numeric(x) && length(x) == 1L && is.finite(x) && x >= 1 &&
-      x == round(x)
+      x <= .Machine$integer.max && x == round(x)
   }
   bad <- names(resources)[!vapply(resources, is_capacity, logical(1))]
   if (length(bad)) {

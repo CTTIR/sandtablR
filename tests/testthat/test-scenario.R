@@ -13,9 +13,10 @@ test_that("sdt_scenario() errors on missing columns", {
 
 test_that("sdt_scenario() refuses a capacity it would otherwise coerce", {
   co <- sdt_synthetic_cohort(n = 5, seed = 1)
-  # Each of these used to be coerced without a word: 0 and -1 to 1, 2.7 to
-  # 2, and text to NA, so the simulated board was not the requested one.
-  for (cap in list(0, -1, 2.7, NA_real_, Inf, "2", c(1, 2))) {
+  # Each of these used to be coerced without a word: 0 and -1 to 1, 2.7 and
+  # "2" to 2, Inf and 3e9 to NA, so the simulated board was not the requested
+  # one.
+  for (cap in list(0, -1, 2.7, NA_real_, Inf, 3e9, "2", c(1, 2))) {
     expect_error(
       sdt_scenario(co, resources = list(or = cap)),
       "whole-number capacities"

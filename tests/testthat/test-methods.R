@@ -141,6 +141,11 @@ test_that(".check_count() accepts whole numbers and rejects the rest", {
   expect_error(f(1.5), "positive whole number")
   expect_error(f(NA), "positive whole number")
   expect_error(f(c(1, 2)), "positive whole number")
+  # Past the integer range as.integer() returns NA with only a warning, so
+  # these are refused up front rather than passed on as NA.
+  expect_error(f(Inf), "positive whole number")
+  expect_error(f(3e9), "positive whole number")
+  expect_identical(f(.Machine$integer.max), .Machine$integer.max)
 })
 
 test_that(".check_flag() insists on a single TRUE or FALSE", {

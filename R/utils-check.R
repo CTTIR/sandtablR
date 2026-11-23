@@ -14,8 +14,10 @@
 .check_count <- function(x,
                          arg = rlang::caller_arg(x),
                          call = rlang::caller_env()) {
-  ok <- is.numeric(x) && length(x) == 1L && !is.na(x) &&
-    x >= 1 && x == round(x)
+  # Bounded above as well, because as.integer() turns Inf and anything past
+  # the integer range into NA with only a warning.
+  ok <- is.numeric(x) && length(x) == 1L && is.finite(x) &&
+    x >= 1 && x <= .Machine$integer.max && x == round(x)
   if (!ok) {
     cli::cli_abort(
       "{.arg {arg}} must be a single positive whole number.",
