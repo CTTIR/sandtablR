@@ -4,7 +4,7 @@ type: software
 title: 'sandtablR: Mass-Casualty Incident Simulation and Machine Learning Workbench'
 authors:
 - family-names: 'Heller'
-  given-names: 'Raban'
+  given-names: 'R.'
   orcid: https://orcid.org/0000-0001-8006-9742
   affiliation: Ulm University
 - family-names: 'Achatz'
