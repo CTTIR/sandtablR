@@ -23,6 +23,9 @@
   board area, including the ones a run never reached; ggplot2 3.5 and later
   listed those with an empty swatch. `sdt_plot_flow()` labels its legend with
   the board's display names, as the other board plots already did.
+* `sdt_roc()`, and the workbench's ROC panel, draw the sighting categories
+  in the package's red, yellow and green. The default hue scale drew the red
+  class in green and the green class in red.
 
 ## Documentation
 

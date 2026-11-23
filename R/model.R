@@ -851,7 +851,7 @@ sdt_roc <- function(model) {
       colour = .data$.level
     )
   }
-  ggplot2::ggplot(curve, mapping) +
+  plot <- ggplot2::ggplot(curve, mapping) +
     ggplot2::geom_abline(
       slope = 1, intercept = 0, linetype = "dashed", colour = "grey60"
     ) +
@@ -864,6 +864,25 @@ sdt_roc <- function(model) {
       x = "1 - specificity", y = "Sensitivity", colour = "Class"
     ) +
     .sdt_theme()
+  # Sighting categories wear their own colours, as on every other plot. The
+  # default hue scale drew the red class in green and the green class in red.
+  palette <- .sdt_class_palette(unique(as.character(curve$.level)))
+  if (is.null(colour) || is.null(palette)) {
+    return(plot)
+  }
+  plot + ggplot2::scale_colour_manual(
+    values = palette, limits = names(palette)
+  )
+}
+
+# The triage palette for a set of sighting categories, in vocabulary order, or
+# NULL when the classes are not all sighting categories.
+.sdt_class_palette <- function(classes) {
+  classes <- classes[!is.na(classes)]
+  if (!length(classes) || !all(classes %in% sdt_triage_levels())) {
+    return(NULL)
+  }
+  .sdt_triage_palette()[intersect(sdt_triage_levels(), classes)]
 }
 
 #' Agreement between two labellings of the same casualties

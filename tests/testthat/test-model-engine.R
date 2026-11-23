@@ -229,6 +229,21 @@ test_that("sdt_roc() draws one curve per class and names the model", {
   )
 })
 
+test_that("sdt_roc() draws each sighting category in its own colour", {
+  skip_unless_bench("rpart")
+  # The default hue scale drew the red class green and the green class red.
+  keys <- ggplot2::get_guide_data(sdt_roc(fixed_fit()), "colour")
+  expect_identical(keys$.label, c("red", "yellow", "green"))
+  expect_identical(
+    toupper(keys$colour), unname(.sdt_triage_palette()[keys$.label])
+  )
+  # Anything that is not a sighting category keeps the default scale.
+  expect_null(.sdt_class_palette(c("DCS", "TASC")))
+  expect_null(.sdt_class_palette(character()))
+  expect_identical(names(.sdt_class_palette(c("green", "red"))),
+                   c("red", "green"))
+})
+
 test_that("sdt_roc() labels the empty case instead of erroring", {
   skip_unless_bench("rpart")
   # A ROC curve needs class probabilities, and a model whose predictions carry

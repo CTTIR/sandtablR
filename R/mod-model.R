@@ -845,9 +845,18 @@ mod_model_server <- function(id, state) {
     return(plot)
   }
   classes <- .sdt_model_class_order(unique(as.character(plot$data$.level)))
-  plot + ggplot2::scale_colour_discrete(
-    limits = classes, labels = .sdt_model_class_label(classes)
-  )
+  palette <- .sdt_class_palette(classes)
+  # Replacing the scale is the point, so ggplot2's note that it did is not.
+  suppressMessages(if (is.null(palette)) {
+    plot + ggplot2::scale_colour_discrete(
+      limits = classes, labels = .sdt_model_class_label(classes)
+    )
+  } else {
+    plot + ggplot2::scale_colour_manual(
+      values = palette, limits = classes,
+      labels = .sdt_model_class_label(classes)
+    )
+  })
 }
 
 # The confusion matrix, with both axes written out. Counts alone hide the

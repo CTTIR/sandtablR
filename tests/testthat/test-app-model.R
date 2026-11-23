@@ -615,6 +615,11 @@ test_that("the ROC plot says which engine drew it, in the panel's words", {
   expect_match(plot$labels$subtitle, "glass box", fixed = TRUE)
   expect_match(plot$labels$subtitle, "participant's called category",
                fixed = TRUE)
+  # Relabelled for the page, but still in the sighting colours.
+  keys <- ggplot2::get_guide_data(plot, "colour")
+  expect_identical(keys$.label,
+                   c("Red (SK I)", "Yellow (SK II)", "Green (SK III)"))
+  expect_identical(toupper(keys$colour), unname(.sdt_triage_palette()))
 })
 
 
