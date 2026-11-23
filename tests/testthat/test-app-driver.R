@@ -134,6 +134,23 @@ test_that("the workbench builds, runs and switches tabs in a browser", {
     "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage",
     "--headless=new"
   ))
+  # Slow runners, notably macOS and Windows on CI, can need more than
+  # chromote's default ten seconds to answer a browser command such as the
+  # first navigation to the app; sessions inherit this limit.
+  browser <- tryCatch(chromote::Chromote$new(), error = function(e) {
+    testthat::skip(paste("Chrome cannot start:", conditionMessage(e)))
+  })
+  browser$default_timeout <- 60
+  previous_browser <- if (chromote::has_default_chromote_object()) {
+    chromote::default_chromote_object()
+  }
+  chromote::set_default_chromote_object(browser)
+  withr::defer({
+    browser$close()
+    if (!is.null(previous_browser)) {
+      chromote::set_default_chromote_object(previous_browser)
+    }
+  })
 
   app <- shinytest2::AppDriver$new(
     app_dir, name = "workbench", height = 1100, width = 1600,
