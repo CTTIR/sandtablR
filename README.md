@@ -153,7 +153,7 @@ schema. Optional-engine errors name the missing dependency. Start with the core
 simulation before adding modelling or explanation packages.
 
 Use `citation("sandtablR")` for installed-version metadata and cite the reference
-publication when using its attributed values. Licensed under [MIT](LICENSE.md).
+publication when using its attributed values. Licensed under [MIT](https://github.com/CTTIR/sandtablR/blob/main/LICENSE.md).
 Report reproducible problems with synthetic inputs in
 [GitHub issues](https://github.com/CTTIR/sandtablR/issues).
 
