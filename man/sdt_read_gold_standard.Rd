@@ -52,8 +52,8 @@ positions are the first thing an edited workbook changes:
 \item \code{blank} — every contract column is empty.
 \item \code{non_numeric_card} — the card id is not a number, which is what catches
 both duplicate test rows carrying a letter id and the shifted legend.
-\item \code{card_out_of_range} — the card id is a number outside the deck, which
-can only happen when \code{deck_size} is given.
+\item \code{card_out_of_range} — the card id is a number below 1, or above
+\code{deck_size} when one is given.
 }
 
 How many rows each guard removed is reported when \code{verbose = TRUE} and kept
