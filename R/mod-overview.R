@@ -3,10 +3,10 @@
 #
 # It exists because of a specific failure: every other panel needs a scenario,
 # and an app whose first screen is a form with an inert chart beside it leaves
-# a new user guessing which of the six tabs to press first. This one says what
-# the workbench is for, names the four steps in order, and offers a single
-# button that runs all of them, so the app is populated within seconds of being
-# opened and every other panel has something to show.
+# a new user guessing which of the other seven tabs to press first. This one
+# says what the workbench is for, names the four steps in order, and offers a
+# single button that runs all of them, so the app is populated within seconds
+# of being opened and every other panel has something to show.
 
 mod_overview_ui <- function(id) {
   ns <- shiny::NS(id)

@@ -89,7 +89,7 @@ the same recipe and scored on the same held-out split, so performance can be com
 per-casualty SHAP attributions via DALEX, all model-agnostic, so a tree and a
 forest can be compared on one footing.
 
-**A workbench.** Seven panels covering the whole workflow, plus a one-click
+**A workbench.** Eight panels covering the whole workflow, plus a one-click
 self-contained HTML report of the session. The app's modules are ordinary
 package functions in `R/`, not scripts under `inst/`, so they are checked,
 linted, covered and driven headlessly by the test suite.

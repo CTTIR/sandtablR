@@ -13,7 +13,7 @@ sdt_app_server(input, output, session)
 Invisible \code{NULL}, called for its side effects.
 }
 \description{
-All six modules share one \code{\link[shiny:reactiveValues]{shiny::reactiveValues()}} holding the scenario,
+All eight modules share one \code{\link[shiny:reactiveValues]{shiny::reactiveValues()}} holding the scenario,
 the game run, the fitted models and the leaderboard. Nothing is passed
 between modules by any other route, so there is one place to look when the
 app and the console disagree.
@@ -21,7 +21,7 @@ app and the console disagree.
 \examples{
 # Driven headlessly in the package's own tests:
 # shiny::testServer(sdt_app_server, { session$setInputs() })
-sdt_app_ui
+names(formals(sdt_app_server))
 }
 \seealso{
 \code{\link[=sdt_run_app]{sdt_run_app()}}, \code{\link[=sdt_app_ui]{sdt_app_ui()}}.

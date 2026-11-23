@@ -76,7 +76,7 @@ sdt_app_ui <- function() {
 
 #' Server for the sandtablR workbench
 #'
-#' All six modules share one [shiny::reactiveValues()] holding the scenario,
+#' All eight modules share one [shiny::reactiveValues()] holding the scenario,
 #' the game run, the fitted models and the leaderboard. Nothing is passed
 #' between modules by any other route, so there is one place to look when the
 #' app and the console disagree.
@@ -88,7 +88,7 @@ sdt_app_ui <- function() {
 #' @examples
 #' # Driven headlessly in the package's own tests:
 #' # shiny::testServer(sdt_app_server, { session$setInputs() })
-#' sdt_app_ui
+#' names(formals(sdt_app_server))
 sdt_app_server <- function(input, output, session) {
   .sdt_mount_assets()
 
