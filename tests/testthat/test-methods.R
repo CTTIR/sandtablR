@@ -183,3 +183,18 @@ test_that("the optional app package list is honest about what is missing", {
   expect_false(any(vapply(missing, requireNamespace, logical(1),
                           quietly = TRUE)))
 })
+
+test_that("sdt_area_labels() always returns character, one label per area", {
+  expect_identical(sdt_area_labels(character()), character())
+  expect_identical(sdt_area_labels(NA), NA_character_)
+  expect_identical(
+    sdt_area_labels(c("or", "morgue", "nowhere")),
+    c("Operating room", "Mortuary", "nowhere")
+  )
+  # A factor is labelled by its levels, not by its integer codes.
+  expect_identical(
+    sdt_area_labels(factor(c("ward", "triage"))),
+    c("Ward", "Screening")
+  )
+  expect_length(sdt_area_labels(), length(sdt_board_areas()))
+})

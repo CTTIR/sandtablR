@@ -108,9 +108,14 @@ sdt_sex_levels <- function() c("f", "m", "d")
 # Label a vector of board areas for display, leaving anything unrecognised as
 # it came in rather than turning it into NA.
 .sdt_label_area <- function(x) {
+  x <- as.character(x)
   labels <- .sdt_area_labels()
   out <- unname(labels[x])
-  ifelse(is.na(out), x, out)
+  # Indexed assignment rather than ifelse(), which answers a zero-length input
+  # with logical(0) instead of character(0).
+  unknown <- is.na(out)
+  out[unknown] <- x[unknown]
+  out
 }
 
 #' Display labels for board areas

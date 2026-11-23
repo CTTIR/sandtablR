@@ -6,6 +6,8 @@
   least 1, naming every offending area. It used to coerce such values without
   a word: 0 and negative capacities became 1, 2.7 became 2 and text became
   `NA`, so the board that was simulated was not the board that was asked for.
+* `sdt_area_labels()` returns a character vector for every input; a
+  zero-length input used to come back as `logical(0)`.
 
 ## CRAN preparation
 
