@@ -23,7 +23,7 @@ An S3 object of class \code{sdt_participant_dictionary}: a list of four
 slots, with \code{print()} and \code{format()} methods.
 }
 \description{
-The TDSC participant register stores four covariates as German free text.
+A course participant register stores four covariates as German free text.
 This function holds the maps that fold that text onto controlled
 vocabularies \strong{as data}, so extending the package for a spelling it has
 not seen is one argument rather than a code change: whatever you pass is

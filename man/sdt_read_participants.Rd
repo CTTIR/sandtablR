@@ -2,7 +2,7 @@
 % Please edit documentation in R/participants.R
 \name{sdt_read_participants}
 \alias{sdt_read_participants}
-\title{Read the TDSC course and group metadata register}
+\title{Read a course and group metadata register}
 \usage{
 sdt_read_participants(
   path,

@@ -241,7 +241,7 @@ skip_if_no_xlsx <- function() {
 }
 
 describe_fixture <- function(dir) {
-  flag <- "No participant course date contains JSON play date 2025-07-20"
+  flag <- "No participant course date contains JSON play date 2000-01-01"
   index <- data.frame(
     Short_Course_ID = c("AAA", "BBB"),
     JSON_File_Name = c("session-AAA.json", "session-BBB.json"),

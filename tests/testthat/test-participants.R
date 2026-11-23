@@ -13,7 +13,7 @@ skip_if_no_xlsx <- function() {
 }
 
 fixture_workbook <- function(dir) {
-  flag <- "No participant course date contains JSON play date 2025-07-20"
+  flag <- "No participant course date contains JSON play date 2000-01-01"
   index <- data.frame(
     Short_Course_ID = c("AAA", "BBB", "CCC"),
     JSON_File_Name = c("session-AAA.json", "session-BBB.json",
@@ -129,12 +129,24 @@ test_that("the academic ladder takes the highest matching rung", {
   ))
 })
 
+test_that("the title map lists only titles, grades and degrees", {
+  # The title map once listed a service-rank abbreviation as an exact key. A
+  # rank is not an academic title, and the fallback already maps anything
+  # unrecognised in the box to "none", so no such key is needed. The keys that
+  # map to "none" are pinned, so a new one is a deliberate change.
+  d <- sdt_participant_dictionary()
+  map <- unlist(d$titel$map)
+  expect_setequal(names(map)[map == "none"],
+                  c("assistenzarzt", "chefarzt", "mba"))
+  expect_true(all(map %in% d$titel$levels))
+})
+
 test_that("multi-specialty free text collapses to the one named first", {
   d <- sdt_participant_dictionary()
   got <- sandtablR:::.map_first_mentioned(
     c("Chirurgie, Unfallchirurgie",
       "Unfallchirurgie, Allgemeinchirurgie",
-      "Allgemein Chirurgie 2000 / Unfallchirurgie 2005"),
+      "Allgemeine Chirurgie, danach Unfallchirurgie"),
     d$fachbereich
   )
   expect_identical(got, c("general_surgery", "trauma_surgery",
@@ -142,13 +154,13 @@ test_that("multi-specialty free text collapses to the one named first", {
 })
 
 test_that("leak detection survives a long but legitimate answer", {
-  flag <- "No participant course date contains JSON play date 2025-07-20"
+  flag <- "No participant course date contains JSON play date 2000-01-01"
   widths <- sandtablR:::.leak_width()
   expect_true(sandtablR:::.detect_leaks(flag, flag, widths[["anrede"]]))
   # The specialty field really does hold sentence-length answers. An earlier
   # single width for every field destroyed two of them.
-  long <- paste("Allgemein Chirurgie 2000 / Unfallchirurgie 2005 akute und",
-                "klinische Notfallmedizin 2024")
+  long <- paste("Allgemeine Chirurgie, danach Unfallchirurgie und zuletzt",
+                "Notfallmedizin im Rettungsdienst")
   expect_false(
     sandtablR:::.detect_leaks(long, flag, widths[["fachbereich"]])
   )

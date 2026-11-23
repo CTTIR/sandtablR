@@ -1,5 +1,5 @@
 # Course and group metadata ---------------------------------------------------
-# Who was in the room. The TDSC participant register records one row per
+# Who was in the room. A course participant register records one row per
 # person per course, and this module reads it, normalises the free text into
 # controlled vocabularies, states its missingness instead of hiding it, and
 # aggregates it to the level the register can actually support.
@@ -17,11 +17,12 @@
 # effect. It can never explain the TEAM random effect -- within a course it is
 # constant, so it has no within-course variance to spend. Any analysis that
 # regresses a team-level outcome on composition is really a between-course
-# regression with 19 points, and must be read as one.
+# regression with as many points as there are courses, and must be read as
+# one.
 #
-# The second constraint is missingness. Four of the nineteen courses have no
-# participants at all, and several covariates are missing for a sixth or more
-# of the people who are recorded. Missingness is the common case here, so the
+# The second constraint is missingness. Some courses can have no linked
+# participants at all, and covariates can be missing for a sizeable share of
+# the people who are recorded. Missingness is the common case here, so the
 # module implements both halves of a missingness policy:
 #
 #   * imputation for modelling -- a stated fill rule plus an indicator column,
@@ -131,8 +132,8 @@
 
 .dict_titel <- function() {
   list(
-    # Exact hits on the normalised key. Every spelling observed in the TDSC
-    # register is listed, so the mapping is auditable by reading it.
+    # Exact hits on the normalised key, so the mapping is auditable by reading
+    # it. Anything else falls through to the patterns below.
     map = list(
       "dr" = "doctorate",
       "dr med" = "doctorate",
@@ -152,11 +153,10 @@
       "prof dr med" = "professor",
       "prof dr med dr" = "professor",
       "univ prof dr med" = "professor",
-      # Written into the title field but not academic titles: a job grade, a
-      # professional designation or non-doctoral degree: no academic title.
+      # Written into the title field but not academic titles: a job grade or
+      # a non-doctoral degree: no academic title.
       "assistenzarzt" = "none",
       "chefarzt" = "none",
-      "ofa" = "none",
       "mba" = "none"
     ),
     # Safety net for spellings nobody has seen yet. Every pattern is tested
@@ -238,7 +238,7 @@
 
 #' Normalisation dictionary for participant metadata
 #'
-#' The TDSC participant register stores four covariates as German free text.
+#' A course participant register stores four covariates as German free text.
 #' This function holds the maps that fold that text onto controlled
 #' vocabularies **as data**, so extending the package for a spelling it has
 #' not seen is one argument rather than a code change: whatever you pass is
@@ -526,7 +526,7 @@ new_sdt_participants <- function(x, course_index, dictionary, meta) {
   is_flag | is_diag | is_wide
 }
 
-#' Read the TDSC course and group metadata register
+#' Read a course and group metadata register
 #'
 #' Reads the participant workbook, binds its per-course sheets, applies
 #' [sdt_participant_dictionary()] and returns one row per participant record
@@ -873,7 +873,7 @@ sdt_read_participants <- function(path,
   if (n_empty) {
     # `sheet_read &`, to match the count on the line that gates this block. A
     # course whose sheet was never read is not an empty course, and without
-    # the guard a `sheets =` subset reports "1 course" and then names all 19.
+    # the guard a `sheets =` subset reports "1 course" and then names them all.
     empty <- idx$short_course_id[idx$sheet_read & !idx$has_participants]
     cli::cli_inform(c(
       "!" = "{n_empty} course{?s} {?has/have} no linked participants:
@@ -1053,7 +1053,7 @@ sdt_participant_summary <- function(x, fields = NULL, by = NULL) {
   # rather than from an answer somebody actually wrote down. The academic
   # ladder is the only covariate with such a fill by default (an empty title
   # box becomes "none"), and the course row has to keep saying so -- otherwise
-  # the denominator claims 16 observations when 5 of them were assumed.
+  # the denominator counts assumed values as observations.
   list(
     share_female = list(
       value = function(d) as_num(d$sex == "female"), filled = none
