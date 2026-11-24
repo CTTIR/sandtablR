@@ -4,8 +4,9 @@
 [![R-CMD-check](https://github.com/cttir/sandtablR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cttir/sandtablR/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24426393.svg)](https://doi.org/10.5281/zenodo.24426393)
 <!-- badges: end -->
+
+Zenodo DOI reserved for the release: `10.5281/zenodo.24426393` (not yet published).
 
 A framework for mass-casualty incident tabletop **exercise simulation**,
 **decision-path analysis** and **machine learning**, with an interactive
